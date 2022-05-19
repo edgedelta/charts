@@ -101,11 +101,11 @@ scylla:
 
   resources:
     limits:
-      cpu: 1000m
-      memory: 4Gi
+      cpu: 2000m
+      memory: 6Gi
     requests:
-      cpu: 500m
-      memory: 2Gi
+      cpu: 1000m
+      memory: 3Gi
 
   storageResources:
     requests:
@@ -117,9 +117,9 @@ scylla:
     commitlog_sync_period_in_ms: 10000
     commitlog_segment_size_in_mb: 32
     seed_provider:
-        - class_name: org.apache.cassandra.locator.SimpleSeedProvider
-          parameters:
-              - seeds: "127.0.0.1"
+      - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+        parameters:
+          - seeds: "127.0.0.1"
     listen_address: localhost
     native_transport_port: 9042
     native_shard_aware_transport_port: 19042
@@ -130,8 +130,8 @@ scylla:
     alternator_enforce_authorization: true
     rpc_address: localhost
     rpc_port: 9160
+    api_address: localhost
     api_port: 10000
-    api_address: 127.0.0.1
     batch_size_warn_threshold_in_kb: 128
     batch_size_fail_threshold_in_kb: 1024
     partitioner: org.apache.cassandra.dht.Murmur3Partitioner

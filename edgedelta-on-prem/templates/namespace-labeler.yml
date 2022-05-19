@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: label-ns
-  namespace: kube-system
+  namespace: {{ .Release.Namespace }}
   labels:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -24,6 +24,5 @@ spec:
         - {{ .Release.Namespace }}
         - cert-manager.io/disable-validation=true
       restartPolicy: Never
-      # use tiller service account since it should have permissions to do namespace labeling
-      serviceAccountName: tiller
+      serviceAccountName: {{ include "edgedelta.onprem.fullname" . | quote }}
 {{- end }}
