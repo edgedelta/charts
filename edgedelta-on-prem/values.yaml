@@ -168,11 +168,13 @@ ingress-nginx:
     image:
       repository: k8s.gcr.io/ingress-nginx/controller # or edgedelta/ingress-nginx-controller
       tag: v1.2.0
+      digest: ""
     admissionWebhooks:
       patch:
         image:
           repository: k8s.gcr.io/ingress-nginx/kube-webhook-certgen # or edgedelta/kube-webhook-certgen
           tag: v1.1.1
+          digest: ""
 
 cert-manager:
   installCRDs: true
