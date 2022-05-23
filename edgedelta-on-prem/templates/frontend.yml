@@ -25,7 +25,11 @@ spec:
           - containerPort: {{ .Values.app.port | default 5555 }}
         env:
           - name: ED_ON_PREM_API_URL
-            value: {{- if .Values.app.overrideApiUrl }}{{ .Values.app.overrideApiUrl | quote }}{{- else }}"https://{{ .Values.api.hostName }}"{{- end }}
+          {{- if .Values.app.overrideApiUrl }}
+            value: {{ .Values.app.overrideApiUrl | quote }}
+          {{- else }}
+            value: "https://{{ .Values.api.hostName }}"
+          {{- end }}
           - name: ED_CONFIG_WIZARD_ID
             value: "f9085b59-7c81-4197-bc0a-cac8a839832c"
           - name: OKTA_AUTH_CLIENT_ID
