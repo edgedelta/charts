@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: labeler
-        image: gcr.io/google_containers/hyperkube:v1.9.7
+        image: bitnami/kubectl:1.22.9
         command:
         - kubectl
         - label

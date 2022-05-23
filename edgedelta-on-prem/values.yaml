@@ -8,9 +8,11 @@ openFaas: # valid for all deployment types
   proLicense: ""
 
 ingress:
+  shouldInstall: true
   enabled: true
 
 clusterIssuer:
+  shouldInstall: true
   enabled: true
   letsEncryptEmail: ""
 
@@ -163,6 +165,27 @@ openfaas:
 ingress-nginx:
   controller:
     replicaCount: 1
+    image:
+      repository: k8s.gcr.io/ingress-nginx/controller:v1.2.0@sha256:d8196e3bc1e72547c5dec66d6556c0ff92a23f6d0919b206be170bc90d5f9185 # or edgedelta/ingress-nginx-controller:v1.2.0
+    admissionWebhooks:
+      patch:
+        image:
+          repository: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660 # or edgedelta/ingress-nginx-kube-webhook-certgen:v1.1.1
 
 cert-manager:
   installCRDs: true
+  image:
+    repository: quay.io/jetstack/cert-manager-controller # or edgedelta/jetstack-cert-manager-controller
+    tag: "v1.8.0"
+  webhook:
+    image:
+      repository: quay.io/jetstack/cert-manager-webhook # or edgedelta/jetstack-cert-manager-webhook
+      tag: "v1.8.0"
+  cainjector:
+    image:
+      repository: quay.io/jetstack/cert-manager-cainjector # or edgedelta/jetstack-cert-manager-cainjector
+      tag: "v1.8.0"
+  startupapicheck:
+    image:
+      repository: quay.io/jetstack/cert-manager-ctl # or edgedelta/jetstack-cert-manager-ctl
+      tag: "v1.8.0"
