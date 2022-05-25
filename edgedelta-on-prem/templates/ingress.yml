@@ -7,7 +7,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt
-    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook: post-install
     helm.sh/hook-weight: "100"
     helm.sh/hook-delete-policy: hook-failed
 spec:
