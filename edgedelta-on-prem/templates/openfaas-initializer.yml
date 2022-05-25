@@ -36,7 +36,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: openfaas-initializer
-        image: gcr.io/edgedelta/faas-init:2022-02-18-10-30-00
+        image: {{ .Values.repository }}/faas-init:2022-02-18-10-30-00
         command:
           - /bin/bash
           - -c
@@ -99,7 +99,7 @@ data:
     functions:
       rehydrate:
         skip_build: true
-        image: gcr.io/edgedelta/function:{{ .Chart.AppVersion }}
+        image: {{ .Values.repository }}/function:{{ .Chart.AppVersion }}
         limits:
           cpu: 2000m
           memory: {{ .Values.rehydration.memoryLimit }}Gi
@@ -146,7 +146,7 @@ data:
           com.openfaas.health.http.initialDelay: "5s"
       echofaas:
         skip_build: true
-        image: gcr.io/edgedelta/function:{{ .Chart.AppVersion }}
+        image: {{ .Values.repository }}/function:{{ .Chart.AppVersion }}
         environment:
           ED_HANDLER_NAME: echo
         labels:

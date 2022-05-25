@@ -21,7 +21,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: rehydration-handler
-        image: gcr.io/edgedelta/function:{{ .Chart.AppVersion }}
+        image: {{ .Values.repository }}/function:{{ .Chart.AppVersion }}
         ports:
           - containerPort: {{ .Values.rehydration.handlerOptions.port | default 8080 }}
         command:

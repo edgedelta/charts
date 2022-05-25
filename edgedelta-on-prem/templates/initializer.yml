@@ -25,7 +25,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: on-prem-initializer
-        image: gcr.io/edgedelta/on-prem-init:2022-05-25-08-01-43
+        image: {{ .Values.repository }}/on-prem-init:2022-05-25-08-01-43
         command:
           - /edgedelta/on-prem-init
           - --working-directory
