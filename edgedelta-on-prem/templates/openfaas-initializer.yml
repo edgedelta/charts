@@ -125,6 +125,7 @@ data:
           ED_REHYDRATION_MEMORY_THRESHOLD: "{{ div (mul .Values.rehydration.memoryLimit 9) 10 }}G" # This value should be less than memory limit of the pod, ideally 90% of the limit
           ED_MAX_INFLIGHT: "1"
           ED_REHYDRATION_BLOCK_TIMEOUT: 5m
+          STORE_PORT: "8085"
           GOGC: "20"
           GODEBUG: "madvdontneed=1"
         secrets:

@@ -50,6 +50,8 @@ spec:
             value: "1"
           - name: ED_REHYDRATION_BLOCK_TIMEOUT
             value: 5m
+          - name: STORE_PORT
+            value: "8085"
           - name: GOGC
             value: "20"
           - name: GODEBUG
