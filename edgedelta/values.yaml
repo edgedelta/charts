@@ -112,7 +112,7 @@ httpRecorderProps:
     enabled: false
     host: ""
     class: nginx
-    annotations: ""
+    annotations: {}
 
 # Custom labels:
 
