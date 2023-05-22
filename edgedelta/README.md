@@ -67,6 +67,7 @@ Edge Delta Agent Chart for Kubernetes
 | httpProxy | string | `""` |  |
 | httpRecorderProps.enabled | bool | `false` |  |
 | httpRecorderProps.image | string | `"gcr.io/edgedelta/httprecorder:latest"` |  |
+| httpRecorderProps.ingress.annotations | string | `""` |  |
 | httpRecorderProps.ingress.class | string | `"nginx"` |  |
 | httpRecorderProps.ingress.enabled | bool | `false` |  |
 | httpRecorderProps.ingress.host | string | `""` |  |

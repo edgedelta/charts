@@ -217,7 +217,7 @@ serviceMonitor:
   # namespace: monitoring
   # scrapeTimeout: 10s
   # jobLabel: edgedelta
-  #selector:
+  # selector:
   #  release: prom-kube-stack
 
 # agent troubleshooter is to verify health of agent after deployment
