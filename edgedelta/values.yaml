@@ -74,7 +74,7 @@ aggregatorProps:
   # storageClassName is used if usePersistentVolume=true
   # If your k8s cluster has specific storage classes you can set storageClassName accordingly.
   storageClassName: ""
-  
+
 
   goMemLimit: ""
   resources:
@@ -112,6 +112,7 @@ httpRecorderProps:
     enabled: false
     host: ""
     class: nginx
+    annotations: ""
 
 # Custom labels:
 
@@ -213,11 +214,11 @@ networkPolicy:
 # enable service monitor to scrape prometheus metrics from agents
 serviceMonitor:
   enabled: false
-  #   namespace: monitoring
-  #   scrapeTimeout: 10s
-  #   jobLabel: edgedelta
-  #   selector:
-  #     release: prom-kube-stack
+  # namespace: monitoring
+  # scrapeTimeout: 10s
+  # jobLabel: edgedelta
+  #selector:
+  #  release: prom-kube-stack
 
 # agent troubleshooter is to verify health of agent after deployment
 # command to run the troubleshooter is displayed as the output of
