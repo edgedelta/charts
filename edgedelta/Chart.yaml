@@ -2,5 +2,5 @@ apiVersion: v2
 name: edgedelta
 description: Edge Delta Agent Chart for Kubernetes
 type: application
-version: 0.1.90-rc2
-appVersion: v0.1.90-rc2
+version: 0.1.90-rc3
+appVersion: v0.1.90-rc3
