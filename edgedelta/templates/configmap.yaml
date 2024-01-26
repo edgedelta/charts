@@ -28,7 +28,13 @@ data:
     - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-compactor
       image: agent
       paths:
-      - {{ .Release.Namespace }}:deploy/{{ include "edgedelta.fullname" . }}-compactor:spec.template.spec.containers[0].image
+      - {{ .Release.Namespace }}:sts/{{ include "edgedelta.fullname" . }}-compactor:spec.template.spec.containers[0].image
+    {{- end }}
+    {{- if .Values.rollUpProps.enabled }}
+    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-rollup
+      image: agent
+      paths:
+      - {{ .Release.Namespace }}:sts/{{ include "edgedelta.fullname" . }}-rollup:spec.template.spec.containers[0].image
     {{- end }}
     log:
       custom_tags:
