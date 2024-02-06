@@ -251,7 +251,7 @@ tracerProps:
 compactorProps:
   enabled: true
   port: 9199
-  dataDir: /var/edgedelta-compactor
+  usePVC: false
   storageClass: ""
   diskSize: 30Gi
   replicas: 1

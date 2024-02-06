@@ -85,8 +85,10 @@ spec:
             value: compactor
           - name: ED_COMPACTOR_PORT
             value: "{{ .Values.compactorProps.port }}"
+          {{- if .Values.compactorProps.usePVC}}
           - name: ED_COMPACTOR_DATA_DIR
-            value: {{ .Values.compactorProps.dataDir }}
+            value: /var/edgedelta-compactor
+          {{- end }}
           - name: ED_HOST_OVERRIDE
             valueFrom:
               fieldRef:
@@ -173,8 +175,10 @@ spec:
           {{- toYaml .Values.compactorProps.resources | nindent 12 }}
         imagePullPolicy: Always
         volumeMounts:
+          {{- if .Values.compactorProps.usePVC}}
           - name: compactor-data
-            mountPath: {{ .Values.compactorProps.dataDir }}
+            mountPath: /var/edgedelta-compactor
+          {{- end }}
           {{- if .Values.edConfigContent }}
           - name: config-volume
             mountPath: /var/edgedelta
@@ -186,6 +190,7 @@ spec:
           configMap:
             name: {{ .Release.Name }}
       {{- end }}
+  {{- if .Values.compactorProps.usePVC}}      
   volumeClaimTemplates:
   - metadata:
       name: compactor-data
@@ -197,6 +202,7 @@ spec:
       resources:
         requests:
           storage: {{ .Values.compactorProps.diskSize }}
+  {{- end }}
 ---
 kind: Service
 apiVersion: v1
