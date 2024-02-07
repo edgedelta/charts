@@ -269,7 +269,7 @@ compactorProps:
       memory: 1000Mi
 
 rollUpProps:
-  enabled: false
+  enabled: true
   port: 9200
   replicas: 2
   serviceDNSSuffix: svc.cluster.local

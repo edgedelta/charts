@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.93-rc20](https://img.shields.io/badge/Version-0.1.93--rc20-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.93-rc20](https://img.shields.io/badge/AppVersion-v0.1.93--rc20-informational?style=flat-square)
+![Version: 0.1.93-rc21](https://img.shields.io/badge/Version-0.1.93--rc21-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.93-rc21](https://img.shields.io/badge/AppVersion-v0.1.93--rc21-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -102,7 +102,7 @@ Edge Delta Agent Chart for Kubernetes
 | resources.limits.memory | string | `"2048Mi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
-| rollUpProps.enabled | bool | `false` |  |
+| rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `"900MiB"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.replicas | int | `2` |  |
