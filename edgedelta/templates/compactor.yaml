@@ -156,6 +156,10 @@ spec:
           - name: NO_PROXY
             value: {{ .Values.noProxy }}
           {{- end }}
+          {{- if .Values.edCustomTags }}
+          - name:  ED_CUSTOM_TAGS
+            value: "{{ .Values.edCustomTags }}"
+          {{- end }}
           {{- if .Values.compactorProps.goMemLimit }}
           - name: GOMEMLIMIT
             value: {{ .Values.compactorProps.goMemLimit }}
