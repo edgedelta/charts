@@ -35,9 +35,9 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "edgedelta.labels" -}}
+{{ include "edgedelta.selectorLabels" . }}
 {{- if not .Values.skipCommonLabels }}
 helm.sh/chart: {{ include "edgedelta.chart" . }}
-{{ include "edgedelta.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
