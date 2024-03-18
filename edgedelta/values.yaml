@@ -156,6 +156,19 @@ updateStrategy:
   rollingUpdate:
     maxUnavailable: 1
 
+# ports will define which extra ports should be exposed in order to send data to agents
+ports: []
+# example configuration can be found below:
+# ports:
+# - name: port-1
+#   protocol: TCP
+#   port: 80
+#   exposeInHost: true # It will expose port in host, only valid for DaemonSet deployment kind
+# - name: port-2
+#   protocol: UDP
+#   port: 5000
+#   exposeInHost: false
+
 # Helm overrides
 
 image:
