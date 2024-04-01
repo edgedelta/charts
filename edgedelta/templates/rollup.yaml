@@ -16,6 +16,7 @@ spec:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
   serviceName: ed-rollup-svc
+  podManagementPolicy: {{ .Values.rollUpProps.podManagementPolicy | default "Parallel" }}
   updateStrategy:
     {{- toYaml .Values.rollUpProps.updateStrategy | nindent 4 }}
   template:
