@@ -226,6 +226,7 @@ spec:
     - port: {{ .Values.aggregatorProps.port }}
       name: aggregator-port
 ---
+{{- if .Values.aggregatorProps.usePersistentVolume }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -240,4 +241,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
+{{- end }}
 {{- end }}
