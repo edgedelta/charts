@@ -85,6 +85,7 @@ aggregatorProps:
   goMemLimit: ""
   resources:
     limits:
+      cpu: 2000m
       memory: 2048Mi
     requests:
       cpu: 200m
@@ -142,6 +143,7 @@ deployment:
 annotations: {}
 resources:
   limits:
+    cpu: 2000m
     memory: 2048Mi
   requests:
     cpu: 200m
