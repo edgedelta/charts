@@ -49,15 +49,23 @@ spec:
         {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "edgedelta.fullname" . }}
-      {{- if .Values.tolerations }}
+      {{- if .Values.compactorProps.tolerations }}
+      tolerations:
+        {{- toYaml .Values.compactorProps.tolerations | nindent 8 }}
+      {{- else if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
-      {{- if .Values.nodeSelector }}
+      {{- if .Values.compactorProps.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.compactorProps.nodeSelector | nindent 8 }}
+      {{- else if .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.priorityClassName }}
+      {{- if .Values.compactorProps.priorityClassName }}
+      priorityClassName: {{ .Values.compactorProps.priorityClassName }}
+      {{- else if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
       containers:
