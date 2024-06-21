@@ -81,13 +81,13 @@ spec:
           - name: metrics
             containerPort: {{ .Values.storePort }}
           {{- end }}
-          {{- if .Values.dataPort }}
-          - name: data
-            containerPort: {{ .Values.dataPort }}
-          {{- end }}
           {{- if .Values.profilerPort }}
           - name: profiler
             containerPort: {{ .Values.profilerPort }}
+          {{- end }}
+          {{- if .Values.promPort }}
+          - name: prom
+            containerPort: {{ .Values.promPort }}
           {{- end }}
         env:
           - name: ED_METRIC_ROLLUP_SERVER_PORT
