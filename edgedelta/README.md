@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.10.0-rc.8](https://img.shields.io/badge/Version-1.10.0--rc.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.0-rc.8](https://img.shields.io/badge/AppVersion-v1.10.0--rc.8-informational?style=flat-square)
+![Version: 1.10.0-rc.9](https://img.shields.io/badge/Version-1.10.0--rc.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.0-rc.9](https://img.shields.io/badge/AppVersion-v1.10.0--rc.9-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -58,7 +58,6 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | compactorProps.usePVC | bool | `false` |  |
-| dataPort | string | `""` |  |
 | deployment.kind | string | `"DaemonSet"` |  |
 | deployment.replicas | int | `1` |  |
 | dockerContainerProps.hostPath | string | `"/var/lib/docker/containers"` |  |
@@ -105,6 +104,12 @@ Edge Delta Agent Chart for Kubernetes
 | priorityClassName | string | `""` |  |
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
+| pushService.annotations | object | `{}` |  |
+| pushService.clusterIP | string | `""` |  |
+| pushService.loadBalancerIP | string | `""` |  |
+| pushService.sessionAffinity | string | `""` |  |
+| pushService.sessionAffinityTimeout | int | `10800` |  |
+| pushService.type | string | `"ClusterIP"` |  |
 | resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2048Mi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |

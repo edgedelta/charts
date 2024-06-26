@@ -82,7 +82,7 @@ spec:
             - /var/edgedelta/config.yml
           {{- end }}
           {{ $usePorts := gt (len .Values.ports) 0 }}
-          {{- if or .Values.storePort .Values.profilerPort .Values.promPort $usePorts .Values.dataPort }}
+          {{- if or .Values.storePort .Values.profilerPort .Values.promPort $usePorts }}
           ports:
           {{- end }}
           {{- if .Values.storePort }}
@@ -107,10 +107,6 @@ spec:
               hostPort: {{ .port }}
               {{- end }}
           {{- end }}
-          {{- else if .Values.dataPort }}
-            - name: data
-              hostPort: {{ .Values.dataPort }}
-              containerPort: {{ .Values.dataPort }}
           {{- end }}
           env:
             {{- if .Values.apiKey }}

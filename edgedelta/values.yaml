@@ -13,7 +13,6 @@ secretApiKey:
 # See: https://docs.edgedelta.com/installation/environment-variables
 
 storePort: ""
-dataPort: ""
 profilerPort: ""
 promPort: ""
 httpProxy: ""
@@ -170,6 +169,13 @@ ports: []
 #   protocol: UDP
 #   port: 5000
 #   exposeInHost: false
+pushService:
+  type: ClusterIP
+  annotations: {}
+  loadBalancerIP: ""
+  clusterIP: ""
+  sessionAffinity: ""
+  sessionAffinityTimeout: 10800
 
 # Helm overrides
 
