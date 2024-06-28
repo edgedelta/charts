@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.10.0-rc.15](https://img.shields.io/badge/Version-1.10.0--rc.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.0-rc.15](https://img.shields.io/badge/AppVersion-v1.10.0--rc.15-informational?style=flat-square)
+![Version: 1.10.0-rc.16](https://img.shields.io/badge/Version-1.10.0--rc.16-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.0-rc.16](https://img.shields.io/badge/AppVersion-v1.10.0--rc.16-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -95,17 +95,17 @@ Edge Delta Agent Chart for Kubernetes
 | httpProxy | string | `""` |  |
 | httpRecorderProps.enabled | bool | `false` |  |
 | httpRecorderProps.image | string | `"gcr.io/edgedelta/httprecorder:latest"` |  |
-| httpRecorderProps.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"letsencrypt"` |  |
-| httpRecorderProps.ingress.annotations."kubernetes.io/ingress.class" | string | `"nginx"` |  |
-| httpRecorderProps.ingress.class | string | `"nginx"` |  |
-| httpRecorderProps.ingress.enabled | bool | `false` |  |
-| httpRecorderProps.ingress.host | string | `""` |  |
 | httpRecorderProps.port | int | `8080` |  |
 | httpsProxy | string | `""` |  |
 | image.fullPath | string | `""` |  |
 | image.name | string | `"gcr.io/edgedelta/agent"` |  |
 | image.tag | string | `""` |  |
 | imagePullSecrets | list | `[]` |  |
+| ingress.annotations | object | `{}` | Set annotations for further ingress configuration |
+| ingress.class | string | `""` | Specify the [ingressClassName](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) |
+| ingress.enabled | bool | `false` | If set to true, we will create and use an Ingress resource |
+| ingress.hosts | list | `[]` | Configure the hosts and paths |
+| ingress.tls | list | `[]` | TLS configurations |
 | instructionURL | string | `"https://app.edgedelta.com"` |  |
 | nameOverride | string | `""` | Override the name of resources. |
 | networkPolicy | object | `{"cilium":{"dnsSelector":{"toEndpoints":[{"matchLabels":{"k8s:io.kubernetes.pod.namespace":"kube-system","k8s:k8s-app":"kube-dns"}}]}},"enabled":false,"type":"cilium"}` | Manage NetworkPolicy |

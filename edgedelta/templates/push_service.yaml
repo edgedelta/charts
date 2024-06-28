@@ -11,12 +11,6 @@ metadata:
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
-    version: v1
-    kubernetes.io/cluster-service: "true"
-  annotations:
-{{- with .Values.pushService.annotations }}
-{{ toYaml . | indent 4 }}
-{{- end }}
 spec:
   type: {{ .Values.pushService.type }}
   {{- if .Values.pushService.sessionAffinity }}
