@@ -45,7 +45,6 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 {{- end }}
 
-
 {{/*
 Selector labels
 */}}
@@ -53,3 +52,14 @@ Selector labels
 app.kubernetes.io/name: {{ include "edgedelta.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+HorizontalPodAutoscaler API version can change with respect to Kubernetes Server version, check it here
+*/}}
+{{- define "autoscaling.apiVersion" -}}
+{{- if or (.Capabilities.APIVersions.Has "autoscaling/v2/HorizontalPodAutoscaler") (semverCompare ">=1.23" .Capabilities.KubeVersion.Version) -}}
+autoscaling/v2
+{{- else -}}
+autoscaling/v2beta2
+{{- end -}}
+{{- end -}}
