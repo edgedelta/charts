@@ -11,6 +11,10 @@ metadata:
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
+  {{- with .Values.pushService.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.pushService.type }}
   {{- if .Values.pushService.sessionAffinity }}
