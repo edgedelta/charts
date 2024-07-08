@@ -10,6 +10,13 @@ metadata:
   labels:
     app: force-reinstall-apps
 rules:
+  # Needed for 'helm list'
+  - apiGroups: [""]
+    resources:
+    - secrets
+    verbs:
+    - get
+    - list
 {{- if or (eq .Values.deployment.kind "DaemonSet") (eq .Values.deployment.kind "Deployment") }}
   - apiGroups:
       - "apps"
