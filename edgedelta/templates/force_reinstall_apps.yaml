@@ -1,3 +1,4 @@
+{{- if .Values.forceReinstallApplications.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -114,3 +115,4 @@ spec:
               fi
       restartPolicy: Never
   backoffLimit: 6
+{{- end }}

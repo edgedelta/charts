@@ -420,3 +420,7 @@ ingress:
   #  - hosts:
   #      - host.example.local
   #    secretName: example-tls-secret
+
+forceReinstallApplications:
+  # forceReinstallApplications.enabled -- When set to true, it will delete some of the K8s applications to be reinstalled again
+  enabled: true
