@@ -125,6 +125,8 @@ spec:
             value: "{{ .Values.profilerPort }}"
           {{- end }}
           {{- if .Values.promPort }}
+          - name: ED_LEADER_ELECTION_DISABLED
+            value: "1"
           - name: PROM_PORT
             value: "{{ .Values.promPort }}"
           {{- end }}
