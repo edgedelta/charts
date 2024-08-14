@@ -153,9 +153,16 @@ deployment:
     behavior:
       scaleDown:
         stabilizationWindowSeconds: 300
+  # deployment.topologySpreadConstraints -- Topology spread constraints for processor agents while in Deployment mode
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
+  #   labelSelector:
+  #     matchLabels:
+  #       edgedelta/agent-type: processor
 
 # Resource constraints
-
 annotations: {}
 resources:
   limits:
@@ -344,6 +351,14 @@ compactorProps:
     behavior:
       scaleDown:
         stabilizationWindowSeconds: 300
+  # compactorProps.topologySpreadConstraints -- Topology spread constraints for compactor agents
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
+  #   labelSelector:
+  #     matchLabels:
+  #       edgedelta/agent-type: compactor
 
 rollUpProps:
   enabled: true
@@ -393,6 +408,14 @@ rollUpProps:
     behavior:
       scaleDown:
         stabilizationWindowSeconds: 300
+  # rollUpProps.topologySpreadConstraints -- Topology spread constraints for rollup agents
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
+  #   labelSelector:
+  #     matchLabels:
+  #       edgedelta/agent-type: rollup
 
 # Configuration for Ingress to add in front of ports defined above,
 # requires Kubernetes >= 1.19
