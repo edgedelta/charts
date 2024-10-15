@@ -61,6 +61,11 @@ dockerContainerProps:
 #         type: ""
 #       name: varlibkubelet
 
+# Agent properties
+agentProps:
+  image:
+    pullPolicy: IfNotPresent
+
 # Aggregator agent mode properties
 # Agents are deployed as daemonset. an extra aggregator agent is deployed to collect/aggregate metrics
 aggregatorProps:
@@ -94,7 +99,9 @@ aggregatorProps:
 # It is deployed as a sidecar for each ED agent. It dumps the incoming logs to filesystem (persisted via PVC) and agents grab from there.
 httpRecorderProps:
   enabled: false
-  image: gcr.io/edgedelta/httprecorder:latest
+  image:
+    fullPath: gcr.io/edgedelta/httprecorder:latest
+    pullPolicy: IfNotPresent
   port: 8080
 
 # Custom labels:
@@ -314,6 +321,8 @@ compactorProps:
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
+  image:
+    pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
   goMemLimit: ""
@@ -369,6 +378,8 @@ rollUpProps:
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
+  image:
+    pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
