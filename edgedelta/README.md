@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.22.0-rc.52](https://img.shields.io/badge/Version-1.22.0--rc.52-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.22.0-rc.52](https://img.shields.io/badge/AppVersion-v1.22.0--rc.52-informational?style=flat-square)
+![Version: 1.22.0](https://img.shields.io/badge/Version-1.22.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.22.0](https://img.shields.io/badge/AppVersion-v1.22.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
