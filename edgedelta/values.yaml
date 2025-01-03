@@ -29,7 +29,7 @@ edTraceFiles: ""
 edAggregatorTraceFiles: ""
 edSkipTlsVerify: ""
 edConfigContent: ""
-goMemLimit: ""
+goMemLimit: "1800MiB"
 
 edEnableControllerDiscovery: true
 
@@ -86,7 +86,7 @@ aggregatorProps:
   # If your k8s cluster has specific storage classes you can set storageClassName accordingly.
   storageClassName: ""
 
-  goMemLimit: ""
+  goMemLimit: "1800MiB"
   resources:
     limits:
       cpu: 2000m
@@ -325,7 +325,7 @@ compactorProps:
     pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
-  goMemLimit: ""
+  goMemLimit: "1800MiB"
   resources:
     limits:
       cpu: 2000m
