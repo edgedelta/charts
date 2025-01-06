@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.27.0-rc.6](https://img.shields.io/badge/Version-1.27.0--rc.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.27.0-rc.6](https://img.shields.io/badge/AppVersion-v1.27.0--rc.6-informational?style=flat-square)
+![Version: 1.27.0-rc.7](https://img.shields.io/badge/Version-1.27.0--rc.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.27.0-rc.7](https://img.shields.io/badge/AppVersion-v1.27.0--rc.7-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -9,16 +9,6 @@ Edge Delta Agent Chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | agentProps.image.pullPolicy | string | `"IfNotPresent"` |  |
-| agentTroubleshooter.image | string | `"gcr.io/edgedelta/agent-troubleshooter:latest"` |  |
-| agentTroubleshooter.symptomCollector.checkInterval | string | `""` |  |
-| agentTroubleshooter.symptomCollector.enabled | bool | `false` |  |
-| agentTroubleshooter.symptomCollector.logLineCount | int | `1000` |  |
-| agentTroubleshooter.symptomCollector.loggingLevel | string | `"info"` |  |
-| agentTroubleshooter.symptomCollector.reportInterval | string | `""` |  |
-| agentTroubleshooter.symptomCollector.resources.limits.cpu | string | `"200m"` |  |
-| agentTroubleshooter.symptomCollector.resources.limits.memory | string | `"200Mi"` |  |
-| agentTroubleshooter.symptomCollector.resources.requests.cpu | string | `"100m"` |  |
-| agentTroubleshooter.symptomCollector.resources.requests.memory | string | `"100Mi"` |  |
 | agentUpdater.baseURL | string | `"https://api.edgedelta.com/v1"` |  |
 | agentUpdater.enabled | bool | `false` |  |
 | agentUpdater.image | string | `"gcr.io/edgedelta/agent-updater:latest"` |  |
