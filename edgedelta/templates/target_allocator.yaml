@@ -73,7 +73,7 @@ spec:
         command:
           - /edgedelta/targetallocator
         ports:
-        - name: target-allocator
+        - name: ta-port
           containerPort: {{ .Values.targetAllocator.port }}
         resources:
           {{- toYaml .Values.targetAllocator.resources | nindent 12 }}
@@ -121,7 +121,7 @@ spec:
     edgedelta/agent-type: target-allocator
   ports:
     - port: {{ .Values.targetAllocator.port }}
-      name: target-allocator-port
+      name: ta-port
 ---
 apiVersion: v1
 automountServiceAccountToken: true

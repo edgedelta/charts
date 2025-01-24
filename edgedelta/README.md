@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.28.0-rc.13](https://img.shields.io/badge/Version-1.28.0--rc.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.28.0-rc.13](https://img.shields.io/badge/AppVersion-v1.28.0--rc.13-informational?style=flat-square)
+![Version: 1.28.0-rc.14](https://img.shields.io/badge/Version-1.28.0--rc.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.28.0-rc.14](https://img.shields.io/badge/AppVersion-v1.28.0--rc.14-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -163,7 +163,7 @@ Edge Delta Agent Chart for Kubernetes
 | targetAllocator.configuration.config.scrape_configs | list | `[]` |  |
 | targetAllocator.configuration.filter_strategy | string | `"relabel-config"` |  |
 | targetAllocator.configuration.prometheus_cr | object | `{}` |  |
-| targetAllocator.enabled | bool | `true` |  |
+| targetAllocator.enabled | bool | `false` |  |
 | targetAllocator.image.fullPath | string | `"gcr.io/edgedelta/target-allocator:v0.1.1"` |  |
 | targetAllocator.image.pullPolicy | string | `"IfNotPresent"` |  |
 | targetAllocator.nodeSelector | object | `{}` |  |

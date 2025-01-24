@@ -441,7 +441,7 @@ forceReinstallApplications:
   enabled: true
 
 targetAllocator:
-  enabled: true
+  enabled: false
   port: 8080
   replicas: 1
   serviceDNSSuffix: svc.cluster.local
