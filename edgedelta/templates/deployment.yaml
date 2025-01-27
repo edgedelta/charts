@@ -237,7 +237,7 @@ spec:
             - name: ED_TARGET_ALLOCATOR_ENABLED
               value: "1"
             - name: ED_TARGET_ALLOCATOR_DESTINATION_OVERRIDE
-              value: ed-target-allocator-svc.{{.Release.Namespace}}.{{.Values.targetAllocator.serviceDNSSuffix}}:{{.Values.targetAllocator.port}}
+              value: http://ed-target-allocator-svc.{{.Release.Namespace}}.{{.Values.targetAllocator.serviceDNSSuffix}}:{{.Values.targetAllocator.port}}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
