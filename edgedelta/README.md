@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.28.0-rc.18](https://img.shields.io/badge/Version-1.28.0--rc.18-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.28.0-rc.18](https://img.shields.io/badge/AppVersion-v1.28.0--rc.18-informational?style=flat-square)
+![Version: 1.28.0-rc.19](https://img.shields.io/badge/Version-1.28.0--rc.19-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.28.0-rc.19](https://img.shields.io/badge/AppVersion-v1.28.0--rc.19-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -160,7 +160,9 @@ Edge Delta Agent Chart for Kubernetes
 | serviceMonitor.enabled | bool | `false` | If true, create ServiceMonitor for processor agents |
 | skipCommonLabels | bool | `false` |  |
 | storePort | string | `""` |  |
-| targetAllocator.configuration.config.scrape_configs | list | `[]` |  |
+| targetAllocator.configuration.config.scrape_configs[0].job_name | string | `"ed-agent-collector"` |  |
+| targetAllocator.configuration.config.scrape_configs[0].scrape_interval | string | `"10s"` |  |
+| targetAllocator.configuration.config.scrape_configs[0].static_configs[0].targets[0] | string | `"0.0.0.0:8888"` |  |
 | targetAllocator.configuration.filter_strategy | string | `"relabel-config"` |  |
 | targetAllocator.configuration.prometheus_cr | object | `{}` |  |
 | targetAllocator.enabled | bool | `false` |  |

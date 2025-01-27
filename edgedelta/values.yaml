@@ -465,7 +465,12 @@ targetAllocator:
       memory: 256Mi
   configuration:
     config:
-      scrape_configs: []
+      scrape_configs:
+        - job_name: ed-agent-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets:
+                - 0.0.0.0:8888
     filter_strategy: relabel-config
     prometheus_cr: {}
     # prometheus_cr:
