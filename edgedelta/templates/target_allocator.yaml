@@ -163,7 +163,10 @@ rules:
   - namespaces
   - services
   - endpointslices
+  - endpoints
   - secrets
+  - nodes
+  - ingresses
   verbs:
   - get
   - list
