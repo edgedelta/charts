@@ -490,3 +490,7 @@ targetAllocator:
   #   labelSelector:
   #     matchLabels:
   #       edgedelta/agent-type: targetallocator
+
+serviceAccount:
+  labels: {}
+  annotations: {}

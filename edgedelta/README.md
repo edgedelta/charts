@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.30.0-rc.9](https://img.shields.io/badge/Version-1.30.0--rc.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0-rc.9](https://img.shields.io/badge/AppVersion-v1.30.0--rc.9-informational?style=flat-square)
+![Version: 1.30.0-rc.10](https://img.shields.io/badge/Version-1.30.0--rc.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0-rc.10](https://img.shields.io/badge/AppVersion-v1.30.0--rc.10-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -156,6 +156,8 @@ Edge Delta Agent Chart for Kubernetes
 | secretApiKey.key | string | `"ed-api-key"` |  |
 | secretApiKey.name | string | `"ed-api-key"` |  |
 | secretApiKey.value | string | `""` |  |
+| serviceAccount.annotations | object | `{}` |  |
+| serviceAccount.labels | object | `{}` |  |
 | serviceMonitor | object | `{"enabled":false}` | it will be used enable prometheus to scrape metrics from processor agents |
 | serviceMonitor.enabled | bool | `false` | If true, create ServiceMonitor for processor agents |
 | skipCommonLabels | bool | `false` |  |
