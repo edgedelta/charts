@@ -28,9 +28,14 @@ spec:
   {{- end }}
   template:
     metadata:
-      {{- if .Values.annotations }}
+      {{- if or .Values.annotations .Values.podSecurity.apparmor.enabled }}
       annotations:
+      {{- if .Values.podSecurity.apparmor.enabled }}
+        container.apparmor.security.beta.kubernetes.io/agent: {{ .Values.podSecurity.apparmor.profile }}
+      {{- end }}
+      {{- if .Values.annotations }}
         {{- toYaml .Values.annotations | nindent 8 }}
+      {{- end }}
       {{- end }}
       labels:
       {{- include "edgedelta.labels" . | nindent 8 }}
@@ -76,6 +81,20 @@ spec:
       {{- if .Values.compactorProps.topologySpreadConstraints }}
       topologySpreadConstraints:
         {{- toYaml .Values.compactorProps.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
+      {{- if .Values.podSecurity.securityContextConstraints.create -}}
+      {{- if and .Values.podSecurity.seLinuxContext .Values.podSecurity.seLinuxContext.seLinuxOptions }}
+      securityContext:
+        seLinuxOptions:
+{{ toYaml .Values.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
+      {{- end }}
+      {{- else if eq  (include "isOpenShift" .) "true"}}
+      securityContext:
+        seLinuxOptions:
+          user: "system_u"
+          role: "system_r"
+          type: "spc_t"
+          level: "s0"
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-compactor

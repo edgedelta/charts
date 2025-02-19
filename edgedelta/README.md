@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.30.0-rc.20](https://img.shields.io/badge/Version-1.30.0--rc.20-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0-rc.20](https://img.shields.io/badge/AppVersion-v1.30.0--rc.20-informational?style=flat-square)
+![Version: 1.30.0-rc.21](https://img.shields.io/badge/Version-1.30.0--rc.21-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0-rc.21](https://img.shields.io/badge/AppVersion-v1.30.0--rc.21-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -113,6 +113,14 @@ Edge Delta Agent Chart for Kubernetes
 | persistingCursorProps.containerMountPath | string | `"/var/lib/edgedelta"` |  |
 | persistingCursorProps.enabled | bool | `true` |  |
 | persistingCursorProps.hostMountPath | string | `"/var/lib/edgedelta"` |  |
+| podSecurity.apparmor.enabled | bool | `false` | If true, it will enable apparmor for the pods |
+| podSecurity.apparmor.profile | string | `"unconfined"` | If apparmor enabled, it will be the profile for apparmor enforcement for the pods |
+| podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH"]` | Allowed capabilities |
+| podSecurity.privileged | bool | `false` | If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true |
+| podSecurity.seLinuxContext | object | Must run as spc_t (For reference, please refer here: https://access.redhat.com/solutions/7025337) | Provide seLinuxContext configuration for SCC |
+| podSecurity.seccompProfiles | list | `["runtime/default"]` | Allowed seccomp profiles |
+| podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SecurityContextConstraints resource for pods |
+| podSecurity.volumes | list | `["configMap","downwardAPI","emptyDir","hostPath","secret"]` | Allowed volumes types |
 | ports | list | `[]` |  |
 | priorityClassName | string | `""` |  |
 | profilerPort | string | `""` |  |
@@ -156,8 +164,8 @@ Edge Delta Agent Chart for Kubernetes
 | secretApiKey.key | string | `"ed-api-key"` |  |
 | secretApiKey.name | string | `"ed-api-key"` |  |
 | secretApiKey.value | string | `""` |  |
-| serviceAccount.annotations | object | `{}` |  |
-| serviceAccount.labels | object | `{}` |  |
+| serviceAccount.annotations | object | `{}` | Annotations for the service account |
+| serviceAccount.labels | object | `{}` | Labels for the service account |
 | serviceMonitor | object | `{"enabled":false}` | it will be used enable prometheus to scrape metrics from processor agents |
 | serviceMonitor.enabled | bool | `false` | If true, create ServiceMonitor for processor agents |
 | skipCommonLabels | bool | `false` |  |
@@ -180,7 +188,7 @@ Edge Delta Agent Chart for Kubernetes
 | targetAllocator.resources.requests.memory | string | `"256Mi"` |  |
 | targetAllocator.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | targetAllocator.tolerations | object | `{}` |  |
-| targetAllocator.topologySpreadConstraints | list | `[]` | Topology spread constraints for targeta allocator |
+| targetAllocator.topologySpreadConstraints | list | `[]` | Topology spread constraints for target allocator |
 | targetAllocator.updateStrategy.rollingUpdate.maxSurge | int | `1` |  |
 | targetAllocator.updateStrategy.rollingUpdate.maxUnavailable | int | `0` |  |
 | targetAllocator.updateStrategy.type | string | `"RollingUpdate"` |  |

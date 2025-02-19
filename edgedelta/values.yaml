@@ -482,7 +482,7 @@ targetAllocator:
     #   service_monitor_selector:
     #     matchLabels: {}
     #     matchExpressions: []
-  # targetAllocator.topologySpreadConstraints -- Topology spread constraints for targeta allocator
+  # targetAllocator.topologySpreadConstraints -- Topology spread constraints for target allocator
   topologySpreadConstraints: []
   # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
@@ -492,5 +492,57 @@ targetAllocator:
   #       edgedelta/agent-type: targetallocator
 
 serviceAccount:
+  # serviceAccount.annotations -- Annotations for the service account
   labels: {}
+  # serviceAccount.labels -- Labels for the service account
   annotations: {}
+
+podSecurity:
+  securityContextConstraints:
+    # podSecurity.securityContextConstraints.create -- If true, create a SecurityContextConstraints resource for pods
+    create: false
+
+  # podSecurity.capabilities -- Allowed capabilities
+  capabilities:
+    - SYS_ADMIN
+    - SYS_RESOURCE
+    - SYS_PTRACE
+    - NET_ADMIN
+    - NET_BROADCAST
+    - NET_RAW
+    - IPC_LOCK
+    - CHOWN
+    - AUDIT_CONTROL
+    - AUDIT_READ
+    - DAC_READ_SEARCH
+
+  # podSecurity.volumes -- Allowed volumes types
+  volumes:
+    - configMap
+    - downwardAPI
+    - emptyDir
+    - hostPath
+    - secret
+
+  # podSecurity.seLinuxContext -- Provide seLinuxContext configuration for SCC
+  # @default -- Must run as spc_t (For reference, please refer here: https://access.redhat.com/solutions/7025337)
+  seLinuxContext:
+    type: MustRunAs
+    seLinuxOptions:
+      user: system_u
+      role: system_r
+      type: spc_t
+      level: s0
+
+  # podSecurity.seccompProfiles -- Allowed seccomp profiles
+  seccompProfiles:
+    - "runtime/default"
+
+  apparmor:
+    # podSecurity.apparmor.enabled -- If true, it will enable apparmor for the pods
+    enabled: false
+    # podSecurity.apparmor.profile -- If apparmor enabled, it will be the profile for apparmor enforcement for the pods
+    profile: "unconfined"
+
+  # podSecurity.privileged -- If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true
+  privileged: false
