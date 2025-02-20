@@ -54,9 +54,9 @@ spec:
         version: v1
         kubernetes.io/cluster-service: "true"
     spec:
-      {{- if .Values.imagePullSecrets }}
+      {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+        {{- toYaml .Values.image.pullSecrets | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "edgedelta.fullname" . }}
       {{- if .Values.compactorProps.tolerations }}
@@ -98,7 +98,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-compactor
-        image: {{ if .Values.image.fullPath }}{{ .Values.image.fullPath }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}
+        image: {{ .Values.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.image.name (.Values.image.tag | default .Chart.AppVersion)) }}
         {{- if .Values.edConfigContent }}
         command:
           - /edgedelta/edgedelta
@@ -214,7 +214,7 @@ spec:
           {{- end }}
         resources:
           {{- toYaml .Values.compactorProps.resources | nindent 12 }}
-        imagePullPolicy: {{ .Values.compactorProps.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
           {{- if .Values.compactorProps.usePVC}}
           - name: compactor-data

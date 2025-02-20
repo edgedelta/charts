@@ -49,10 +49,17 @@ spec:
     spec:
       template:
         spec:
+          {{- if .Values.agentUpdater.image.pullSecrets }}
+          imagePullSecrets:
+            {{- toYaml .Values.agentUpdater.image.pullSecrets | nindent 8 }}
+          {{- else if .Values.image.pullSecrets }}
+          imagePullSecrets:
+            {{- toYaml .Values.image.pullSecrets | nindent 8 }}
+          {{- end }}
           containers:
           - name: edgedelta-updater-container
-            image: {{ .Values.agentUpdater.image }}
-            imagePullPolicy: Always
+            image: {{ .Values.agentUpdater.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.agentUpdater.image.name .Values.agentUpdater.image.tag) }}
+            imagePullPolicy: {{ .Values.agentUpdater.image.pullPolicy }}
             command:
             - /ko-app/agent-updater
             - --config

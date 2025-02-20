@@ -38,9 +38,12 @@ spec:
       {{- end }}
         edgedelta/agent-type: target-allocator
     spec:
-      {{- if .Values.imagePullSecrets }}
+      {{- if .Values.targetAllocator.image.pullSecrets }}
       imagePullSecrets:
-        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+        {{- toYaml .Values.targetAllocator.image.pullSecrets | nindent 8 }}
+      {{- else if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.image.pullSecrets | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "edgedelta.fullname" . }}-target-allocator
       {{- if .Values.targetAllocator.tolerations }}
@@ -68,7 +71,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-target-allocator
-        image: {{ .Values.targetAllocator.image.fullPath }}
+        image: {{ .Values.targetAllocator.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.targetAllocator.image.name .Values.targetAllocator.image.tag) }}
         imagePullPolicy: {{ .Values.targetAllocator.image.pullPolicy }}
         command:
           - /edgedelta/targetallocator

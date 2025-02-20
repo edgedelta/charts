@@ -61,11 +61,6 @@ dockerContainerProps:
 #         type: ""
 #       name: varlibkubelet
 
-# Agent properties
-agentProps:
-  image:
-    pullPolicy: IfNotPresent
-
 # Aggregator agent mode properties
 # Agents are deployed as daemonset. an extra aggregator agent is deployed to collect/aggregate metrics
 aggregatorProps:
@@ -100,7 +95,9 @@ aggregatorProps:
 httpRecorderProps:
   enabled: false
   image:
-    fullPath: gcr.io/edgedelta/httprecorder:latest
+    name: httprecorder
+    tag: latest
+    fullPath: ""
     pullPolicy: IfNotPresent
   port: 8080
 
@@ -210,15 +207,16 @@ pushService:
   sessionAffinityTimeout: 10800
 
 # Helm overrides
-
+repository: gcr.io/edgedelta
 image:
-  name: gcr.io/edgedelta/agent
+  name: agent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   # Overrides full image (with url and version/tag) if not empty
   # example: gcr.io/edgedelta/agent@sha256:0180ff40f52528d7462200c40fae8aff3bdb83289ac19ce823a3fcb1c40c9ad9
   fullPath: ""
-imagePullSecrets: []
+  pullPolicy: IfNotPresent
+  pullSecrets: []
 
 # nameOverride -- Override the name of resources.
 nameOverride: ""
@@ -273,7 +271,12 @@ instructionURL: "https://app.edgedelta.com"
 
 agentUpdater:
   enabled: false
-  image: gcr.io/edgedelta/agent-updater:latest
+  image:
+    name: agent-updater
+    tag: latest
+    fullPath: ""
+    pullPolicy: Always
+    pullSecrets: []
   baseURL: https://api.edgedelta.com/v1
   latestTagEndpoint: /versioning/latest
   metadataEndpoint: /agent_updater/metadata
@@ -299,8 +302,6 @@ compactorProps:
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
-  image:
-    pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
   goMemLimit: "1800MiB"
@@ -357,8 +358,6 @@ rollUpProps:
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
-  image:
-    pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -449,8 +448,11 @@ targetAllocator:
   nodeSelector: {}
   priorityClassName: ""
   image:
-    fullPath: gcr.io/edgedelta/target-allocator:v0.1.1
+    name: target-allocator
+    tag: v0.1.1
+    fullPath: ""
     pullPolicy: IfNotPresent
+    pullSecrets: []
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
