@@ -269,21 +269,6 @@ serviceMonitor:
 
 instructionURL: "https://app.edgedelta.com"
 
-agentUpdater:
-  enabled: false
-  image:
-    name: agent-updater
-    tag: latest
-    fullPath: ""
-    pullPolicy: Always
-    pullSecrets: []
-  baseURL: https://api.edgedelta.com/v1
-  latestTagEndpoint: /versioning/latest
-  metadataEndpoint: /agent_updater/metadata
-  logUploader:
-    enabled: true
-    presignedUploadURLEndpoint: /agent_updater/self_logs_upload_link
-
 tracerProps:
   enabled: true
   port: 9595

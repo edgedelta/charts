@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.30.0-rc.31](https://img.shields.io/badge/Version-1.30.0--rc.31-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0-rc.31](https://img.shields.io/badge/AppVersion-v1.30.0--rc.31-informational?style=flat-square)
+![Version: 1.30.0-rc.32](https://img.shields.io/badge/Version-1.30.0--rc.32-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0-rc.32](https://img.shields.io/badge/AppVersion-v1.30.0--rc.32-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -8,17 +8,6 @@ Edge Delta Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| agentUpdater.baseURL | string | `"https://api.edgedelta.com/v1"` |  |
-| agentUpdater.enabled | bool | `false` |  |
-| agentUpdater.image.fullPath | string | `""` |  |
-| agentUpdater.image.name | string | `"agent-updater"` |  |
-| agentUpdater.image.pullPolicy | string | `"Always"` |  |
-| agentUpdater.image.pullSecrets | list | `[]` |  |
-| agentUpdater.image.tag | string | `"latest"` |  |
-| agentUpdater.latestTagEndpoint | string | `"/versioning/latest"` |  |
-| agentUpdater.logUploader.enabled | bool | `true` |  |
-| agentUpdater.logUploader.presignedUploadURLEndpoint | string | `"/agent_updater/self_logs_upload_link"` |  |
-| agentUpdater.metadataEndpoint | string | `"/agent_updater/metadata"` |  |
 | aggregatorProps.enabled | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.metric | bool | `true` |  |

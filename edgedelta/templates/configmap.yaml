@@ -1,4 +1,4 @@
-{{- if or .Values.edConfigContent .Values.agentUpdater.enabled }}
+{{- if .Values.edConfigContent }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,62 +10,5 @@ data:
 {{- if .Values.edConfigContent }}
   config.yml: |-
 {{ tpl .Values.edConfigContent . | indent 4 }}
-{{- end }}
-{{- if .Values.agentUpdater.enabled }}
-  updater-config.yml: |-
-    entities:
-    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}
-      image: agent
-      paths:
-      - {{ .Release.Namespace }}:ds/{{ include "edgedelta.fullname" . }}:spec.template.spec.containers[0].image
-    {{- if .Values.aggregatorProps.enabled }}
-    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-aggregator
-      image: agent
-      paths:
-      - {{ .Release.Namespace }}:deploy/{{ include "edgedelta.fullname" . }}-aggregator:spec.template.spec.containers[0].image
-    {{- end }}
-    {{- if .Values.compactorProps.enabled }}
-    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-compactor
-      image: compactor
-      paths:
-      - {{ .Release.Namespace }}:sts/{{ include "edgedelta.fullname" . }}-compactor:spec.template.spec.containers[0].image
-    {{- end }}
-    {{- if .Values.rollUpProps.enabled }}
-    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-rollup
-      image: rollup
-      paths:
-      - {{ .Release.Namespace }}:sts/{{ include "edgedelta.fullname" . }}-rollup:spec.template.spec.containers[0].image
-    {{- end }}
-    log:
-      custom_tags:
-        host: "{{ "{{" }} .env.KUBE_POD {{ "}}" }}"
-        org_id: "{{ "{{" }} .meta.org_id {{ "}}" }}"
-        source_type: updater
-        source_name: "{{ "{{" }} .env.KUBE_NODE {{ "}}" }}/{{ "{{" }} .env.KUBE_NAMESPACE {{ "}}" }}/{{ "{{" }} .env.KUBE_POD {{ "}}" }}"
-    api:
-      base_url: {{ .Values.agentUpdater.baseURL }}
-      auth:
-        header_key: X-ED-Config-Id
-        header_value: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}
-      latest_tag:
-        endpoint: {{ .Values.agentUpdater.latestTagEndpoint }}
-      metadata:
-        endpoint: {{ .Values.agentUpdater.metadataEndpoint }}
-      log_upload:
-        enabled: {{ .Values.agentUpdater.logUploader.enabled }}
-        method: PUT
-        encoding:
-          type: raw
-          options:
-            delimiter: '\n'
-        compression: gzip
-        presigned_upload_url:
-          endpoint: {{ .Values.agentUpdater.logUploader.presignedUploadURLEndpoint }}
-          params:
-            query:
-              size: "{{ "{{" }} .ctx.size {{ "}}" }}"
-              host: "{{ "{{" }} .env.KUBE_POD {{ "}}" }}"
-              format: json
-              compression: gzip
 {{- end }}
 {{- end }}
