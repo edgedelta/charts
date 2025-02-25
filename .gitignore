@@ -1,0 +1,5 @@
+charts/*/charts
+helm-docs
+vendor/
+.vscode
+.DS_Store
