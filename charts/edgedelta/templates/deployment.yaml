@@ -71,20 +71,27 @@ spec:
             - -c
             - /var/edgedelta/config.yml
           {{- end }}
-          {{- if or .Values.storePort .Values.dataPort .Values.profilerPort }}
+          {{ $usePorts := gt (len .Values.ports) 0 }}
+          {{- if or .Values.storePort .Values.profilerPort $usePorts .Values.dataPort }}
           ports:
           {{- end }}
           {{- if .Values.storePort }}
             - name: metrics
               containerPort: {{ .Values.storePort }}
           {{- end }}
-          {{- if .Values.dataPort }}
-            - name: data
-              containerPort: {{ .Values.dataPort }}
-          {{- end }}
           {{- if .Values.profilerPort }}
             - name: profiler
               containerPort: {{ .Values.profilerPort }}
+          {{- end }}
+          {{- if $usePorts }}
+          {{- range .Values.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+          {{- end }}
+          {{- else if .Values.dataPort }}
+            - name: data
+              hostPort: {{ .Values.dataPort }}
+              containerPort: {{ .Values.dataPort }}
           {{- end }}
           env:
             {{- if .Values.apiKey }}
@@ -310,25 +317,5 @@ spec:
   ports:
   - port: {{ .Values.httpRecorderProps.port }}
     name: httprecorder-port
-{{- end }}
-{{- if .Values.dataPort }}
----
-# Service for data supply
-apiVersion: v1
-kind: Service
-metadata:
-  name: ed-data-supply-svc
-  namespace: {{ .Release.Namespace }}
-spec:
-  sessionAffinity: ClientIP
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 86400 # 24h
-  selector:
-    {{- include "edgedelta.labels" . | nindent 4 }}
-    edgedelta/agent-type: processor
-  ports:
-  - port: {{ .Values.dataPort }}
-    name: data-port
 {{- end }}
 {{- end -}}

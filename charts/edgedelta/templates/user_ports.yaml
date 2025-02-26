@@ -1,0 +1,31 @@
+{{ $usePorts := gt (len .Values.ports) 0 }}
+{{- if or $usePorts .Values.dataPort }}
+# Service for data supply
+apiVersion: v1
+kind: Service
+metadata:
+  name: ed-data-supply-svc
+  namespace: {{ .Release.Namespace }}
+spec:
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 86400 # 24h
+  selector:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+    edgedelta/agent-type: processor
+  ports:
+  {{- if $usePorts }}
+  {{- range .Values.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      protocol: {{ .protocol }}
+  {{- end }}
+  {{- else if .Values.dataPort }}
+    - name: data-port
+      port: {{ .Values.dataPort }}
+  {{- end }}
+{{- end }}
