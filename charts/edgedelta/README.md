@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.26.0](https://img.shields.io/badge/Version-1.26.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.26.0](https://img.shields.io/badge/AppVersion-v1.26.0-informational?style=flat-square)
+![Version: 1.27.0](https://img.shields.io/badge/Version-1.27.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.27.0](https://img.shields.io/badge/AppVersion-v1.27.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -9,16 +9,6 @@ Edge Delta Agent Chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | agentProps.image.pullPolicy | string | `"IfNotPresent"` |  |
-| agentTroubleshooter.image | string | `"gcr.io/edgedelta/agent-troubleshooter:latest"` |  |
-| agentTroubleshooter.symptomCollector.checkInterval | string | `""` |  |
-| agentTroubleshooter.symptomCollector.enabled | bool | `false` |  |
-| agentTroubleshooter.symptomCollector.logLineCount | int | `1000` |  |
-| agentTroubleshooter.symptomCollector.loggingLevel | string | `"info"` |  |
-| agentTroubleshooter.symptomCollector.reportInterval | string | `""` |  |
-| agentTroubleshooter.symptomCollector.resources.limits.cpu | string | `"200m"` |  |
-| agentTroubleshooter.symptomCollector.resources.limits.memory | string | `"200Mi"` |  |
-| agentTroubleshooter.symptomCollector.resources.requests.cpu | string | `"100m"` |  |
-| agentTroubleshooter.symptomCollector.resources.requests.memory | string | `"100Mi"` |  |
 | agentUpdater.baseURL | string | `"https://api.edgedelta.com/v1"` |  |
 | agentUpdater.enabled | bool | `false` |  |
 | agentUpdater.image | string | `"gcr.io/edgedelta/agent-updater:latest"` |  |
@@ -30,7 +20,7 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
 | aggregatorProps.enabledDataTypes.topk | bool | `false` |  |
-| aggregatorProps.goMemLimit | string | `""` |  |
+| aggregatorProps.goMemLimit | string | `"1800MiB"` |  |
 | aggregatorProps.port | int | `9191` |  |
 | aggregatorProps.resources.limits.cpu | string | `"2000m"` |  |
 | aggregatorProps.resources.limits.memory | string | `"2048Mi"` |  |
@@ -51,7 +41,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
-| compactorProps.goMemLimit | string | `""` |  |
+| compactorProps.goMemLimit | string | `"1800MiB"` |  |
 | compactorProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
 | compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
@@ -96,7 +86,7 @@ Edge Delta Agent Chart for Kubernetes
 | edWorkflows | string | `""` |  |
 | forceReinstallApplications.enabled | bool | `true` | When set to true, it will delete some of the K8s applications to be reinstalled again |
 | fullnameOverride | string | `""` | Override the full name of resources. |
-| goMemLimit | string | `""` |  |
+| goMemLimit | string | `"1800MiB"` |  |
 | httpProxy | string | `""` |  |
 | httpRecorderProps.enabled | bool | `false` |  |
 | httpRecorderProps.image.fullPath | string | `"gcr.io/edgedelta/httprecorder:latest"` |  |

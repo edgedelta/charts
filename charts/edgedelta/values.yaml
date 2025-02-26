@@ -29,7 +29,7 @@ edTraceFiles: ""
 edAggregatorTraceFiles: ""
 edSkipTlsVerify: ""
 edConfigContent: ""
-goMemLimit: ""
+goMemLimit: "1800MiB"
 
 edEnableControllerDiscovery: true
 
@@ -86,7 +86,7 @@ aggregatorProps:
   # If your k8s cluster has specific storage classes you can set storageClassName accordingly.
   storageClassName: ""
 
-  goMemLimit: ""
+  goMemLimit: "1800MiB"
   resources:
     limits:
       cpu: 2000m
@@ -148,7 +148,8 @@ deployment:
     # deployment.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
     targetForMemoryUtilizationPercentage:
     # deployment.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
-    customMetric: {}
+    customMetric:
+      {}
       #  - type: Pods
       #    pods:
       #      metric:
@@ -268,29 +269,6 @@ serviceMonitor:
   #   selector:
   #     release: prom-kube-stack
 
-# agent troubleshooter is to verify health of agent after deployment
-# command to run the troubleshooter is displayed as the output of
-# helm install command
-# it is also used (in separate mode) for collecting log and status data
-# from namespace when a restart occurs
-agentTroubleshooter:
-  image: gcr.io/edgedelta/agent-troubleshooter:latest
-
-  symptomCollector:
-    enabled: false
-    checkInterval: "" # can be a golang time string, ex: 30s, 1m
-    reportInterval: "" # can be a golang time string, ex: 30s, 1m
-    loggingLevel: "info" # can be "debug", "info", "error" or "warn"
-    logLineCount: 1000
-
-    resources:
-      limits:
-        cpu: 200m
-        memory: 200Mi
-      requests:
-        cpu: 100m
-        memory: 100Mi
-
 instructionURL: "https://app.edgedelta.com"
 
 agentUpdater:
@@ -325,7 +303,7 @@ compactorProps:
     pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
-  goMemLimit: ""
+  goMemLimit: "1800MiB"
   resources:
     limits:
       cpu: 2000m
@@ -348,7 +326,8 @@ compactorProps:
     # compactorProps.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
     targetForMemoryUtilizationPercentage:
     # compactorProps.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
-    customMetric: {}
+    customMetric:
+      {}
       #  - type: Pods
       #    pods:
       #      metric:
@@ -407,7 +386,8 @@ rollUpProps:
     # rollUpProps.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
     targetForMemoryUtilizationPercentage:
     # rollUpProps.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
-    customMetric: {}
+    customMetric:
+      {}
       #  - type: Pods
       #    pods:
       #      metric:
@@ -436,7 +416,8 @@ ingress:
   # ingress.class -- Specify the [ingressClassName](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)
   class: ""
   # ingress.annotations -- Set annotations for further ingress configuration
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   # ingress.hosts -- Configure the hosts and paths
