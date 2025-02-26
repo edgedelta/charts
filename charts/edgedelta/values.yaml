@@ -236,3 +236,7 @@ agentUpdater:
   logUploader:
     enabled: true
     presignedUploadURLEndpoint: /agent_updater/self_logs_upload_link
+
+tracerProps:
+  enabled: false
+  port: 9595

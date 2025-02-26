@@ -59,6 +59,10 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
+      {{- if .Values.tracerProps.enabled }}
+      hostPID: true
+      hostNetwork: true
+      {{- end }}
       containers:
         # agent container
         - name: {{ .Chart.Name }}-agent
@@ -217,6 +221,16 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.name
             {{- end }}
+            {{- if .Values.tracerProps.enabled }}
+            - name: TRACER_SERVER_PORT
+              value: "{{ .Values.tracerProps.port }}"
+            - name: ED_ENABLE_TRAFFIC_TRACER
+              value: "1"
+            {{- end }}
+          {{- if .Values.tracerProps.enabled }}
+          securityContext:
+            privileged: true
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: Always
@@ -239,6 +253,16 @@ spec:
             - mountPath: /var/captured_requests/
               name: capturedrequests
               subPathExpr: $(POD_NAME)
+            {{- end }}
+            {{- if .Values.tracerProps.enabled }}
+            - name: cgroup
+              mountPath: /sys/fs/cgroup
+            - name: debugfs
+              mountPath: /sys/kernel/debug
+            - name: netns
+              mountPath: /var/run/netns
+            - name: proc
+              mountPath: /proc
             {{- end }}
         {{- if .Values.httpRecorderProps.enabled }}
         # httprecorder container
@@ -298,6 +322,20 @@ spec:
         - name: capturedrequests
           hostPath:
             path: /var/log/
+        {{- end }}
+        {{- if .Values.tracerProps.enabled }}
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
+        - name: debugfs
+          hostPath:
+            path: /sys/kernel/debug
+        - name: netns
+          hostPath:
+            path: /var/run/netns
+        - name: proc
+          hostPath:
+            path: /proc
         {{- end }}
 {{- if .Values.httpRecorderProps.enabled }}
 ---
