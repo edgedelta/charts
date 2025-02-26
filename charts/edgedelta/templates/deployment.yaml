@@ -110,7 +110,7 @@ spec:
           {{- end }}
             {{- if .Values.edTraceFiles }}
             - name:  ED_TRACE_FILES
-              value: {{ .Values.edTraceFiles }}
+              value: {{ .Values.edTraceFile | quote }}
             {{- end }}
             {{- if .Values.edApiEndpoint }}
             - name:  ED_API_ENDPOINT

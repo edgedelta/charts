@@ -104,7 +104,7 @@ spec:
           {{- end }}
           {{- if .Values.edAggregatorTraceFiles }}
           - name: ED_TRACE_FILES
-            value: {{ .Values.edAggregatorTraceFiles }}
+            value: {{ .Values.edAggregatorTraceFiles | quote }}
           {{- end }}
           {{- if .Values.edApiEndpoint }}
           - name: ED_API_ENDPOINT
