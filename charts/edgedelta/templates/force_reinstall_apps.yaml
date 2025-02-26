@@ -1,0 +1,109 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: force-reinstall-apps
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "pre-upgrade"
+    helm.sh/hook-weight: "-20"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded,hook-failed"
+  labels:
+    app: force-reinstall-apps
+rules:
+{{- if or (eq .Values.deployment.kind "DaemonSet") (eq .Values.deployment.kind "Deployment") }}
+  - apiGroups:
+      - "apps"
+    resources:
+{{- if eq .Values.deployment.kind "DaemonSet" }}
+      - "daemonsets"
+{{- else }}
+      - "deployments"
+{{- end }}
+    resourceNames:
+      - "{{ include "edgedelta.fullname" . }}"
+    verbs:
+      - "delete"
+{{- end }}
+{{- if .Values.compactorProps.enabled }}
+  - apiGroups:
+      - "apps"
+    resources:
+      - "statefulsets"
+    resourceNames:
+      - "{{ include "edgedelta.fullname" . }}-compactor"
+    verbs:
+      - "delete"
+{{- end }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: force-reinstall-apps
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "pre-upgrade"
+    helm.sh/hook-weight: "-15"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded,hook-failed"
+  labels:
+    app: force-reinstall-apps
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: force-reinstall-apps
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "pre-upgrade"
+    helm.sh/hook-weight: "-14"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded,hook-failed"
+  labels:
+    app: force-reinstall-apps
+subjects:
+  - kind: ServiceAccount
+    name: force-reinstall-apps
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: force-reinstall-apps
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: force-reinstall-apps
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "pre-upgrade"
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded,hook-failed"
+  labels:
+    app: force-reinstall-apps
+spec:
+  template:
+    spec:
+      serviceAccountName: force-reinstall-apps
+      containers:
+        - name: force-reinstall-apps
+          image: dtzar/helm-kubectl:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -e
+            - -x
+            - -c
+            - |-
+              version=$(helm list -n {{ .Release.Namespace }} -ojson | jq -r 'map(select(.name == "{{ .Release.Name }}")) | .[0].app_version');
+              if [[ ! "$version" > "v1.10.0-rc.14" ]]; then
+              {{- if or (eq .Values.deployment.kind "DaemonSet") (eq .Values.deployment.kind "Deployment") }}
+              {{- if eq .Values.deployment.kind "DaemonSet" }}
+                kubectl delete daemonset {{ include "edgedelta.fullname" . }} -n {{ .Release.Namespace }};
+              {{- else }}
+                kubectl delete deployment {{ include "edgedelta.fullname" . }} -n {{ .Release.Namespace }};
+              {{- end }}
+              {{- end }}
+              {{- if .Values.compactorProps.enabled }}
+                kubectl -n {{ .Release.Namespace }} delete statefulset {{ include "edgedelta.fullname" . }}-compactor;
+              {{- end }}
+              fi
+      restartPolicy: Never
+  backoffLimit: 6

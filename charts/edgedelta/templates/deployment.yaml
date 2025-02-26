@@ -11,10 +11,13 @@ metadata:
     {{- end }}
     edgedelta/agent-type: processor
 spec:
+  {{- if not (or .Values.deployment.autoscaling.enabled .Values.deployment.autoscaling.external) }}
   replicas: {{ default 1 .Values.deployment.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
+      edgedelta/agent-type: processor
   strategy:
   {{- if .Values.updateStrategy }}
     {{- toYaml .Values.updateStrategy | nindent 4 }}
@@ -72,7 +75,7 @@ spec:
             - /var/edgedelta/config.yml
           {{- end }}
           {{ $usePorts := gt (len .Values.ports) 0 }}
-          {{- if or .Values.storePort .Values.profilerPort $usePorts .Values.dataPort }}
+          {{- if or .Values.storePort .Values.profilerPort $usePorts }}
           ports:
           {{- end }}
           {{- if .Values.storePort }}
@@ -88,10 +91,6 @@ spec:
             - name: {{ .name }}
               containerPort: {{ .port }}
           {{- end }}
-          {{- else if .Values.dataPort }}
-            - name: data
-              hostPort: {{ .Values.dataPort }}
-              containerPort: {{ .Values.dataPort }}
           {{- end }}
           env:
             {{- if .Values.apiKey }}
@@ -317,5 +316,49 @@ spec:
   ports:
   - port: {{ .Values.httpRecorderProps.port }}
     name: httprecorder-port
+{{- end }}
+{{- if .Values.deployment.autoscaling.enabled }}
+---
+apiVersion: {{ template "autoscaling.apiVersion" . }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "edgedelta.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+spec:
+  minReplicas: {{ .Values.deployment.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.deployment.autoscaling.maxReplicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "edgedelta.fullname" . }}
+  metrics:
+    {{- if .Values.deployment.autoscaling.targetForMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.deployment.autoscaling.targetForMemoryUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.deployment.autoscaling.targetForCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.deployment.autoscaling.targetForCPUUtilizationPercentage }}
+    {{- end }}
+    {{- with .Values.deployment.autoscaling.customMetric -}}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.deployment.autoscaling.behavior }}
+  behavior:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}
 {{- end -}}

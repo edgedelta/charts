@@ -13,7 +13,6 @@ secretApiKey:
 # See: https://docs.edgedelta.com/installation/environment-variables
 
 storePort: ""
-dataPort: ""
 profilerPort: ""
 promPort: ""
 httpProxy: ""
@@ -98,16 +97,6 @@ httpRecorderProps:
   image: gcr.io/edgedelta/httprecorder:latest
   port: 8080
 
-  # Enable ingress if the k8s cluster already has nginx + cert-manager installed
-  # Without ingress enabled you can directly send logs within cluster using http://ed-httprecorder-svc.{namespace}.svc.cluster.local:8080
-  ingress:
-    enabled: false
-    host: ""
-    class: nginx
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      cert-manager.io/cluster-issuer: letsencrypt
-
 # Custom labels:
 
 # labels:
@@ -131,12 +120,39 @@ httpRecorderProps:
 # Create secrets with below command:
 # kubectl create secret generic sample-k8-secret-name --namespace=edgedelta --from-literal=sample-k8s-secret-subkey="SECRET_VALUE"
 
-# Configure the deployment type
+# Configuration of deployment type for processor agents
 deployment:
-  # Can be either Deployment or DaemonSet
+  # deployment.kind -- Can be either DaemonSet or Deployment
   kind: DaemonSet
-  # Number of pods of the deployment (only applies when kind == Deployment)
+  # deployment.replicas -- Number of pods of the deployment (only applies when kind == Deployment). Mutually exclusive with autoscaling
   replicas: 1
+  # Configuration of HorizontalPodAutoscaler for processor agents in Deployment mode
+  autoscaling:
+    # deployment.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for processor agents
+    enabled: false
+    # deployment.autoscaling.external -- Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/)
+    external: false
+    # deployment.autoscaling.minReplicas -- Minimum replica count for rollup agents
+    minReplicas: 1
+    # deployment.autoscaling.maxReplicas -- Maximum replica count for rollup agents
+    maxReplicas: 10
+    # deployment.autoscaling.targetForCPUUtilizationPercentage -- Targeted CPU utilization for rollup agents in order to HPA to kick in
+    targetForCPUUtilizationPercentage: 85
+    # deployment.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
+    targetForMemoryUtilizationPercentage:
+    # deployment.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
+    customMetric: {}
+      #  - type: Pods
+      #    pods:
+      #      metric:
+      #        name: packets-per-second
+      #      target:
+      #        type: AverageValue
+      #        averageValue: 1k
+    # deployment.autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 300
 
 # Resource constraints
 
@@ -144,7 +160,7 @@ annotations: {}
 resources:
   limits:
     cpu: 2000m
-    memory: 2048Mi
+    memory: 2Gi
   requests:
     cpu: 200m
     memory: 256Mi
@@ -170,6 +186,13 @@ ports: []
 #   protocol: UDP
 #   port: 5000
 #   exposeInHost: false
+pushService:
+  type: ClusterIP
+  annotations: {}
+  loadBalancerIP: ""
+  clusterIP: ""
+  sessionAffinity: ""
+  sessionAffinityTimeout: 10800
 
 # Helm overrides
 
@@ -182,12 +205,14 @@ image:
   fullPath: ""
 imagePullSecrets: []
 
+# nameOverride -- Override the name of resources.
 nameOverride: ""
+# fullnameOverride -- Override the full name of resources.
 fullnameOverride: ""
 
-# Manage NetworkPolicy
+# networkPolicy -- Manage NetworkPolicy
 networkPolicy:
-  # networkPolicy.create -- If true, create NetworkPolicy for DaemonSet
+  # networkPolicy.enabled -- If true, create NetworkPolicy for DaemonSet
   enabled: false
   # networkPolicy.type -- Type of the network policy to use.
   # Can be:
@@ -219,8 +244,9 @@ networkPolicy:
     #         - port: "443"
     #           protocol: TCP
 
-# enable service monitor to scrape prometheus metrics from agents
+# serviceMonitor -- it will be used enable prometheus to scrape metrics from processor agents
 serviceMonitor:
+  # serviceMonitor.enabled -- If true, create ServiceMonitor for processor agents
   enabled: false
   #   namespace: monitoring
   #   scrapeTimeout: 10s
@@ -273,6 +299,7 @@ compactorProps:
   usePVC: false
   storageClass: ""
   diskSize: 30Gi
+  # compactorProps.replicas -- Number of compactor agents to be created statically, mutually exclusive with autoscaling
   replicas: 1
   serviceDNSSuffix: svc.cluster.local
   traceFiles: ""
@@ -286,10 +313,37 @@ compactorProps:
   resources:
     limits:
       cpu: 2000m
-      memory: 2000Mi
+      memory: 2Gi
     requests:
       cpu: 200m
       memory: 300Mi
+  # Configuration of HorizontalPodAutoscaler for compactor agents
+  autoscaling:
+    # compactorProps.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for compactor agents
+    enabled: false
+    # compactorProps.autoscaling.external -- Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/)
+    external: false
+    # compactorProps.autoscaling.minReplicas -- Minimum replica count for rollup agents
+    minReplicas: 1
+    # compactorProps.autoscaling.maxReplicas -- Maximum replica count for rollup agents
+    maxReplicas: 10
+    # compactorProps.autoscaling.targetForCPUUtilizationPercentage -- Targeted CPU utilization for rollup agents in order to HPA to kick in
+    targetForCPUUtilizationPercentage: 85
+    # compactorProps.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
+    targetForMemoryUtilizationPercentage:
+    # compactorProps.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
+    customMetric: {}
+      #  - type: Pods
+      #    pods:
+      #      metric:
+      #        name: packets-per-second
+      #      target:
+      #        type: AverageValue
+      #        averageValue: 1k
+    # compactorProps.autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 300
 
 rollUpProps:
   enabled: true
@@ -302,6 +356,8 @@ rollUpProps:
   priorityClassName: ""
   updateStrategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   goMemLimit: "900MiB"
   resources:
     limits:
@@ -310,3 +366,57 @@ rollUpProps:
     requests:
       cpu: 200m
       memory: 256Mi
+  # Configuration of HorizontalPodAutoscaler for rollup agents
+  autoscaling:
+    # rollUpProps.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for rollup agents
+    enabled: false
+    # rollUpProps.autoscaling.external -- Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/)
+    external: false
+    # rollUpProps.autoscaling.minReplicas -- Minimum replica count for rollup agents
+    minReplicas: 2
+    # rollUpProps.autoscaling.maxReplicas -- Maximum replica count for rollup agents
+    maxReplicas: 10
+    # rollUpProps.autoscaling.targetForCPUUtilizationPercentage -- Targeted CPU utilization for rollup agents in order to HPA to kick in
+    targetForCPUUtilizationPercentage: 85
+    # rollUpProps.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
+    targetForMemoryUtilizationPercentage:
+    # rollUpProps.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
+    customMetric: {}
+      #  - type: Pods
+      #    pods:
+      #      metric:
+      #        name: packets-per-second
+      #      target:
+      #        type: AverageValue
+      #        averageValue: 1k
+    # rollUpProps.autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 300
+
+# Configuration for Ingress to add in front of ports defined above,
+# requires Kubernetes >= 1.19
+ingress:
+  # ingress.enabled -- If set to true, we will create and use an Ingress resource
+  enabled: false
+  # ingress.class -- Specify the [ingressClassName](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)
+  class: ""
+  # ingress.annotations -- Set annotations for further ingress configuration
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # ingress.hosts -- Configure the hosts and paths
+  hosts: []
+  #  - host: host.example.local
+  #    paths:
+  #      - path: /
+  #        pathType: ImplementationSpecific
+  #        # Specify the port name or number from ports section
+  #        port:
+  #          name: ""
+  #          number: ""
+  # ingress.tls -- TLS configurations
+  tls: []
+  #  - hosts:
+  #      - host.example.local
+  #    secretName: example-tls-secret

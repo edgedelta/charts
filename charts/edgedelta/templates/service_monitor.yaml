@@ -1,4 +1,4 @@
-{{- if .Values.serviceMonitor.enabled }}
+{{- if and .Values.serviceMonitor.enabled .Values.promPort }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -21,21 +21,25 @@ spec:
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
+      edgedelta/supports-prometheus: "true"
+{{- end }}
+{{- if or .Values.storePort .Values.promPort }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: edgedelta-metrics
+  name: edgedelta-processor-metrics
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
+    edgedelta/supports-prometheus: "true"
 spec:
   selector:
     {{- include "edgedelta.selectorLabels" . | nindent 4 }}
-  {{- if or .Values.storePort .Values.promPort }}
+    edgedelta/agent-type: processor
   ports:
     {{- if .Values.storePort }}
     - name: metrics
@@ -49,5 +53,34 @@ spec:
       targetPort: prom
       protocol: TCP
     {{- end }}
-  {{- end }}
+{{- if .Values.rollUpProps.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edgedelta-rollup-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    {{- include "edgedelta.selectorLabels" . | nindent 4 }}
+    edgedelta/agent-type: rollup
+  ports:
+    {{- if .Values.storePort }}
+    - name: metrics
+      port: {{ .Values.storePort }}
+      targetPort: metrics
+      protocol: TCP
+    {{- end }}
+    {{- if .Values.promPort }}
+    - name: prom
+      port: {{ .Values.promPort }}
+      targetPort: prom
+      protocol: TCP
+    {{- end }}
+{{- end }}
 {{- end }}

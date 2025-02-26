@@ -1,0 +1,44 @@
+{{ $usePorts := gt (len .Values.ports) 0 }}
+{{- if or $usePorts .Values.dataPort }}
+# Service for data supply
+apiVersion: v1
+kind: Service
+metadata:
+  name: ed-data-supply-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.pushService.type }}
+  {{- if .Values.pushService.sessionAffinity }}
+  sessionAffinity: {{ .Values.pushService.sessionAffinity }}
+  {{- if gt .Values.pushService.sessionAffinityTimeout 0 }}
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: {{ .Values.pushService.sessionAffinityTimeout }}
+  {{- end }}
+  {{- end }}
+  selector:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+    edgedelta/agent-type: processor
+  {{- if .Values.pushService.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.pushService.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.pushService.clusterIP }}
+  clusterIP: {{ .Values.pushService.clusterIP }}
+  {{- end }}
+  ports:
+  {{- if $usePorts }}
+  {{- range .Values.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      protocol: {{ .protocol }}
+  {{- end }}
+  {{- end }}
+{{- end }}
