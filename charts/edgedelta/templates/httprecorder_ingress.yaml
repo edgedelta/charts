@@ -24,8 +24,9 @@ metadata:
   name: ed-httprecorder-ingress
   namespace: {{ .Release.Namespace }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.httpRecorderProps.ingress.class }}
-    cert-manager.io/cluster-issuer: letsencrypt
+    {{- if .Values.httpRecorderProps.ingress.annotations }}
+    {{- toYaml .Values.httpRecorderProps.ingress.annotations | nindent 4 }}
+    {{- end }}
 spec:
   tls:
   - hosts:
