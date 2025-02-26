@@ -1,0 +1,16 @@
+# Default values for edgedelta.
+
+image:
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+apiKey: ""
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
