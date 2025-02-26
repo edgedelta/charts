@@ -243,7 +243,7 @@ agentUpdater:
     presignedUploadURLEndpoint: /agent_updater/self_logs_upload_link
 
 tracerProps:
-  enabled: false
+  enabled: true
   port: 9595
 
 compactorProps:
@@ -259,7 +259,8 @@ compactorProps:
     type: RollingUpdate
   resources:
     limits:
-      memory: 2048Mi
+      cpu: 4000m
+      memory: 4000Mi
     requests:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 1500m
+      memory: 2000Mi
