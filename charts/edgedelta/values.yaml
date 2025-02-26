@@ -277,6 +277,9 @@ compactorProps:
   serviceDNSSuffix: svc.cluster.local
   traceFiles: ""
   podManagementPolicy: "OrderedReady"
+  tolerations: {}
+  nodeSelector: {}
+  priorityClassName: ""
   updateStrategy:
     type: RollingUpdate
   goMemLimit: ""
@@ -294,6 +297,9 @@ rollUpProps:
   replicas: 2
   serviceDNSSuffix: svc.cluster.local
   podManagementPolicy: "OrderedReady"
+  tolerations: {}
+  nodeSelector: {}
+  priorityClassName: ""
   updateStrategy:
     type: RollingUpdate
   goMemLimit: "900MiB"

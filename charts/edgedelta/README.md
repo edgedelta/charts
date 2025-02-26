@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.104](https://img.shields.io/badge/Version-0.1.104-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.104](https://img.shields.io/badge/AppVersion-v0.1.104-informational?style=flat-square)
+![Version: 0.1.105](https://img.shields.io/badge/Version-0.1.105-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.105](https://img.shields.io/badge/AppVersion-v0.1.105-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -43,8 +43,10 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
+| compactorProps.nodeSelector | object | `{}` |  |
 | compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
+| compactorProps.priorityClassName | string | `""` |  |
 | compactorProps.replicas | int | `1` |  |
 | compactorProps.resources.limits.cpu | string | `"2000m"` |  |
 | compactorProps.resources.limits.memory | string | `"2000Mi"` |  |
@@ -52,6 +54,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.resources.requests.memory | string | `"300Mi"` |  |
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | compactorProps.storageClass | string | `""` |  |
+| compactorProps.tolerations | object | `{}` |  |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | compactorProps.usePVC | bool | `false` |  |
@@ -108,14 +111,17 @@ Edge Delta Agent Chart for Kubernetes
 | resources.requests.memory | string | `"256Mi"` |  |
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `"900MiB"` |  |
+| rollUpProps.nodeSelector | object | `{}` |  |
 | rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
+| rollUpProps.priorityClassName | string | `""` |  |
 | rollUpProps.replicas | int | `2` |  |
 | rollUpProps.resources.limits.cpu | string | `"1000m"` |  |
 | rollUpProps.resources.limits.memory | string | `"1Gi"` |  |
 | rollUpProps.resources.requests.cpu | string | `"200m"` |  |
 | rollUpProps.resources.requests.memory | string | `"256Mi"` |  |
 | rollUpProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
+| rollUpProps.tolerations | object | `{}` |  |
 | rollUpProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | secretApiKey.enable | bool | `false` |  |
 | secretApiKey.key | string | `"ed-api-key"` |  |
