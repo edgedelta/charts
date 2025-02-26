@@ -142,8 +142,6 @@ spec:
           - name: ED_WORKFLOWS
             value: {{ .Values.edWorkflows }}
           {{- end }}
-          - name: ED_LEADER_ELECTION_ENABLED
-            value: "0"
           {{- if .Values.edWorkflowPrefixes }}
           - name: ED_WORKFLOW_PREFIXES
             value: {{ .Values.edWorkflowPrefixes }}
