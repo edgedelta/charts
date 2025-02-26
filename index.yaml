@@ -19,7 +19,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.97/edgedelta-0.0.97.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.97/edgedelta-0.0.97.tgz
     version: 0.0.97
   - apiVersion: v2
     appVersion: v0.0.96
@@ -29,7 +29,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.96/edgedelta-0.0.96.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.96/edgedelta-0.0.96.tgz
     version: 0.0.96
   - apiVersion: v2
     appVersion: v0.0.95
@@ -39,7 +39,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.95/edgedelta-0.0.95.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.95/edgedelta-0.0.95.tgz
     version: 0.0.95
   - apiVersion: v2
     appVersion: v0.0.94
@@ -49,7 +49,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.94/edgedelta-0.0.94.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.94/edgedelta-0.0.94.tgz
     version: 0.0.94
   - apiVersion: v2
     appVersion: v0.0.93
@@ -59,7 +59,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.93/edgedelta-0.0.93.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.93/edgedelta-0.0.93.tgz
     version: 0.0.93
   - apiVersion: v2
     appVersion: v0.0.91
@@ -69,7 +69,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.91/edgedelta-0.0.91.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.91/edgedelta-0.0.91.tgz
     version: 0.0.91
   - apiVersion: v2
     appVersion: v0.0.89
@@ -79,6 +79,6 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-test/releases/download/edgedelta-0.0.89/edgedelta-0.0.89.tgz
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.89/edgedelta-0.0.89.tgz
     version: 0.0.89
 generated: "2025-02-26T10:55:44.50600863Z"
