@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.99](https://img.shields.io/badge/Version-0.1.99-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.99](https://img.shields.io/badge/AppVersion-v0.1.99-informational?style=flat-square)
+![Version: 0.1.100](https://img.shields.io/badge/Version-0.1.100-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.100](https://img.shields.io/badge/AppVersion-v0.1.100-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -31,6 +31,7 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.enabledDataTypes.topk | bool | `false` |  |
 | aggregatorProps.goMemLimit | string | `""` |  |
 | aggregatorProps.port | int | `9191` |  |
+| aggregatorProps.resources.limits.cpu | string | `"2000m"` |  |
 | aggregatorProps.resources.limits.memory | string | `"2048Mi"` |  |
 | aggregatorProps.resources.requests.cpu | string | `"200m"` |  |
 | aggregatorProps.resources.requests.memory | string | `"256Mi"` |  |
@@ -101,6 +102,7 @@ Edge Delta Agent Chart for Kubernetes
 | priorityClassName | string | `""` |  |
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
+| resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2048Mi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
