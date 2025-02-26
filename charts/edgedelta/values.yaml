@@ -247,7 +247,7 @@ tracerProps:
   port: 9595
 
 compactorProps:
-  enabled: false
+  enabled: true
   port: 9199
   dataDir: /var/edgedelta-compactor
   storageClass: ""
@@ -259,8 +259,7 @@ compactorProps:
     type: RollingUpdate
   resources:
     limits:
-      cpu: 4000m
-      memory: 4000Mi
+      memory: 2048Mi
     requests:
       cpu: 200m
-      memory: 1000Mi
+      memory: 256Mi
