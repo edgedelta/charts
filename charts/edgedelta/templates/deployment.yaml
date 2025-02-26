@@ -154,12 +154,6 @@ spec:
             - name: ED_ENABLE_PARENT_K8S_CONTROLLER_DISCOVERY
               value: "1"
             {{- end }}
-            - name:  ED_LEADER_ELECTION_ENABLED
-            {{- if .Values.edDisableLeaderElection }}
-              value: "0"
-            {{- else }}
-              value: "1"
-            {{- end }}
             {{- if .Values.edWorkflowPrefixes }}
             - name:  ED_WORKFLOW_PREFIXES
               value: {{ .Values.edWorkflowPrefixes }}
