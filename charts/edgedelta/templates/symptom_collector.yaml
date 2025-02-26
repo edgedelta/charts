@@ -1,0 +1,98 @@
+{{- if .Values.agentTroubleshooter.symptomCollector.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "edgedelta.fullname" . }}-symptom-collector
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "edgedelta.selectorLabels" . | nindent 6 }}
+  strategy:
+  {{- if .Values.updateStrategy }}
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  {{- else }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  {{- end }}
+  template:
+    metadata:
+      {{- if .Values.annotations }}
+      annotations:
+        {{- toYaml .Values.annotations | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- include "edgedelta.labels" . | nindent 8 }}
+      {{- if .Values.labels }}
+        {{- toYaml .Values.labels | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "edgedelta.fullname" . }}
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      containers:
+        # symptom collector container
+        - name: {{ .Chart.Name }}-symptom-collector
+          image: {{ .Values.agentTroubleshooter.image }}
+          command:
+            - /edgedelta/agent_troubleshooter
+          args:
+            - --mode
+            - "symptom-collector"
+            - --symptom-collector-namespace
+            - {{ .Release.Namespace | quote }}
+            {{- if .Values.agentTroubleshooter.symptomCollector.loggingLevel }}
+            - --logging_level
+            - {{ .Values.agentTroubleshooter.symptomCollector.loggingLevel | quote }}
+            {{- end }}
+            {{- if .Values.agentTroubleshooter.symptomCollector.checkInterval }}
+            - --symptom-collector-check-interval
+            - {{ .Values.agentTroubleshooter.symptomCollector.checkInterval | quote }}
+            {{- end }}
+            {{- if .Values.agentTroubleshooter.symptomCollector.reportInterval }}
+            - --symptom-collector-report-interval
+            - {{ .Values.agentTroubleshooter.symptomCollector.reportInterval | quote }}
+            {{- end }}
+            {{- if .Values.agentTroubleshooter.symptomCollector.logLineCount }}
+            - --symptom-collector-check-logs-line-count
+            - {{ .Values.agentTroubleshooter.symptomCollector.logLineCount | quote }}
+            {{- end }}
+          env:
+            {{- if .Values.apiKey }}
+            - name:  ED_API_KEY
+              value: {{ .Values.apiKey | quote }}
+            {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+            {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+            {{- if $lookupResult }}
+            - name:  ED_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretApiKey.name }}
+                  key: {{ .Values.secretApiKey.key }}
+            {{- end }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.agentTroubleshooter.symptomCollector.resources | nindent 12 }}
+          imagePullPolicy: Always
+      terminationGracePeriodSeconds: 10
+{{- end -}}

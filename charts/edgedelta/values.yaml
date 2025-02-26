@@ -203,7 +203,24 @@ serviceMonitor:
 # agent troubleshooter is to verify health of agent after deployment
 # command to run the troubleshooter is displayed as the output of
 # helm install command
-agentTroubleshooter: 
+# it is also used (in separate mode) for collecting log and status data
+# from namespace when a restart occurs
+agentTroubleshooter:
   image: gcr.io/edgedelta/agent-troubleshooter:latest
+
+  symptomCollector:
+    enabled: false
+    checkInterval: "" # can be a golang time string, ex: 30s, 1m
+    reportInterval: "" # can be a golang time string, ex: 30s, 1m
+    loggingLevel: "info" # can be "debug", "info", "error" or "warn"
+    logLineCount: 1000
+
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 100m
+        memory: 100Mi
 
 instructionURL: "https://app.edgedelta.com"

@@ -2,7 +2,7 @@
 {{- if .Values.apiKey }}
 2. Find the configuration with {{ .Values.apiKey | quote }} on {{ .Values.instructionURL | default "https://app.edgedelta.com" }} to check if agents are active
 {{- if .Values.agentTroubleshooter.image }}
-3. You can also run the command below to verify the agent health. 
+3. You can also run the command below to verify the agent health.
 kubectl run agent-troubleshooter -i --rm --image={{ .Values.agentTroubleshooter.image}}  -- /edgedelta/agent_troubleshooter --mode=post-install-checks --api_key={{ .Values.apiKey }}
 {{- end }}
 {{- else if and (and .Values.secretApiKey.name .Values.secretApiKey.key) .Values.secretApiKey.value }}
@@ -10,13 +10,13 @@ kubectl run agent-troubleshooter -i --rm --image={{ .Values.agentTroubleshooter.
 {{- if $lookupResult }}
 2. Find the configuration with {{ index $lookupResult.data .Values.secretApiKey.key | b64dec | quote }} on {{ .Values.instructionURL | default "https://app.edgedelta.com" }} to check if agents are active
 {{- if .Values.agentTroubleshooter.image }}
-3. You can also run the command below to verify the agent health. 
-kubectl run agent-troubleshooter -i --rm --image={{ .Values.agentTroubleshooter.image}}  -- /edgedelta/agent_troubleshooter --mode=post-install-checks --api_key={{ index $lookupResult.data .Values.secretApiKey.key | b64dec }} 
+3. You can also run the command below to verify the agent health.
+kubectl run agent-troubleshooter -i --rm --image={{ .Values.agentTroubleshooter.image}}  -- /edgedelta/agent_troubleshooter --mode=post-install-checks --api_key={{ index $lookupResult.data .Values.secretApiKey.key | b64dec }}
 {{- end }}
 {{- else }}
 2. Find the configuration with {{ .Values.secretApiKey.value }} on {{ .Values.instructionURL | default "https://app.edgedelta.com" }} to check if agents are active
 {{- if .Values.agentTroubleshooter.image }}
-3. You can also run the command below to verify the agent health. 
+3. You can also run the command below to verify the agent health.
 kubectl run agent-troubleshooter -i --rm --image={{ .Values.agentTroubleshooter.image}}  -- /edgedelta/agent_troubleshooter --mode=post-install-checks --api_key={{ .Values.secretApiKey.value }}
 {{- end }}
 {{- end }}
