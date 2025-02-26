@@ -1,0 +1,54 @@
+{{- if .Values.podSecurity.securityContextConstraints.create }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: {{ include "edgedelta.fullname" . }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+users:
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "edgedelta.fullname" . }}
+# Allow host ports when any host port being used
+{{ $usePorts := gt (len .Values.ports) 0 }}
+allowHostPorts: {{ or .Values.storePort .Values.profilerPort $usePorts }}
+# Allow host PID when eBPF tracer is enabled
+allowHostPID: {{ .Values.tracerProps.enabled }}
+# Allow host PID when eBPF tracer is enabled
+allowHostNetwork: {{ .Values.tracerProps.enabled }}
+# Allow hostPath for eBPF and container logs
+volumes:
+{{ toYaml .Values.podSecurity.volumes | indent 2 }}
+# Use the `spc_t` selinux type to access the
+# docker/cri socket + proc and cgroup stats
+seLinuxContext:
+{{- if .Values.podSecurity.seLinuxContext }}
+{{ toYaml .Values.podSecurity.seLinuxContext | indent 2 }}
+{{- end }}
+# eBPF requires some specific seccomp and capabilities
+seccompProfiles:
+{{ toYaml .Values.podSecurity.seccompProfiles | indent 2 }}
+allowedCapabilities:
+{{ toYaml .Values.podSecurity.capabilities | indent 2 }}
+#
+# The rest is copied from default SCCs
+#
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowPrivilegedContainer: {{ or .Values.podSecurity.privileged .Values.tracerProps.enabled }}
+allowedFlexVolumes: []
+defaultAddCapabilities: []
+fsGroup:
+  type: MustRunAs
+readOnlyRootFilesystem: false
+runAsUser:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+# If your environment restricts user access to the Docker socket or journald (for logging)
+# create or use an existing group that has access and add the GID to
+# the lines below (also remove the previous line, `type: RunAsAny`)
+#   type: MustRunAs
+#   ranges:
+#   - min: <min-group-ID>
+#   - max: <max-group-ID>
+requiredDropCapabilities: []
+{{- end }}

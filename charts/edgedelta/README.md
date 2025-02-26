@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.29.0](https://img.shields.io/badge/Version-1.29.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.29.0](https://img.shields.io/badge/AppVersion-v1.29.0-informational?style=flat-square)
+![Version: 1.30.0](https://img.shields.io/badge/Version-1.30.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0](https://img.shields.io/badge/AppVersion-v1.30.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -8,14 +8,6 @@ Edge Delta Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| agentProps.image.pullPolicy | string | `"IfNotPresent"` |  |
-| agentUpdater.baseURL | string | `"https://api.edgedelta.com/v1"` |  |
-| agentUpdater.enabled | bool | `false` |  |
-| agentUpdater.image | string | `"gcr.io/edgedelta/agent-updater:latest"` |  |
-| agentUpdater.latestTagEndpoint | string | `"/versioning/latest"` |  |
-| agentUpdater.logUploader.enabled | bool | `true` |  |
-| agentUpdater.logUploader.presignedUploadURLEndpoint | string | `"/agent_updater/self_logs_upload_link"` |  |
-| agentUpdater.metadataEndpoint | string | `"/agent_updater/metadata"` |  |
 | aggregatorProps.enabled | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
@@ -42,7 +34,6 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `"1800MiB"` |  |
-| compactorProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
 | compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
@@ -89,14 +80,17 @@ Edge Delta Agent Chart for Kubernetes
 | goMemLimit | string | `"1800MiB"` |  |
 | httpProxy | string | `""` |  |
 | httpRecorderProps.enabled | bool | `false` |  |
-| httpRecorderProps.image.fullPath | string | `"gcr.io/edgedelta/httprecorder:latest"` |  |
+| httpRecorderProps.image.fullPath | string | `""` |  |
+| httpRecorderProps.image.name | string | `"httprecorder"` |  |
 | httpRecorderProps.image.pullPolicy | string | `"IfNotPresent"` |  |
+| httpRecorderProps.image.tag | string | `"latest"` |  |
 | httpRecorderProps.port | int | `8080` |  |
 | httpsProxy | string | `""` |  |
 | image.fullPath | string | `""` |  |
-| image.name | string | `"gcr.io/edgedelta/agent"` |  |
+| image.name | string | `"agent"` |  |
+| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.pullSecrets | list | `[]` |  |
 | image.tag | string | `""` |  |
-| imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` | Set annotations for further ingress configuration |
 | ingress.class | string | `""` | Specify the [ingressClassName](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) |
 | ingress.enabled | bool | `false` | If set to true, we will create and use an Ingress resource |
@@ -113,6 +107,14 @@ Edge Delta Agent Chart for Kubernetes
 | persistingCursorProps.containerMountPath | string | `"/var/lib/edgedelta"` |  |
 | persistingCursorProps.enabled | bool | `true` |  |
 | persistingCursorProps.hostMountPath | string | `"/var/lib/edgedelta"` |  |
+| podSecurity.apparmor.enabled | bool | `false` | If true, it will enable apparmor for the pods |
+| podSecurity.apparmor.profile | string | `"unconfined"` | If apparmor enabled, it will be the profile for apparmor enforcement for the pods |
+| podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH"]` | Allowed capabilities |
+| podSecurity.privileged | bool | `false` | If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true |
+| podSecurity.seLinuxContext | object | Must run as spc_t (For reference, please refer here: https://access.redhat.com/solutions/7025337) | Provide seLinuxContext configuration for SCC |
+| podSecurity.seccompProfiles | list | `["runtime/default"]` | Allowed seccomp profiles |
+| podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SecurityContextConstraints resource for pods |
+| podSecurity.volumes | list | `["configMap","downwardAPI","emptyDir","hostPath","secret"]` | Allowed volumes types |
 | ports | list | `[]` |  |
 | priorityClassName | string | `""` |  |
 | profilerPort | string | `""` |  |
@@ -123,6 +125,7 @@ Edge Delta Agent Chart for Kubernetes
 | pushService.sessionAffinity | string | `""` |  |
 | pushService.sessionAffinityTimeout | int | `10800` |  |
 | pushService.type | string | `"ClusterIP"` |  |
+| repository | string | `"gcr.io/edgedelta"` |  |
 | resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2Gi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
@@ -137,7 +140,6 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `"900MiB"` |  |
-| rollUpProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
 | rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
@@ -156,6 +158,8 @@ Edge Delta Agent Chart for Kubernetes
 | secretApiKey.key | string | `"ed-api-key"` |  |
 | secretApiKey.name | string | `"ed-api-key"` |  |
 | secretApiKey.value | string | `""` |  |
+| serviceAccount.annotations | object | `{}` | Annotations for the service account |
+| serviceAccount.labels | object | `{}` | Labels for the service account |
 | serviceMonitor | object | `{"enabled":false}` | it will be used enable prometheus to scrape metrics from processor agents |
 | serviceMonitor.enabled | bool | `false` | If true, create ServiceMonitor for processor agents |
 | skipCommonLabels | bool | `false` |  |
@@ -166,8 +170,11 @@ Edge Delta Agent Chart for Kubernetes
 | targetAllocator.configuration.filter_strategy | string | `"relabel-config"` |  |
 | targetAllocator.configuration.prometheus_cr | object | `{}` |  |
 | targetAllocator.enabled | bool | `false` |  |
-| targetAllocator.image.fullPath | string | `"gcr.io/edgedelta/target-allocator:v0.1.1"` |  |
+| targetAllocator.image.fullPath | string | `""` |  |
+| targetAllocator.image.name | string | `"target-allocator"` |  |
 | targetAllocator.image.pullPolicy | string | `"IfNotPresent"` |  |
+| targetAllocator.image.pullSecrets | list | `[]` |  |
+| targetAllocator.image.tag | string | `"v0.1.1"` |  |
 | targetAllocator.nodeSelector | object | `{}` |  |
 | targetAllocator.port | int | `8080` |  |
 | targetAllocator.priorityClassName | string | `""` |  |
@@ -178,7 +185,7 @@ Edge Delta Agent Chart for Kubernetes
 | targetAllocator.resources.requests.memory | string | `"256Mi"` |  |
 | targetAllocator.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | targetAllocator.tolerations | object | `{}` |  |
-| targetAllocator.topologySpreadConstraints | list | `[]` | Topology spread constraints for targeta allocator |
+| targetAllocator.topologySpreadConstraints | list | `[]` | Topology spread constraints for target allocator |
 | targetAllocator.updateStrategy.rollingUpdate.maxSurge | int | `1` |  |
 | targetAllocator.updateStrategy.rollingUpdate.maxUnavailable | int | `0` |  |
 | targetAllocator.updateStrategy.type | string | `"RollingUpdate"` |  |

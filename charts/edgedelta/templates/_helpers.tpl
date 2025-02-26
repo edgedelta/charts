@@ -63,3 +63,14 @@ autoscaling/v2
 autoscaling/v2beta2
 {{- end -}}
 {{- end -}}
+
+{{/*
+Check if target cluster is running OpenShift
+*/}}
+{{- define "isOpenShift" -}}
+{{- if .Capabilities.APIVersions.Has "quota.openshift.io/v1/ClusterResourceQuota" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

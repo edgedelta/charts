@@ -61,11 +61,6 @@ dockerContainerProps:
 #         type: ""
 #       name: varlibkubelet
 
-# Agent properties
-agentProps:
-  image:
-    pullPolicy: IfNotPresent
-
 # Aggregator agent mode properties
 # Agents are deployed as daemonset. an extra aggregator agent is deployed to collect/aggregate metrics
 aggregatorProps:
@@ -100,7 +95,9 @@ aggregatorProps:
 httpRecorderProps:
   enabled: false
   image:
-    fullPath: gcr.io/edgedelta/httprecorder:latest
+    name: httprecorder
+    tag: latest
+    fullPath: ""
     pullPolicy: IfNotPresent
   port: 8080
 
@@ -210,15 +207,16 @@ pushService:
   sessionAffinityTimeout: 10800
 
 # Helm overrides
-
+repository: gcr.io/edgedelta
 image:
-  name: gcr.io/edgedelta/agent
+  name: agent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   # Overrides full image (with url and version/tag) if not empty
   # example: gcr.io/edgedelta/agent@sha256:0180ff40f52528d7462200c40fae8aff3bdb83289ac19ce823a3fcb1c40c9ad9
   fullPath: ""
-imagePullSecrets: []
+  pullPolicy: IfNotPresent
+  pullSecrets: []
 
 # nameOverride -- Override the name of resources.
 nameOverride: ""
@@ -271,16 +269,6 @@ serviceMonitor:
 
 instructionURL: "https://app.edgedelta.com"
 
-agentUpdater:
-  enabled: false
-  image: gcr.io/edgedelta/agent-updater:latest
-  baseURL: https://api.edgedelta.com/v1
-  latestTagEndpoint: /versioning/latest
-  metadataEndpoint: /agent_updater/metadata
-  logUploader:
-    enabled: true
-    presignedUploadURLEndpoint: /agent_updater/self_logs_upload_link
-
 tracerProps:
   enabled: true
   port: 9595
@@ -299,8 +287,6 @@ compactorProps:
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
-  image:
-    pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
   goMemLimit: "1800MiB"
@@ -357,8 +343,6 @@ rollUpProps:
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
-  image:
-    pullPolicy: IfNotPresent
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -449,8 +433,11 @@ targetAllocator:
   nodeSelector: {}
   priorityClassName: ""
   image:
-    fullPath: gcr.io/edgedelta/target-allocator:v0.1.1
+    name: target-allocator
+    tag: v0.1.1
+    fullPath: ""
     pullPolicy: IfNotPresent
+    pullSecrets: []
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -482,7 +469,7 @@ targetAllocator:
     #   service_monitor_selector:
     #     matchLabels: {}
     #     matchExpressions: []
-  # targetAllocator.topologySpreadConstraints -- Topology spread constraints for targeta allocator
+  # targetAllocator.topologySpreadConstraints -- Topology spread constraints for target allocator
   topologySpreadConstraints: []
   # - maxSkew: 1
   #   topologyKey: topology.kubernetes.io/zone
@@ -490,3 +477,59 @@ targetAllocator:
   #   labelSelector:
   #     matchLabels:
   #       edgedelta/agent-type: targetallocator
+
+serviceAccount:
+  # serviceAccount.annotations -- Annotations for the service account
+  labels: {}
+  # serviceAccount.labels -- Labels for the service account
+  annotations: {}
+
+podSecurity:
+  securityContextConstraints:
+    # podSecurity.securityContextConstraints.create -- If true, create a SecurityContextConstraints resource for pods
+    create: false
+
+  # podSecurity.capabilities -- Allowed capabilities
+  capabilities:
+    - SYS_ADMIN
+    - SYS_RESOURCE
+    - SYS_PTRACE
+    - NET_ADMIN
+    - NET_BROADCAST
+    - NET_RAW
+    - IPC_LOCK
+    - CHOWN
+    - AUDIT_CONTROL
+    - AUDIT_READ
+    - DAC_READ_SEARCH
+
+  # podSecurity.volumes -- Allowed volumes types
+  volumes:
+    - configMap
+    - downwardAPI
+    - emptyDir
+    - hostPath
+    - secret
+
+  # podSecurity.seLinuxContext -- Provide seLinuxContext configuration for SCC
+  # @default -- Must run as spc_t (For reference, please refer here: https://access.redhat.com/solutions/7025337)
+  seLinuxContext:
+    type: MustRunAs
+    seLinuxOptions:
+      user: system_u
+      role: system_r
+      type: spc_t
+      level: s0
+
+  # podSecurity.seccompProfiles -- Allowed seccomp profiles
+  seccompProfiles:
+    - "runtime/default"
+
+  apparmor:
+    # podSecurity.apparmor.enabled -- If true, it will enable apparmor for the pods
+    enabled: false
+    # podSecurity.apparmor.profile -- If apparmor enabled, it will be the profile for apparmor enforcement for the pods
+    profile: "unconfined"
+
+  # podSecurity.privileged -- If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true
+  privileged: false
