@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.88](https://img.shields.io/badge/Version-0.1.88-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.88](https://img.shields.io/badge/AppVersion-v0.1.88-informational?style=flat-square)
+![Version: 0.1.89](https://img.shields.io/badge/Version-0.1.89-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.89](https://img.shields.io/badge/AppVersion-v0.1.89-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -26,6 +26,9 @@ Edge Delta Agent Chart for Kubernetes
 | agentUpdater.logUploader.presignedUploadURLEndpoint | string | `"/agent_updater/self_logs_upload_link"` |  |
 | agentUpdater.metadataEndpoint | string | `"/agent_updater/metadata"` |  |
 | aggregatorProps.enabled | bool | `false` |  |
+| aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
+| aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
+| aggregatorProps.enabledDataTypes.topk | bool | `false` |  |
 | aggregatorProps.goMemLimit | string | `""` |  |
 | aggregatorProps.port | int | `9191` |  |
 | aggregatorProps.resources.limits.memory | string | `"2048Mi"` |  |

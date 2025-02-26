@@ -209,10 +209,18 @@ spec:
                   key: {{ .secretKeyRef.key }}
             {{- end }}
             {{- if .Values.aggregatorProps.enabled }}
+            {{ $enabledDataTypes := list }}
+            {{- range $key, $value := .Values.aggregatorProps.enabledDataTypes }}
+            {{- if $value }}
+              {{ $enabledDataTypes = append $enabledDataTypes $key }}
+            {{- end }}
+            {{- end }}
             - name: ED_AGENT_MODE
               value: processor
             - name: ED_AGGREGATOR_DESTINATION
               value: "http://ed-aggregator-svc.{{.Release.Namespace}}.{{.Values.aggregatorProps.serviceDNSSuffix}}:{{.Values.aggregatorProps.port}}"
+            - name: ED_AGGREGATOR_ENABLED_DATA_TYPES
+              value: {{ join "," (sortAlpha $enabledDataTypes) }}
             {{- end }}
             {{- if .Values.httpRecorderProps.enabled }}
             - name: POD_NAME

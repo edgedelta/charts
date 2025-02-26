@@ -66,6 +66,10 @@ aggregatorProps:
   # serviceDNSSuffix is "svc.cluster.local" by default. It's used to construct endpoint for aggregator agent service so that processor agents can communicate with aggregator.
   # Final endpoint looks like this: http://ed-aggregator-svc.my-namespace.svc.cluster.local:9191
   serviceDNSSuffix: "svc.cluster.local"
+  enabledDataTypes:
+    metric: true
+    cluster_pattern_and_sample: false
+    topk: false
 
   # aggregator can leverage persistent volume to persist internal source related information to recover quickly after restarts/upgrades.
   # aggregator doesn't necessarily need a persistent volume. It will reconcile overall state  after a restart from other agents by returning them an error and forcing them to share source information

@@ -71,10 +71,18 @@ spec:
             containerPort: {{ .Values.promPort }}
           {{- end }}
         env:
+          {{ $enabledDataTypes := list }}
+          {{- range $key, $value := .Values.aggregatorProps.enabledDataTypes }}
+          {{- if $value }}
+            {{ $enabledDataTypes = append $enabledDataTypes $key }}
+          {{- end }}
+          {{- end }}
           - name: ED_AGENT_MODE
             value: aggregator
           - name: ED_AGGREGATOR_LISTEN_PORT
             value: "{{ .Values.aggregatorProps.port }}"
+          - name: ED_AGGREGATOR_ENABLED_DATA_TYPES
+            value: {{ join "," (sortAlpha $enabledDataTypes) }}
           {{- if .Values.aggregatorProps.usePersistentVolume }}
           - name: ED_AGGREGATOR_SRC_MAP_PATH
             value: "/edgedelta/data/src_mapping.json"
