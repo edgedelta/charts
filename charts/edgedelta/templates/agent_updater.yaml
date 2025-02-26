@@ -29,7 +29,11 @@ roleRef:
   name: agent-updater-roles
   apiGroup: rbac.authorization.k8s.io
 ---
+{{- if .Capabilities.APIVersions.Has "batch/v1beta1" }}
+apiVersion: batch/v1beta1
+{{- else }}
 apiVersion: batch/v1
+{{- end }}
 kind: CronJob
 metadata:
   name: edgedelta-updater
