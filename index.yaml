@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   edgedelta:
   - apiVersion: v2
+    appVersion: v0.1.88
+    created: "2025-02-26T11:53:57.730720404Z"
+    description: Edge Delta Agent Chart for Kubernetes
+    digest: 7ce773d68f2c35dac75c4d91eee7e0b624fb67e6bba9073b07d7fb6968c8beb7
+    name: edgedelta
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.88/edgedelta-0.1.88.tgz
+    version: 0.1.88
+  - apiVersion: v2
     appVersion: v0.1.87
     created: "2025-02-26T11:53:38.071683989Z"
     description: Edge Delta Agent Chart for Kubernetes
@@ -901,4 +911,4 @@ entries:
     urls:
     - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.0.89/edgedelta-0.0.89.tgz
     version: 0.0.89
-generated: "2025-02-26T11:53:38.07211204Z"
+generated: "2025-02-26T11:53:57.731700681Z"
