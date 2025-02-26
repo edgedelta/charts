@@ -34,8 +34,13 @@ spec:
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
-      {{- if .Values.edConfigContent }}
-        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum }}
+      {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+      {{- if .Values.secretApiKey.value }}
+        edgedelta/api-key-sha: {{ .Values.secretApiKey.value | sha256sum | substr 0 48 }}
+      {{- else if $lookupResult }}
+        edgedelta/api-key-sha: {{ index $lookupResult.data .Values.secretApiKey.key | b64dec | sha256sum | substr 0 48 }}
+      {{- end }}
       {{- end }}
         edgedelta/agent-type: processor
     spec:
@@ -59,6 +64,13 @@ spec:
         # agent container
         - name: {{ .Chart.Name }}-agent
           image: {{ if .Values.image.fullPath }}{{ .Values.image.fullPath }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}
+          {{- if .Values.edConfigContent }}
+          command:
+            - /edgedelta/edgedelta
+          args:
+            - -c
+            - /var/edgedelta/config.yml
+          {{- end }}
           {{- if or .Values.storePort .Values.dataPort .Values.profilerPort }}
           ports:
           {{- end }}
@@ -201,8 +213,7 @@ spec:
           volumeMounts:
             {{- if .Values.edConfigContent }}
             - name: config-volume
-              mountPath: /edgedelta/config.yml
-              subPath: config.yml
+              mountPath: /var/edgedelta
             {{- end }}
             {{- if .Values.httpRecorderProps.enabled }}
             - mountPath: /var/captured_requests/

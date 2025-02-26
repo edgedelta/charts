@@ -28,9 +28,6 @@ spec:
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
-      {{- if .Values.edConfigContent }}
-        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum | substr 0 48 }}
-      {{- end }}
       {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
       {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
       {{- if .Values.secretApiKey.value }}
@@ -60,6 +57,13 @@ spec:
       containers:
       - name: {{ .Chart.Name }}-archiver
         image: {{ if .Values.image.fullPath }}{{ .Values.image.fullPath }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}
+        {{- if .Values.edConfigContent }}
+        command:
+          - /edgedelta/edgedelta
+        args:
+          - -c
+          - /var/edgedelta/config.yml
+        {{- end }}
         ports:
           - containerPort: {{ .Values.archiverProps.port }}
           {{- if .Values.promPort }}
@@ -171,11 +175,10 @@ spec:
           - name: hostpath
             mountPath: {{ .Values.dockerContainerProps.hostPath }}
             readOnly: true
-        {{- if .Values.edConfigContent }}
+          {{- if .Values.edConfigContent }}
           - name: config-volume
-            mountPath: /edgedelta/config.yml
-            subPath: config.yml
-        {{- end }}
+            mountPath: /var/edgedelta
+          {{- end }}
         resources:
           {{- toYaml .Values.archiverProps.resources | nindent 10 }}
         imagePullPolicy: Always

@@ -33,9 +33,6 @@ spec:
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
-      {{- if .Values.edConfigContent }}
-        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum | substr 0 48 }}
-      {{- end }}
       {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
       {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
       {{- if .Values.secretApiKey.value }}
@@ -66,6 +63,13 @@ spec:
         # agent container
         - name: {{ .Chart.Name }}-agent
           image: {{ if .Values.image.fullPath }}{{ .Values.image.fullPath }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}
+          {{- if .Values.edConfigContent }}
+          command:
+            - /edgedelta/edgedelta
+          args:
+            - -c
+            - /var/edgedelta/config.yml
+          {{- end }}
           {{- if or .Values.storePort .Values.dataPort .Values.profilerPort .Values.promPort}}
           ports:
           {{- end }}
@@ -225,8 +229,7 @@ spec:
               readOnly: true
             {{- if .Values.edConfigContent }}
             - name: config-volume
-              mountPath: /edgedelta/config.yml
-              subPath: config.yml
+              mountPath: /var/edgedelta
             {{- end }}
             {{- if .Values.persistingCursorProps.enabled }}
             - name: persisting-cursor-storage
