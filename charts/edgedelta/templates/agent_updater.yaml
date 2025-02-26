@@ -29,10 +29,12 @@ roleRef:
   name: agent-updater-roles
   apiGroup: rbac.authorization.k8s.io
 ---
-{{- if .Capabilities.APIVersions.Has "batch/v1beta1" }}
+{{- if .Capabilities.APIVersions.Has "batch/v1" }}
+apiVersion: batch/v1
+{{- else if .Capabilities.APIVersions.Has "batch/v1beta1" }}
 apiVersion: batch/v1beta1
 {{- else }}
-apiVersion: batch/v1
+{{ fail "Neither 'batch/v1' nor 'batch/v1beta1' is supported by the cluster" }}
 {{- end }}
 kind: CronJob
 metadata:
