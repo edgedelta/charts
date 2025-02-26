@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.68](https://img.shields.io/badge/Version-0.1.68-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.68](https://img.shields.io/badge/AppVersion-v0.1.68-informational?style=flat-square)
+![Version: 0.1.69](https://img.shields.io/badge/Version-0.1.69-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.69](https://img.shields.io/badge/AppVersion-v0.1.69-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -36,20 +36,24 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.usePersistentVolume | bool | `false` |  |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
-| archiverProps.diskSize | string | `"10Gi"` |  |
-| archiverProps.enabled | bool | `false` |  |
-| archiverProps.goMemLimit | string | `""` |  |
-| archiverProps.port | int | `9292` |  |
-| archiverProps.resources.limits.memory | string | `"2048Mi"` |  |
-| archiverProps.resources.requests.cpu | string | `"200m"` |  |
-| archiverProps.resources.requests.memory | string | `"256Mi"` |  |
-| archiverProps.storageClassName | string | `""` |  |
+| compactorProps.dataDir | string | `"/var/edgedelta-compactor"` |  |
+| compactorProps.diskSize | string | `"30Gi"` |  |
+| compactorProps.enabled | bool | `false` |  |
+| compactorProps.port | int | `9199` |  |
+| compactorProps.replicas | int | `1` |  |
+| compactorProps.resources.limits.cpu | string | `"4000m"` |  |
+| compactorProps.resources.limits.memory | string | `"4000Mi"` |  |
+| compactorProps.resources.requests.cpu | string | `"200m"` |  |
+| compactorProps.resources.requests.memory | string | `"1000Mi"` |  |
+| compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
+| compactorProps.storageClass | string | `""` |  |
+| compactorProps.traceFiles | string | `""` |  |
+| compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | dataPort | string | `""` |  |
 | deployment.kind | string | `"DaemonSet"` |  |
 | deployment.replicas | int | `1` |  |
 | dockerContainerProps.hostPath | string | `"/var/lib/docker/containers"` |  |
 | edAggregatorTraceFiles | string | `""` |  |
-| edArchiverTraceFiles | string | `""` |  |
 | edBackendDisabled | string | `""` |  |
 | edConfigContent | string | `""` |  |
 | edCustomTags | string | `""` |  |

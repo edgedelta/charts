@@ -227,9 +227,13 @@ spec:
             - name: ED_ENABLE_TRAFFIC_TRACER
               value: "1"
             {{- end }}
-            {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.archiverProps.enabled) }}
+            {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.compactorProps.enabled) }}
             - name: ED_SERVICE_DNS_REQUIRED
               value: "1"
+            {{- end }}
+            {{- if .Values.compactorProps.enabled }}
+            - name: ED_COMPACT_SERVICE_ENDPOINT
+              value: ed-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
             {{- end }}
           {{- if .Values.tracerProps.enabled }}
           securityContext:

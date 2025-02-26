@@ -207,6 +207,10 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.name
             {{- end }}
+            {{- if .Values.compactorProps.enabled }}
+            - name: ED_COMPACT_SERVICE_ENDPOINT
+              value: ed-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: Always

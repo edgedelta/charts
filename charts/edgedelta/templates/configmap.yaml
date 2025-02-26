@@ -24,11 +24,11 @@ data:
       paths:
       - {{ .Release.Namespace }}:deploy/{{ include "edgedelta.fullname" . }}-aggregator:spec.template.spec.containers[0].image
     {{- end }}
-    {{- if .Values.archiverProps.enabled }}
-    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-archiver
+    {{- if .Values.compactorProps.enabled }}
+    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}-compactor
       image: agent
       paths:
-      - {{ .Release.Namespace }}:deploy/{{ include "edgedelta.fullname" . }}-archiver:spec.template.spec.containers[0].image
+      - {{ .Release.Namespace }}:deploy/{{ include "edgedelta.fullname" . }}-compactor:spec.template.spec.containers[0].image
     {{- end }}
     log:
       custom_tags:

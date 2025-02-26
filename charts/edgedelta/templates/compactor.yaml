@@ -1,22 +1,23 @@
-{{- if .Values.archiverProps.enabled }}
+{{- if .Values.compactorProps.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "edgedelta.fullname" . }}-archiver
+  name: {{ include "edgedelta.fullname" . }}-compactor
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
-    edgedelta/agent-type: archiver
+    edgedelta/agent-type: compactor
 spec:
-  replicas: 1
-  strategy:
-    type: Recreate # Rolling update gets stuck with ReadWriteOnce PVC
+  replicas: {{ .Values.compactorProps.replicas }}
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
+  serviceName: ed-compactor-svc
+  updateStrategy:
+    {{- toYaml .Values.compactorProps.updateStrategy | nindent 4 }}
   template:
     metadata:
       {{- if .Values.annotations }}
@@ -36,7 +37,7 @@ spec:
         edgedelta/api-key-sha: {{ index $lookupResult.data .Values.secretApiKey.key | b64dec | sha256sum | substr 0 48 }}
       {{- end }}
       {{- end }}
-        edgedelta/agent-type: archiver
+        edgedelta/agent-type: compactor
     spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -55,7 +56,7 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-archiver
+      - name: {{ .Chart.Name }}-compactor
         image: {{ if .Values.image.fullPath }}{{ .Values.image.fullPath }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}
         {{- if .Values.edConfigContent }}
         command:
@@ -65,20 +66,31 @@ spec:
           - /var/edgedelta/config.yml
         {{- end }}
         ports:
-          - containerPort: {{ .Values.archiverProps.port }}
-          {{- if .Values.promPort }}
-          - name: prom
-            containerPort: {{ .Values.promPort }}
+          - name: compactor
+            containerPort: {{ .Values.compactorProps.port }}
+          {{- if .Values.storePort }}
+          - name: metrics
+            containerPort: {{ .Values.storePort }}
+          {{- end }}
+          {{- if .Values.dataPort }}
+          - name: data
+            containerPort: {{ .Values.dataPort }}
+          {{- end }}
+          {{- if .Values.profilerPort }}
+          - name: profiler
+            containerPort: {{ .Values.profilerPort }}
           {{- end }}
         env:
           - name: ED_AGENT_MODE
-            value: archiver
-          - name: ED_ARCHIVER_PORT
-            value: "{{ .Values.archiverProps.port }}"
+            value: compactor
+          - name: ED_COMPACTOR_PORT
+            value: "{{ .Values.compactorProps.port }}"
+          - name: ED_COMPACTOR_DATA_DIR
+            value: {{ .Values.compactorProps.dataDir }}
           - name: ED_HOST_OVERRIDE
-            value: {{ .Chart.Name }}-archiver
-          - name: ED_ARCHIVER_DUMP_FOLDER
-            value: "/edgedelta/data"
+            valueFrom:
+              fieldRef:
+               fieldPath: metadata.name
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}
@@ -96,14 +108,16 @@ spec:
           - name: STORE_PORT
             value: "{{ .Values.storePort }}"
           {{- end }}
+          {{- if .Values.profilerPort }}
+          - name: PROFILER_PORT
+            value: "{{ .Values.profilerPort }}"
+          {{- end }}
           {{- if .Values.promPort }}
           - name: PROM_PORT
             value: "{{ .Values.promPort }}"
           {{- end }}
-          {{- if .Values.edArchiverTraceFiles }}
           - name: ED_TRACE_FILES
-            value: {{ .Values.edArchiverTraceFiles | quote }}
-          {{- end }}
+            value: {{ .Values.compactorProps.traceFiles | quote }}
           {{- if .Values.edApiEndpoint }}
           - name: ED_API_ENDPOINT
             value: {{ .Values.edApiEndpoint }}
@@ -120,23 +134,13 @@ spec:
           - name: ED_TAG_OVERRIDE
             value: {{ .Values.edTagOverride }}
           {{- end }}
+          {{- if .Values.edSkipTlsVerify }}
+          - name: ED_SKIP_K8S_TLS_VERIFY
+            value: "{{ .Values.edSkipTlsVerify }}"
+          {{- end }}
           {{- if .Values.edOrgID }}
           - name: ED_ORG_ID
             value: {{ .Values.edOrgID }}
-          {{- end }}
-          {{- if .Values.edSuppressionMode }}
-          - name: ED_SUPPRESSION_MODE
-            value: "{{ .Values.edSuppressionMode }}"
-          {{- end }}
-          {{- if .Values.edWorkflows }}
-          - name: ED_WORKFLOWS
-            value: {{ .Values.edWorkflows }}
-          {{- end }}
-          - name: ED_LEADER_ELECTION_ENABLED
-            value: "0"
-          {{- if .Values.edWorkflowPrefixes }}
-          - name: ED_WORKFLOW_PREFIXES
-            value: {{ .Values.edWorkflowPrefixes }}
           {{- end }}
           {{- if .Values.httpProxy }}
           - name: HTTP_PROXY
@@ -150,13 +154,9 @@ spec:
           - name: NO_PROXY
             value: {{ .Values.noProxy }}
           {{- end }}
-          {{- if .Values.edCustomTags }}
-          - name: ED_CUSTOM_TAGS
-            value: "{{ .Values.edCustomTags }}"
-          {{- end }}
-          {{- if .Values.archiverProps.goMemLimit }}
+          {{- if .Values.compactorProps.goMemLimit }}
           - name: GOMEMLIMIT
-            value: {{ .Values.archiverProps.goMemLimit }}
+            value: {{ .Values.compactorProps.goMemLimit }}
           {{- end }}
           {{- range .Values.envs }}
           - name: {{ .name }}
@@ -169,37 +169,39 @@ spec:
                 name: {{ .secretKeyRef.name }}
                 key: {{ .secretKeyRef.key }}
           {{- end }}
+        resources:
+          {{- toYaml .Values.compactorProps.resources | nindent 12 }}
+        imagePullPolicy: Always
         volumeMounts:
-          - name: archiver-data
-            mountPath: /edgedelta/data
-          - name: hostpath
-            mountPath: {{ .Values.dockerContainerProps.hostPath }}
-            readOnly: true
+          - name: compactor-data
+            mountPath: {{ .Values.compactorProps.dataDir }}
           {{- if .Values.edConfigContent }}
           - name: config-volume
             mountPath: /var/edgedelta
           {{- end }}
-        resources:
-          {{- toYaml .Values.archiverProps.resources | nindent 10 }}
-        imagePullPolicy: Always
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 60
       volumes:
-        - name: archiver-data
-          persistentVolumeClaim:
-            claimName: archiver-data
-        - name: hostpath
-          hostPath:
-            path: {{ .Values.dockerContainerProps.hostPath }}
       {{- if .Values.edConfigContent }}
         - name: config-volume
           configMap:
             name: {{ .Release.Name }}
       {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: compactor-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.compactorProps.storageClass }}
+      storageClassName: {{ .Values.compactorProps.storageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.compactorProps.diskSize }}
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: ed-archiver-svc
+  name: ed-compactor-svc
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
@@ -207,23 +209,8 @@ spec:
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
-    edgedelta/agent-type: archiver
+    edgedelta/agent-type: compactor
   ports:
-    - port: {{ .Values.archiverProps.port }}
-      name: archiver-port
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: archiver-data
-  namespace: {{ .Release.Namespace }}
-spec:
-  {{- if .Values.archiverProps.storageClassName }}
-  storageClassName: {{ .Values.archiverProps.storageClassName }}
-  {{- end }}
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.archiverProps.diskSize | default "10Gi" }}
+    - port: {{ .Values.compactorProps.port }}
+      name: compactor-port
 {{- end }}

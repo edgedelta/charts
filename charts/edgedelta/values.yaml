@@ -27,7 +27,6 @@ edWorkflowPrefixes: ""
 edDisableLeaderElection: ""
 edTraceFiles: ""
 edAggregatorTraceFiles: ""
-edArchiverTraceFiles: ""
 edSkipTlsVerify: ""
 edConfigContent: ""
 goMemLimit: ""
@@ -74,24 +73,9 @@ aggregatorProps:
   # storageClassName is used if usePersistentVolume=true
   # If your k8s cluster has specific storage classes you can set storageClassName accordingly.
   storageClassName: ""
-  
+
 
   goMemLimit: ""
-  resources:
-    limits:
-      memory: 2048Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-archiverProps:
-  enabled: false
-  port: 9292
-  # Final archiver endpoint looks like this: http://ed-archiver-svc.my-namespace.dns-suffix:9292
-  storageClassName: ""
-  diskSize: 10Gi
-  goMemLimit: ""
-
   resources:
     limits:
       memory: 2048Mi
@@ -115,7 +99,7 @@ httpRecorderProps:
     annotations:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: letsencrypt
-      
+
 
 # Custom labels:
 
@@ -261,3 +245,22 @@ agentUpdater:
 tracerProps:
   enabled: false
   port: 9595
+
+compactorProps:
+  enabled: false
+  port: 9199
+  dataDir: /var/edgedelta-compactor
+  storageClass: ""
+  diskSize: 30Gi
+  replicas: 1
+  serviceDNSSuffix: svc.cluster.local
+  traceFiles: ""
+  updateStrategy:
+    type: RollingUpdate
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 4000Mi
+    requests:
+      cpu: 200m
+      memory: 1000Mi
