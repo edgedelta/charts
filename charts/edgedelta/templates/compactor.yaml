@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "edgedelta.fullname" . }}-compactor
+  name: edgedelta-compactor
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}

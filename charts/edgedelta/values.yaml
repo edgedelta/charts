@@ -245,7 +245,7 @@ tracerProps:
   port: 9595
 
 compactorProps:
-  enabled: false
+  enabled: true
   port: 9199
   dataDir: /var/edgedelta-compactor
   storageClass: ""
