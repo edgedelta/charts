@@ -94,7 +94,7 @@ spec:
             value: {{ .Values.apiKey | quote }}
           {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
           {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
-          {{- if or $lookupResult .Values.secretApiKey.value }}
+          {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
           - name: ED_API_KEY
             valueFrom:
               secretKeyRef:
@@ -226,6 +226,7 @@ spec:
     - port: {{ .Values.aggregatorProps.port }}
       name: aggregator-port
 ---
+{{- if .Values.aggregatorProps.usePersistentVolume }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -240,4 +241,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
+{{- end }}
 {{- end }}

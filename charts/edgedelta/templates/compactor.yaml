@@ -14,6 +14,7 @@ metadata:
     kubernetes.io/cluster-service: "true"
 spec:
   replicas: {{ .Values.compactorProps.replicas }}
+  podManagementPolicy: {{ .Values.compactorProps.podManagementPolicy | default "Parallel" }}
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}

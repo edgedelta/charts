@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.98](https://img.shields.io/badge/Version-0.1.98-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.98](https://img.shields.io/badge/AppVersion-v0.1.98-informational?style=flat-square)
+![Version: 0.1.99](https://img.shields.io/badge/Version-0.1.99-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.99](https://img.shields.io/badge/AppVersion-v0.1.99-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -42,6 +42,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
+| compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.replicas | int | `1` |  |
 | compactorProps.resources.limits.cpu | string | `"2000m"` |  |
@@ -105,6 +106,7 @@ Edge Delta Agent Chart for Kubernetes
 | resources.requests.memory | string | `"256Mi"` |  |
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `"900MiB"` |  |
+| rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.replicas | int | `2` |  |
 | rollUpProps.resources.limits.cpu | string | `"1000m"` |  |
