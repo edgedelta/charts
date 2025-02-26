@@ -4,12 +4,16 @@ kind: DaemonSet
 metadata:
   name: {{ include "edgedelta.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  annotations:
+    prometheus.io/scrape: "true"
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
     edgedelta/agent-type: processor
+    version: v1
+    kubernetes.io/cluster-service: "true"
 spec:
   selector:
     matchLabels:
@@ -42,6 +46,8 @@ spec:
       {{- end }}
       {{- end }}
         edgedelta/agent-type: processor
+        version: v1
+        kubernetes.io/cluster-service: "true"
     spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -103,7 +109,7 @@ spec:
               value: {{ .Values.apiKey | quote }}
             {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
             {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
-            {{- if or $lookupResult .Values.secretApiKey.value }}
+            {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
             - name: ED_API_KEY
               valueFrom:
                 secretKeyRef:

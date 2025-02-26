@@ -7,6 +7,7 @@ secretApiKey:
   name: "ed-api-key"
   key: "ed-api-key"
   value: ""
+  enable: false # set true when creating template from charts
 
 # Predefined environment variables
 # See: https://docs.edgedelta.com/installation/environment-variables
@@ -33,12 +34,15 @@ goMemLimit: ""
 
 edEnableControllerDiscovery: true
 
+# skipping adding common labels for helm charts into direct helm to k8s yaml file creation.
+skipCommonLabels: false
+
 # custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agent to configured destination(s).
 edCustomTags: ""
 
 # Persisting Cursor props constraints
 persistingCursorProps:
-  enabled: false
+  enabled: true
   hostMountPath: "/var/lib/edgedelta"
   containerMountPath: "/var/lib/edgedelta"
 

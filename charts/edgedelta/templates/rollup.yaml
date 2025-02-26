@@ -150,6 +150,10 @@ spec:
           - name: NO_PROXY
             value: {{ .Values.noProxy }}
           {{- end }}
+          {{- if .Values.edCustomTags }}
+          - name:  ED_CUSTOM_TAGS
+            value: "{{ .Values.edCustomTags }}"
+          {{- end }}
           {{- if .Values.rollUpProps.goMemLimit }}
           - name: GOMEMLIMIT
             value: {{ .Values.rollUpProps.goMemLimit }}

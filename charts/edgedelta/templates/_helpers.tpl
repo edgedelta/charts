@@ -35,6 +35,7 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "edgedelta.labels" -}}
+{{- if not .Values.skipCommonLabels }}
 helm.sh/chart: {{ include "edgedelta.chart" . }}
 {{ include "edgedelta.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
@@ -42,6 +43,8 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+{{- end }}
+
 
 {{/*
 Selector labels

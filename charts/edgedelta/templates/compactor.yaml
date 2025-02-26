@@ -10,6 +10,8 @@ metadata:
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
     edgedelta/agent-type: compactor
+    version: v1
+    kubernetes.io/cluster-service: "true"
 spec:
   replicas: {{ .Values.compactorProps.replicas }}
   selector:
@@ -38,6 +40,8 @@ spec:
       {{- end }}
       {{- end }}
         edgedelta/agent-type: compactor
+        version: v1
+        kubernetes.io/cluster-service: "true"
     spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -98,7 +102,7 @@ spec:
             value: {{ .Values.apiKey | quote }}
           {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
           {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
-          {{- if or $lookupResult .Values.secretApiKey.value }}
+          {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
           - name: ED_API_KEY
             valueFrom:
               secretKeyRef:
@@ -155,6 +159,10 @@ spec:
           {{- if .Values.noProxy }}
           - name: NO_PROXY
             value: {{ .Values.noProxy }}
+          {{- end }}
+          {{- if .Values.edCustomTags }}
+          - name:  ED_CUSTOM_TAGS
+            value: "{{ .Values.edCustomTags }}"
           {{- end }}
           {{- if .Values.compactorProps.goMemLimit }}
           - name: GOMEMLIMIT
