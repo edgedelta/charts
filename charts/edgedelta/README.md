@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.73](https://img.shields.io/badge/Version-0.1.73-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.73](https://img.shields.io/badge/AppVersion-v0.1.73-informational?style=flat-square)
+![Version: 0.1.74](https://img.shields.io/badge/Version-0.1.74-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.74](https://img.shields.io/badge/AppVersion-v0.1.74-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -38,13 +38,13 @@ Edge Delta Agent Chart for Kubernetes
 | apiKey | string | `""` |  |
 | compactorProps.dataDir | string | `"/var/edgedelta-compactor"` |  |
 | compactorProps.diskSize | string | `"30Gi"` |  |
-| compactorProps.enabled | bool | `true` |  |
+| compactorProps.enabled | bool | `false` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.replicas | int | `1` |  |
-| compactorProps.resources.limits.cpu | string | `"4000m"` |  |
-| compactorProps.resources.limits.memory | string | `"4000Mi"` |  |
-| compactorProps.resources.requests.cpu | string | `"1500m"` |  |
-| compactorProps.resources.requests.memory | string | `"2000Mi"` |  |
+| compactorProps.resources.limits.cpu | string | `"2000m"` |  |
+| compactorProps.resources.limits.memory | string | `"2000Mi"` |  |
+| compactorProps.resources.requests.cpu | string | `"1000m"` |  |
+| compactorProps.resources.requests.memory | string | `"1000Mi"` |  |
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | compactorProps.storageClass | string | `""` |  |
 | compactorProps.traceFiles | string | `""` |  |
