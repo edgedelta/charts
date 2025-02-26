@@ -26,6 +26,8 @@ edWorkflows: ""
 edWorkflowPrefixes: ""
 edDisableLeaderElection: ""
 edTraceFiles: ""
+edAggregatorTraceFiles: ""
+edArchiverTraceFiles: ""
 edSkipTlsVerify: ""
 edConfigContent: ""
 goMemLimit: ""
@@ -224,3 +226,9 @@ agentTroubleshooter:
         memory: 100Mi
 
 instructionURL: "https://app.edgedelta.com"
+
+agentUpdater:
+  enabled: false
+  image: gcr.io/edgedelta/agent-updater:latest
+  baseURL: https://api.edgedelta.com/v1
+  endpoint: /versioning/latest

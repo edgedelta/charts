@@ -1,4 +1,4 @@
-{{- if .Values.edConfigContent }}
+{{- if or .Values.edConfigContent .Values.agentUpdater.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,6 +7,23 @@ metadata:
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
 data:
+{{- if .Values.edConfigContent }}
   config.yml: |-
 {{ tpl .Values.edConfigContent . | indent 4 }}
+{{- end }}
+{{- if .Values.agentUpdater.enabled }}
+  updater-config.yml: |-
+    entities:
+    - id: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}
+      image: agent
+      paths:
+      - {{ .Release.Namespace }}:ds/{{ include "edgedelta.fullname" . }}:spec.template.spec.containers[0].image
+    api:
+      base_url: {{ .Values.agentUpdater.baseURL }}
+      latest_tag:
+        endpoint: {{ .Values.agentUpdater.endpoint }}
+        auth:
+          header_key: X-ED-Config-Id
+          header_value: {{- if .Values.apiKey }} {{ .Values.apiKey }}{{- else }} {{ .Values.secretApiKey.value }}{{- end }}
+{{- end }}
 {{- end }}

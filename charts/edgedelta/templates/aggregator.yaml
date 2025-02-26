@@ -100,9 +100,9 @@ spec:
           - name: PROM_PORT
             value: "{{ .Values.promPort }}"
           {{- end }}
-          {{- if .Values.edTraceFiles }}
+          {{- if .Values.edAggregatorTraceFiles }}
           - name: ED_TRACE_FILES
-            value: {{ .Values.edTraceFiles }}
+            value: {{ .Values.edAggregatorTraceFiles }}
           {{- end }}
           {{- if .Values.edApiEndpoint }}
           - name: ED_API_ENDPOINT
