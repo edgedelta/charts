@@ -74,7 +74,7 @@ spec:
             - {{ .Values.agentTroubleshooter.symptomCollector.reportInterval | quote }}
             {{- end }}
             {{- if .Values.agentTroubleshooter.symptomCollector.logLineCount }}
-            - --symptom-collector-check-logs-line-count
+            - --symptom-collector-logs-line-count
             - {{ .Values.agentTroubleshooter.symptomCollector.logLineCount | quote }}
             {{- end }}
           env:
