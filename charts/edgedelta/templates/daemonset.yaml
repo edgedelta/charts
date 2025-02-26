@@ -13,9 +13,6 @@ spec:
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
-      {{- if .Values.labels }}
-        {{- toYaml .Values.labels | nindent 6 }}
-      {{- end }}
   updateStrategy:
   {{- if .Values.updateStrategy }}
     {{- toYaml .Values.updateStrategy | nindent 4 }}
@@ -125,6 +122,10 @@ spec:
             {{- if .Values.edWorkflows }}
             - name:  ED_WORKFLOWS
               value: {{ .Values.edWorkflows }}
+            {{- end }}
+             {{- if .Values.edDiscoverKubernetesControllers }}
+            - name: ED_DISCOVER_KUBERNETES_CONTROLLERS
+              value: "1"
             {{- end }}
             - name:  ED_LEADER_ELECTION_ENABLED
             {{- if .Values.edDisableLeaderElection }}
@@ -240,7 +241,6 @@ spec:
             name: capturedrequests
             subPathExpr: $(POD_NAME)
         {{- end }}
-
       terminationGracePeriodSeconds: 10
       volumes:
         - name: varlog
