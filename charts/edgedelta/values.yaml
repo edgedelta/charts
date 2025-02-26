@@ -259,6 +259,7 @@ compactorProps:
   traceFiles: ""
   updateStrategy:
     type: RollingUpdate
+  goMemLimit: ""
   resources:
     limits:
       cpu: 2000m
@@ -266,3 +267,19 @@ compactorProps:
     requests:
       cpu: 1000m
       memory: 1000Mi
+
+rollUpProps:
+  enabled: false
+  port: 9200
+  replicas: 2
+  serviceDNSSuffix: svc.cluster.local
+  updateStrategy:
+    type: RollingUpdate
+  goMemLimit: "900MiB"
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi

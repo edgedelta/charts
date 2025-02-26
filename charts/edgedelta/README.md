@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.91](https://img.shields.io/badge/Version-0.1.91-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.91](https://img.shields.io/badge/AppVersion-v0.1.91-informational?style=flat-square)
+![Version: 0.1.92](https://img.shields.io/badge/Version-0.1.92-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.92](https://img.shields.io/badge/AppVersion-v0.1.92-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -42,6 +42,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.dataDir | string | `"/var/edgedelta-compactor"` |  |
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
+| compactorProps.goMemLimit | string | `""` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.replicas | int | `1` |  |
 | compactorProps.resources.limits.cpu | string | `"2000m"` |  |
@@ -101,6 +102,16 @@ Edge Delta Agent Chart for Kubernetes
 | resources.limits.memory | string | `"2048Mi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
+| rollUpProps.enabled | bool | `false` |  |
+| rollUpProps.goMemLimit | string | `"900MiB"` |  |
+| rollUpProps.port | int | `9200` |  |
+| rollUpProps.replicas | int | `2` |  |
+| rollUpProps.resources.limits.cpu | string | `"1000m"` |  |
+| rollUpProps.resources.limits.memory | string | `"1Gi"` |  |
+| rollUpProps.resources.requests.cpu | string | `"200m"` |  |
+| rollUpProps.resources.requests.memory | string | `"256Mi"` |  |
+| rollUpProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
+| rollUpProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | secretApiKey.key | string | `"ed-api-key"` |  |
 | secretApiKey.name | string | `"ed-api-key"` |  |
 | secretApiKey.value | string | `""` |  |

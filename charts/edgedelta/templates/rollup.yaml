@@ -1,0 +1,203 @@
+{{- if .Values.rollUpProps.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: edgedelta-rollup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+    edgedelta/agent-type: rollup
+spec:
+  replicas: {{ .Values.rollUpProps.replicas }}
+  selector:
+    matchLabels:
+      {{- include "edgedelta.selectorLabels" . | nindent 6 }}
+  serviceName: ed-rollup-svc
+  updateStrategy:
+    {{- toYaml .Values.rollUpProps.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      {{- if .Values.annotations }}
+      annotations:
+        {{- toYaml .Values.annotations | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- include "edgedelta.labels" . | nindent 8 }}
+      {{- if .Values.labels }}
+        {{- toYaml .Values.labels | nindent 8 }}
+      {{- end }}
+      {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+      {{- if .Values.secretApiKey.value }}
+        edgedelta/api-key-sha: {{ .Values.secretApiKey.value | sha256sum | substr 0 48 }}
+      {{- else if $lookupResult }}
+        edgedelta/api-key-sha: {{ index $lookupResult.data .Values.secretApiKey.key | b64dec | sha256sum | substr 0 48 }}
+      {{- end }}
+      {{- end }}
+        edgedelta/agent-type: rollup
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "edgedelta.fullname" . }}
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-rollup
+        image: {{ if .Values.image.fullPath }}{{ .Values.image.fullPath }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}
+        {{- if .Values.edConfigContent }}
+        command:
+          - /edgedelta/edgedelta
+        args:
+          - -c
+          - /var/edgedelta/config.yml
+        {{- end }}
+        ports:
+          - name: rollup
+            containerPort: {{ .Values.rollUpProps.port }}
+          {{- if .Values.storePort }}
+          - name: metrics
+            containerPort: {{ .Values.storePort }}
+          {{- end }}
+          {{- if .Values.dataPort }}
+          - name: data
+            containerPort: {{ .Values.dataPort }}
+          {{- end }}
+          {{- if .Values.profilerPort }}
+          - name: profiler
+            containerPort: {{ .Values.profilerPort }}
+          {{- end }}
+        env:
+          - name: ED_METRIC_ROLLUP_SERVER_PORT
+            value: "{{ .Values.rollUpProps.port }}"
+          - name: ED_HOST_OVERRIDE
+            valueFrom:
+              fieldRef:
+               fieldPath: metadata.name
+          {{- if .Values.apiKey }}
+          - name: ED_API_KEY
+            value: {{ .Values.apiKey | quote }}
+          {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+          {{- if or $lookupResult .Values.secretApiKey.value }}
+          - name: ED_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secretApiKey.name }}
+                key: {{ .Values.secretApiKey.key }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.storePort }}
+          - name: STORE_PORT
+            value: "{{ .Values.storePort }}"
+          {{- end }}
+          {{- if .Values.profilerPort }}
+          - name: PROFILER_PORT
+            value: "{{ .Values.profilerPort }}"
+          {{- end }}
+          {{- if .Values.promPort }}
+          - name: PROM_PORT
+            value: "{{ .Values.promPort }}"
+          {{- end }}
+          - name: ED_TRACE_FILES
+            value: {{ .Values.compactorProps.traceFiles | quote }}
+          {{- if .Values.edApiEndpoint }}
+          - name: ED_API_ENDPOINT
+            value: {{ .Values.edApiEndpoint }}
+          {{- end }}
+          {{- if .Values.edBackendDisabled }}
+          - name: ED_BACKEND_DISABLED
+            value: "{{ .Values.edBackendDisabled }}"
+          {{- end }}
+          {{- if .Values.edSkipConfDownload }}
+          - name: ED_SKIP_CONF_DOWNLOAD
+            value: "{{ .Values.edSkipConfDownload }}"
+          {{- end }}
+          {{- if .Values.edTagOverride }}
+          - name: ED_TAG_OVERRIDE
+            value: {{ .Values.edTagOverride }}
+          {{- end }}
+          {{- if .Values.edSkipTlsVerify }}
+          - name: ED_SKIP_K8S_TLS_VERIFY
+            value: "{{ .Values.edSkipTlsVerify }}"
+          {{- end }}
+          {{- if .Values.edOrgID }}
+          - name: ED_ORG_ID
+            value: {{ .Values.edOrgID }}
+          {{- end }}
+          {{- if .Values.httpProxy }}
+          - name: HTTP_PROXY
+            value: {{ .Values.httpProxy }}
+          {{- end }}
+          {{- if .Values.httpsProxy }}
+          - name: HTTPS_PROXY
+            value: {{ .Values.httpsProxy }}
+          {{- end }}
+          {{- if .Values.noProxy }}
+          - name: NO_PROXY
+            value: {{ .Values.noProxy }}
+          {{- end }}
+          {{- if .Values.rollUpProps.goMemLimit }}
+          - name: GOMEMLIMIT
+            value: {{ .Values.rollUpProps.goMemLimit }}
+          {{- end }}
+          {{- range .Values.envs }}
+          - name: {{ .name }}
+            value: "{{ .value }}"
+          {{- end }}
+          {{- range .Values.secrets }}
+          - name: {{ .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretKeyRef.name }}
+                key: {{ .secretKeyRef.key }}
+          {{- end }}
+          {{- if .Values.compactorProps.enabled }}
+          - name: ED_COMPACT_SERVICE_ENDPOINT
+            value: ed-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
+          {{- end }}
+        resources:
+          {{- toYaml .Values.rollUpProps.resources | nindent 12 }}
+        imagePullPolicy: Always
+        {{- if .Values.edConfigContent }}
+        volumeMounts:
+          - name: config-volume
+            mountPath: /var/edgedelta
+        {{- end }}
+      terminationGracePeriodSeconds: 60
+      {{- if .Values.edConfigContent }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}
+      {{- end }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ed-rollup-svc
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+    edgedelta/agent-type: rollup
+  ports:
+    - port: {{ .Values.rollUpProps.port }}
+      name: rollup-port
+{{- end }}
