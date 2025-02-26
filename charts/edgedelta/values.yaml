@@ -270,7 +270,7 @@ tracerProps:
 compactorProps:
   enabled: true
   port: 9199
-  usePVC: true
+  usePVC: false
   storageClass: ""
   diskSize: 30Gi
   replicas: 1
