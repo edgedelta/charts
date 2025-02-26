@@ -439,3 +439,54 @@ ingress:
 forceReinstallApplications:
   # forceReinstallApplications.enabled -- When set to true, it will delete some of the K8s applications to be reinstalled again
   enabled: true
+
+targetAllocator:
+  enabled: false
+  port: 8080
+  replicas: 1
+  serviceDNSSuffix: svc.cluster.local
+  tolerations: {}
+  nodeSelector: {}
+  priorityClassName: ""
+  image:
+    fullPath: gcr.io/edgedelta/target-allocator:v0.1.1
+    pullPolicy: IfNotPresent
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  configuration:
+    config:
+      scrape_configs:
+        - job_name: ed-agent-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets:
+                - 0.0.0.0:8888
+    filter_strategy: relabel-config
+    prometheus_cr: {}
+    # prometheus_cr:
+    #   enabled: true
+    #   pod_monitor_selector:
+    #     matchLabels: {}
+    #     matchExpressions: []
+    #   scrape_interval: 30s
+    #   service_monitor_selector:
+    #     matchLabels: {}
+    #     matchExpressions: []
+  # targetAllocator.topologySpreadConstraints -- Topology spread constraints for targeta allocator
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
+  #   labelSelector:
+  #     matchLabels:
+  #       edgedelta/agent-type: targetallocator

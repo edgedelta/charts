@@ -1,0 +1,198 @@
+{{- if .Values.targetAllocator.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "edgedelta.fullname" . }}-target-allocator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+    edgedelta/agent-type: target-allocator
+spec:
+  replicas: {{ default 1 .Values.targetAllocator.replicas }}
+  selector:
+    matchLabels:
+      {{- include "edgedelta.selectorLabels" . | nindent 6 }}
+      edgedelta/agent-type: target-allocator
+  strategy:
+  {{- if .Values.targetAllocator.updateStrategy }}
+    {{- toYaml .Values.targetAllocator.updateStrategy | nindent 4 }}
+  {{- else }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  {{- end }}
+  template:
+    metadata:
+      {{- if .Values.annotations }}
+      annotations:
+        {{- toYaml .Values.annotations | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- include "edgedelta.labels" . | nindent 8 }}
+      {{- if .Values.labels }}
+        {{- toYaml .Values.labels | nindent 8 }}
+      {{- end }}
+        edgedelta/agent-type: target-allocator
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "edgedelta.fullname" . }}-target-allocator
+      {{- if .Values.targetAllocator.tolerations }}
+      tolerations:
+        {{- toYaml .Values.targetAllocator.tolerations | nindent 8 }}
+      {{- else if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.targetAllocator.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.targetAllocator.nodeSelector | nindent 8 }}
+      {{- else if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.targetAllocator.priorityClassName }}
+      priorityClassName: {{ .Values.targetAllocator.priorityClassName }}
+      {{- else if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      {{- if .Values.targetAllocator.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml .Values.targetAllocator.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-target-allocator
+        image: {{ .Values.targetAllocator.image.fullPath }}
+        imagePullPolicy: {{ .Values.targetAllocator.image.pullPolicy }}
+        command:
+          - /edgedelta/targetallocator
+        ports:
+        - name: ta-port
+          containerPort: {{ .Values.targetAllocator.port }}
+        resources:
+          {{- toYaml .Values.targetAllocator.resources | nindent 12 }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /conf
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ include "edgedelta.fullname" . }}-target-allocator
+          items:
+          - key: targetallocator.yaml
+            path: targetallocator.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "edgedelta.fullname" . }}-target-allocator
+  namespace: {{ .Release.Namespace }}
+data:
+  targetallocator.yaml: |
+    allocation_strategy: consistent-hashing
+    collector_selector:
+      matchlabels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        edgedelta/agent-type: processor
+      matchexpressions: []
+    {{- toYaml .Values.targetAllocator.configuration | nindent 4 }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ed-target-allocator-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    version: v1
+    kubernetes.io/cluster-service: "true"
+spec:
+  selector:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+    {{- if .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
+    edgedelta/agent-type: target-allocator
+  ports:
+    - port: {{ .Values.targetAllocator.port }}
+      name: ta-port
+---
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  name: {{ include "edgedelta.fullname" . }}-target-allocator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "edgedelta.fullname" . }}-target-allocator-binding
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "edgedelta.fullname" . }}-target-allocator
+subjects:
+- kind: ServiceAccount
+  name: {{ include "edgedelta.fullname" . }}-target-allocator
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "edgedelta.fullname" . }}-target-allocator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - namespaces
+  - services
+  - endpointslices
+  - endpoints
+  - secrets
+  - nodes
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+{{- with .Values.targetAllocator.configuration.prometheus_cr }}
+{{- if .enabled }}
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  - probes
+  - podmonitors
+  - scrapeconfigs
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+{{- end }}
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
+---
+{{- end }}

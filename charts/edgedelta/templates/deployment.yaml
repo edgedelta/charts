@@ -212,14 +212,14 @@ spec:
             - name: ED_AGGREGATOR_ENABLED_DATA_TYPES
               value: {{ join "," (sortAlpha $enabledDataTypes) }}
             {{- end }}
-            {{- if .Values.httpRecorderProps.enabled }}
+            {{- if or .Values.httpRecorderProps.enabled .Values.targetAllocator.enabled }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
             {{- end }}
-            {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.compactorProps.enabled .Values.rollUpProps.enabled) }}
+            {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.compactorProps.enabled .Values.rollUpProps.enabled .Values.targetAllocator.enabled) }}
             - name: ED_SERVICE_DNS_REQUIRED
               value: "1"
             {{- end }}
@@ -232,6 +232,12 @@ spec:
               value: "1"
             - name: ED_METRIC_ROLLUP_DESTINATION_OVERRIDE
               value: ed-rollup-svc.{{.Release.Namespace}}.{{.Values.rollUpProps.serviceDNSSuffix}}:{{.Values.rollUpProps.port}}
+            {{- end }}
+            {{- if .Values.targetAllocator.enabled }}
+            - name: ED_TARGET_ALLOCATOR_ENABLED
+              value: "1"
+            - name: ED_TARGET_ALLOCATOR_DESTINATION_OVERRIDE
+              value: http://ed-target-allocator-svc.{{.Release.Namespace}}.{{.Values.targetAllocator.serviceDNSSuffix}}:{{.Values.targetAllocator.port}}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

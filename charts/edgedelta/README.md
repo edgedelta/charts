@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.27.0](https://img.shields.io/badge/Version-1.27.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.27.0](https://img.shields.io/badge/AppVersion-v1.27.0-informational?style=flat-square)
+![Version: 1.28.0](https://img.shields.io/badge/Version-1.28.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.28.0](https://img.shields.io/badge/AppVersion-v1.28.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -160,6 +160,28 @@ Edge Delta Agent Chart for Kubernetes
 | serviceMonitor.enabled | bool | `false` | If true, create ServiceMonitor for processor agents |
 | skipCommonLabels | bool | `false` |  |
 | storePort | string | `""` |  |
+| targetAllocator.configuration.config.scrape_configs[0].job_name | string | `"ed-agent-collector"` |  |
+| targetAllocator.configuration.config.scrape_configs[0].scrape_interval | string | `"10s"` |  |
+| targetAllocator.configuration.config.scrape_configs[0].static_configs[0].targets[0] | string | `"0.0.0.0:8888"` |  |
+| targetAllocator.configuration.filter_strategy | string | `"relabel-config"` |  |
+| targetAllocator.configuration.prometheus_cr | object | `{}` |  |
+| targetAllocator.enabled | bool | `false` |  |
+| targetAllocator.image.fullPath | string | `"gcr.io/edgedelta/target-allocator:v0.1.1"` |  |
+| targetAllocator.image.pullPolicy | string | `"IfNotPresent"` |  |
+| targetAllocator.nodeSelector | object | `{}` |  |
+| targetAllocator.port | int | `8080` |  |
+| targetAllocator.priorityClassName | string | `""` |  |
+| targetAllocator.replicas | int | `1` |  |
+| targetAllocator.resources.limits.cpu | string | `"1000m"` |  |
+| targetAllocator.resources.limits.memory | string | `"1Gi"` |  |
+| targetAllocator.resources.requests.cpu | string | `"200m"` |  |
+| targetAllocator.resources.requests.memory | string | `"256Mi"` |  |
+| targetAllocator.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
+| targetAllocator.tolerations | object | `{}` |  |
+| targetAllocator.topologySpreadConstraints | list | `[]` | Topology spread constraints for targeta allocator |
+| targetAllocator.updateStrategy.rollingUpdate.maxSurge | int | `1` |  |
+| targetAllocator.updateStrategy.rollingUpdate.maxUnavailable | int | `0` |  |
+| targetAllocator.updateStrategy.type | string | `"RollingUpdate"` |  |
 | tolerations | object | `{}` |  |
 | tracerProps.enabled | bool | `true` |  |
 | tracerProps.port | int | `9595` |  |
