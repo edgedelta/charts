@@ -21,6 +21,7 @@ spec:
       labels:
       {{- include "edgedelta.labels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ include "edgedelta.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: edgedelta/agent:{{ .Values.image.tag | default .Chart.AppVersion }}
@@ -35,15 +36,49 @@ spec:
               value:  {{ .Values.apiKey }}
             {{- if .Values.storePort }}
             - name:  STORE_PORT
-              value: {{ .Values.storePort }}
+              value: "{{ .Values.storePort }}"
+            {{- end }}
+            {{- if .Values.edTraceFiles }}
+            - name:  ED_TRACE_FILES
+              value: {{ .Values.edTraceFiles }}
+            {{- end }}
+            {{- if .Values.edApiEndpoint }}
+            - name:  ED_API_ENDPOINT
+              value: {{ .Values.edApiEndpoint }}
+            {{- end }}
+            {{- if .Values.edBackendDisabled }}
+            - name:  ED_BACKEND_DISABLED
+              value: "{{ .Values.edBackendDisabled }}"
+            {{- end }}
+            {{- if .Values.edSkipConfDownload }}
+            - name:  ED_SKIP_CONF_DOWNLOAD
+              value: "{{ .Values.edSkipConfDownload }}"
+            {{- end }}
+            {{- if .Values.edTagOverride }}
+            - name:  ED_TAG_OVERRIDE
+              value: {{ .Values.edTagOverride }}
+            {{- end }}
+            {{- if .Values.edOrgID }}
+            - name:  ED_ORG_ID
+              value: {{ .Values.edOrgID }}
+            {{- end }}
+            {{- if .Values.edSuppressionMode }}
+            - name:  ED_SUPPRESSION_MODE
+              value: "{{ .Values.edSuppressionMode }}"
+            {{- end }}
+            {{- if .Values.httpProxy }}
+            - name:  HTTP_PROXY
+              value: {{ .Values.httpProxy }}
+            {{- end }}
+            {{- if .Values.noProxy }}
+            - name:  NO_PROXY
+              value: {{ .Values.noProxy }}
             {{- end }}
             # pass node hostname to agent
             - name: ED_HOST_OVERRIDE
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          command:
-            - /edgedelta/edgedelta
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -52,6 +87,11 @@ spec:
             - name: varlibdockercontainers
               mountPath: /var/lib/docker/containers
               readOnly: true
+            {{- if .Values.edConfigContent }}
+            - name: config-volume
+              mountPath: /edgedelta/config.yml
+              subPath: config.yml
+            {{- end }}
       terminationGracePeriodSeconds: 10
       volumes:
         - name: varlog
@@ -60,3 +100,8 @@ spec:
         - name: varlibdockercontainers
           hostPath:
             path: /var/lib/docker/containers
+        {{- if .Values.edConfigContent }}
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}
+        {{- end }}
