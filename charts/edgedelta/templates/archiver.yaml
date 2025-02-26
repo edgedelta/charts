@@ -19,15 +19,18 @@ spec:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations:
       {{- if .Values.annotations }}
+      annotations:
         {{- toYaml .Values.annotations | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "edgedelta.labels" . | nindent 8 }}
-        {{- if .Values.labels }}
-          {{- toYaml .Values.labels | nindent 8 }}
-        {{- end }}
+      {{- include "edgedelta.labels" . | nindent 8 }}
+      {{- if .Values.labels }}
+        {{- toYaml .Values.labels | nindent 8 }}
+      {{- end }}
+      {{- if .Values.edConfigContent }}
+        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum }}
+      {{- end }}
         edgedelta/agent-type: archiver
     spec:
       serviceAccountName: {{ include "edgedelta.fullname" . }}
@@ -38,6 +41,9 @@ spec:
       {{- if .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-archiver
@@ -55,10 +61,10 @@ spec:
             value: "/edgedelta/data"
           {{- if .Values.apiKey }}
           - name:  ED_API_KEY
-            value: "{{ .Values.apiKey }}"
-          {{- end }}
-          {{- if .Values.secretApiKey }}
-          {{- if .Values.secretApiKey.name }}
+            value: {{ .Values.apiKey | quote }}
+          {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+          {{- if $lookupResult }}
           - name:  ED_API_KEY
             valueFrom:
               secretKeyRef:

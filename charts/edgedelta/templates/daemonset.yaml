@@ -23,14 +23,17 @@ spec:
   {{- end }}
   template:
     metadata:
-      annotations:
       {{- if .Values.annotations }}
+      annotations:
         {{- toYaml .Values.annotations | nindent 8 }}
       {{- end }}
       labels:
       {{- include "edgedelta.labels" . | nindent 8 }}
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
+      {{- end }}
+      {{- if .Values.edConfigContent }}
+        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum }}
       {{- end }}
         edgedelta/agent-type: processor
     spec:
@@ -42,6 +45,9 @@ spec:
       {{- if .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
       containers:
         # agent container
@@ -68,10 +74,10 @@ spec:
           env:
             {{- if .Values.apiKey }}
             - name:  ED_API_KEY
-              value: "{{ .Values.apiKey }}"
-            {{- end }}
-            {{- if .Values.secretApiKey }}
-            {{- if .Values.secretApiKey.name }}
+              value: {{ .Values.apiKey | quote }}
+            {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+            {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+            {{- if $lookupResult }}
             - name:  ED_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -123,8 +129,8 @@ spec:
             - name:  ED_WORKFLOWS
               value: {{ .Values.edWorkflows }}
             {{- end }}
-             {{- if .Values.edDiscoverKubernetesControllers }}
-            - name: ED_DISCOVER_KUBERNETES_CONTROLLERS
+             {{- if .Values.edDisableControllerDiscovery }}
+            - name: ED_DISABLE_PARENT_K8S_CONTROLLER_DISCOVERY
               value: "1"
             {{- end }}
             - name:  ED_LEADER_ELECTION_ENABLED
