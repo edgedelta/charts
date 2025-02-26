@@ -150,6 +150,10 @@ spec:
           - name: ED_CUSTOM_TAGS
             value: "{{ .Values.edCustomTags }}"
           {{- end }}
+          {{- if .Values.archiverProps.goMemLimit }}
+          - name: GOMEMLIMIT
+            value: {{ .Values.archiverProps.goMemLimit }}
+          {{- end }}
           {{- range .Values.envs }}
           - name: {{ .name }}
             value: "{{ .value }}"
@@ -173,7 +177,7 @@ spec:
             subPath: config.yml
         {{- end }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.archiverProps.resources | nindent 10 }}
         imagePullPolicy: Always
       terminationGracePeriodSeconds: 10
       volumes:

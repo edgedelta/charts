@@ -180,6 +180,10 @@ spec:
             - name:  ED_CUSTOM_TAGS
               value: "{{ .Values.edCustomTags }}"
             {{- end }}
+            {{- if .Values.goMemLimit }}
+            - name: GOMEMLIMIT
+              value: {{ .Values.goMemLimit }}
+            {{- end }}
             # pass node hostname to agent
             - name: ED_HOST_OVERRIDE
               valueFrom:
