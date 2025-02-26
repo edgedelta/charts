@@ -47,6 +47,18 @@ persistingCursorProps:
 dockerContainerProps:
   hostPath: "/var/lib/docker/containers"
 
+# Volume props will be used for mounting certain volume(s) to the given path(s) for the agent
+# volumeProps:
+#   volumeMounts:
+#     - mountPath: /var/lib/kubelet
+#       name: varlibkubelet
+#       readOnly: true
+#   volumes:
+#     - hostPath:
+#         path: /var/lib/kubelet
+#         type: ""
+#       name: varlibkubelet
+
 # Aggregator agent mode properties
 # Agents are deployed as daemonset. an extra aggregator agent is deployed to collect/aggregate metrics
 aggregatorProps:

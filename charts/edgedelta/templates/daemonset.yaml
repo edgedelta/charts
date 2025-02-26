@@ -227,6 +227,10 @@ spec:
             - name: ED_ENABLE_TRAFFIC_TRACER
               value: "1"
             {{- end }}
+            {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.archiverProps.enabled) }}
+            - name: ED_SERVICE_DNS_REQUIRED
+              value: "1"
+            {{- end }}
           {{- if .Values.tracerProps.enabled }}
           securityContext:
             privileged: true
@@ -263,6 +267,9 @@ spec:
               mountPath: /var/run/netns
             - name: proc
               mountPath: /proc
+            {{- end }}
+            {{- if and .Values.volumeProps .Values.volumeProps.volumeMounts }}
+              {{- toYaml .Values.volumeProps.volumeMounts | nindent 12 }}
             {{- end }}
         {{- if .Values.httpRecorderProps.enabled }}
         # httprecorder container
@@ -336,6 +343,9 @@ spec:
         - name: proc
           hostPath:
             path: /proc
+        {{- end }}
+        {{- if and .Values.volumeProps .Values.volumeProps.volumes }}
+          {{- toYaml .Values.volumeProps.volumes | nindent 8 }}
         {{- end }}
 {{- if .Values.httpRecorderProps.enabled }}
 ---
