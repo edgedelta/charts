@@ -75,8 +75,10 @@ spec:
             value: aggregator
           - name: ED_AGGREGATOR_LISTEN_PORT
             value: "{{ .Values.aggregatorProps.port }}"
+          {{- if .Values.aggregatorProps.usePersistentVolume }}
           - name: ED_AGGREGATOR_SRC_MAP_PATH
             value: "/edgedelta/data/src_mapping.json"
+          {{- end }}
           - name: ED_HOST_OVERRIDE
             value: {{ .Chart.Name }}-aggregator
           {{- if .Values.apiKey }}
@@ -170,8 +172,10 @@ spec:
                 key: {{ .secretKeyRef.key }}
           {{- end }}
         volumeMounts:
+          {{- if .Values.aggregatorProps.usePersistentVolume }}
           - name: "aggregator-data"
             mountPath: "/edgedelta/data"
+          {{- end }}
           - name: hostpath
             mountPath: {{ .Values.dockerContainerProps.hostPath }}
             readOnly: true
@@ -184,9 +188,11 @@ spec:
         imagePullPolicy: Always
       terminationGracePeriodSeconds: 10
       volumes:
+        {{- if .Values.aggregatorProps.usePersistentVolume }}
         - name: aggregator-data
           persistentVolumeClaim:
             claimName: aggregator-data
+        {{- end }}
         - name: hostpath
           hostPath:
             path: {{ .Values.dockerContainerProps.hostPath }}
