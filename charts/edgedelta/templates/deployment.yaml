@@ -220,7 +220,7 @@ spec:
               name: capturedrequests
               subPathExpr: $(POD_NAME)
             {{- end }}
-            {{- if and .Values.volumeProps .Values.volumeProps.volumeMounts }}
+            {{- if (.Values.volumeProps).volumeMounts }}
               {{- toYaml .Values.volumeProps.volumeMounts | nindent 12 }}
             {{- end }}
         {{- if .Values.httpRecorderProps.enabled }}
@@ -270,7 +270,7 @@ spec:
           hostPath:
             path: /var/log/
         {{- end }}
-        {{- if and .Values.volumeProps .Values.volumeProps.volumes }}
+        {{- if (.Values.volumeProps).volumes }}
           {{- toYaml .Values.volumeProps.volumes | nindent 8 }}
         {{- end }}
 {{- if .Values.httpRecorderProps.enabled }}
