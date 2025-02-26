@@ -285,6 +285,7 @@ spec:
         - name: persisting-cursor-storage
           hostPath:
             path: {{ .Values.persistingCursorProps.hostMountPath }}
+            type: DirectoryOrCreate
         {{- end }}
         {{- if .Values.httpRecorderProps.enabled }}
         - name: capturedrequests
