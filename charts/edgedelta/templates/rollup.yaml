@@ -195,7 +195,7 @@ spec:
           {{- end }}
         resources:
           {{- toYaml .Values.rollUpProps.resources | nindent 12 }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.rollUpProps.image.pullPolicy }}
         {{- if .Values.edConfigContent }}
         volumeMounts:
           - name: config-volume

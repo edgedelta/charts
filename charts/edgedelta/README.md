@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.20.0](https://img.shields.io/badge/Version-1.20.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.20.0](https://img.shields.io/badge/AppVersion-v1.20.0-informational?style=flat-square)
+![Version: 1.21.0](https://img.shields.io/badge/Version-1.21.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.21.0](https://img.shields.io/badge/AppVersion-v1.21.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -8,6 +8,7 @@ Edge Delta Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| agentProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | agentTroubleshooter.image | string | `"gcr.io/edgedelta/agent-troubleshooter:latest"` |  |
 | agentTroubleshooter.symptomCollector.checkInterval | string | `""` |  |
 | agentTroubleshooter.symptomCollector.enabled | bool | `false` |  |
@@ -51,6 +52,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
+| compactorProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
 | compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
@@ -97,7 +99,8 @@ Edge Delta Agent Chart for Kubernetes
 | goMemLimit | string | `""` |  |
 | httpProxy | string | `""` |  |
 | httpRecorderProps.enabled | bool | `false` |  |
-| httpRecorderProps.image | string | `"gcr.io/edgedelta/httprecorder:latest"` |  |
+| httpRecorderProps.image.fullPath | string | `"gcr.io/edgedelta/httprecorder:latest"` |  |
+| httpRecorderProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | httpRecorderProps.port | int | `8080` |  |
 | httpsProxy | string | `""` |  |
 | image.fullPath | string | `""` |  |
@@ -144,6 +147,7 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `"900MiB"` |  |
+| rollUpProps.image.pullPolicy | string | `"IfNotPresent"` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
 | rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |

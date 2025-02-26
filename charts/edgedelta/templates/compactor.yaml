@@ -195,7 +195,7 @@ spec:
           {{- end }}
         resources:
           {{- toYaml .Values.compactorProps.resources | nindent 12 }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.compactorProps.image.pullPolicy }}
         volumeMounts:
           {{- if .Values.compactorProps.usePVC}}
           - name: compactor-data

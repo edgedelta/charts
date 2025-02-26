@@ -235,7 +235,7 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.agentProps.image.pullPolicy }}
           volumeMounts:
             {{- if .Values.edConfigContent }}
             - name: config-volume
@@ -252,8 +252,8 @@ spec:
         {{- if .Values.httpRecorderProps.enabled }}
         # httprecorder container
         - name: {{ .Chart.Name }}-httprecorder
-          image: {{ .Values.httpRecorderProps.image }}
-          imagePullPolicy: Always
+          image: {{ .Values.httpRecorderProps.image.fullPath }}
+          imagePullPolicy: {{ .Values.httpRecorderProps.image.pullPolicy }}
           command:
             - /edgedelta/httprecorder
             - --port
