@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.13.0](https://img.shields.io/badge/Version-1.13.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.13.0](https://img.shields.io/badge/AppVersion-v1.13.0-informational?style=flat-square)
+![Version: 1.14.0](https://img.shields.io/badge/Version-1.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.14.0](https://img.shields.io/badge/AppVersion-v1.14.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -63,6 +63,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | compactorProps.storageClass | string | `""` |  |
 | compactorProps.tolerations | object | `{}` |  |
+| compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | compactorProps.usePVC | bool | `false` |  |
@@ -76,6 +77,7 @@ Edge Delta Agent Chart for Kubernetes
 | deployment.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | deployment.kind | string | `"DaemonSet"` | Can be either DaemonSet or Deployment |
 | deployment.replicas | int | `1` | Number of pods of the deployment (only applies when kind == Deployment). Mutually exclusive with autoscaling |
+| deployment.topologySpreadConstraints | list | `[]` | Topology spread constraints for processor agents while in Deployment mode |
 | dockerContainerProps.hostPath | string | `"/var/lib/docker/containers"` |  |
 | edAggregatorTraceFiles | string | `""` |  |
 | edBackendDisabled | string | `""` |  |
@@ -153,6 +155,7 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.resources.requests.memory | string | `"256Mi"` |  |
 | rollUpProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | rollUpProps.tolerations | object | `{}` |  |
+| rollUpProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for rollup agents |
 | rollUpProps.updateStrategy.rollingUpdate.maxUnavailable | int | `1` |  |
 | rollUpProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | secretApiKey.enable | bool | `false` |  |
