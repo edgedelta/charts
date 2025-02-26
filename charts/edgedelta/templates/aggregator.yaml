@@ -29,7 +29,15 @@ spec:
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
       {{- if .Values.edConfigContent }}
-        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum }}
+        edgedelta/config-sha: {{ .Values.edConfigContent | sha256sum | substr 0 48 }}
+      {{- end }}
+      {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
+      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+      {{- if .Values.secretApiKey.value }}
+        edgedelta/api-key-sha: {{ .Values.secretApiKey.value | sha256sum | substr 0 48 }}
+      {{- else if $lookupResult }}
+        edgedelta/api-key-sha: {{ index $lookupResult.data .Values.secretApiKey.key | b64dec | sha256sum | substr 0 48 }}
+      {{- end }}
       {{- end }}
         edgedelta/agent-type: aggregator
     spec:
@@ -63,17 +71,17 @@ spec:
             value: aggregator
           - name: ED_AGGREGATOR_LISTEN_PORT
             value: "{{ .Values.aggregatorProps.port }}"
-          - name:  ED_AGGREGATOR_SRC_MAP_PATH
+          - name: ED_AGGREGATOR_SRC_MAP_PATH
             value: "/edgedelta/data/src_mapping.json"
           - name: ED_HOST_OVERRIDE
             value: {{ .Chart.Name }}-aggregator
           {{- if .Values.apiKey }}
-          - name:  ED_API_KEY
+          - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}
           {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
           {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
-          {{- if $lookupResult }}
-          - name:  ED_API_KEY
+          {{- if or $lookupResult .Values.secretApiKey.value }}
+          - name: ED_API_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.secretApiKey.name }}
@@ -81,7 +89,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- if .Values.storePort }}
-          - name:  STORE_PORT
+          - name: STORE_PORT
             value: "{{ .Values.storePort }}"
           {{- end }}
           {{- if .Values.promPort }}
@@ -89,57 +97,57 @@ spec:
             value: "{{ .Values.promPort }}"
           {{- end }}
           {{- if .Values.edTraceFiles }}
-          - name:  ED_TRACE_FILES
+          - name: ED_TRACE_FILES
             value: {{ .Values.edTraceFiles }}
           {{- end }}
           {{- if .Values.edApiEndpoint }}
-          - name:  ED_API_ENDPOINT
+          - name: ED_API_ENDPOINT
             value: {{ .Values.edApiEndpoint }}
           {{- end }}
           {{- if .Values.edBackendDisabled }}
-          - name:  ED_BACKEND_DISABLED
+          - name: ED_BACKEND_DISABLED
             value: "{{ .Values.edBackendDisabled }}"
           {{- end }}
           {{- if .Values.edSkipConfDownload }}
-          - name:  ED_SKIP_CONF_DOWNLOAD
+          - name: ED_SKIP_CONF_DOWNLOAD
             value: "{{ .Values.edSkipConfDownload }}"
           {{- end }}
           {{- if .Values.edTagOverride }}
-          - name:  ED_TAG_OVERRIDE
+          - name: ED_TAG_OVERRIDE
             value: {{ .Values.edTagOverride }}
           {{- end }}
           {{- if .Values.edOrgID }}
-          - name:  ED_ORG_ID
+          - name: ED_ORG_ID
             value: {{ .Values.edOrgID }}
           {{- end }}
           {{- if .Values.edSuppressionMode }}
-          - name:  ED_SUPPRESSION_MODE
+          - name: ED_SUPPRESSION_MODE
             value: "{{ .Values.edSuppressionMode }}"
           {{- end }}
           {{- if .Values.edWorkflows }}
-          - name:  ED_WORKFLOWS
+          - name: ED_WORKFLOWS
             value: {{ .Values.edWorkflows }}
           {{- end }}
-          - name:  ED_LEADER_ELECTION_ENABLED
+          - name: ED_LEADER_ELECTION_ENABLED
             value: "0"
           {{- if .Values.edWorkflowPrefixes }}
-          - name:  ED_WORKFLOW_PREFIXES
+          - name: ED_WORKFLOW_PREFIXES
             value: {{ .Values.edWorkflowPrefixes }}
           {{- end }}
           {{- if .Values.httpProxy }}
-          - name:  HTTP_PROXY
+          - name: HTTP_PROXY
             value: {{ .Values.httpProxy }}
           {{- end }}
           {{- if .Values.httpsProxy }}
-          - name:  HTTPS_PROXY
+          - name: HTTPS_PROXY
             value: {{ .Values.httpsProxy }}
           {{- end }}
           {{- if .Values.noProxy }}
-          - name:  NO_PROXY
+          - name: NO_PROXY
             value: {{ .Values.noProxy }}
           {{- end }}
           {{- if .Values.edCustomTags }}
-          - name:  ED_CUSTOM_TAGS
+          - name: ED_CUSTOM_TAGS
             value: "{{ .Values.edCustomTags }}"
           {{- end }}
           {{- range .Values.envs }}

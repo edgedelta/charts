@@ -29,7 +29,7 @@ edTraceFiles: ""
 edSkipTlsVerify: ""
 edConfigContent: ""
 
-edDisableControllerDiscovery: false
+edEnableControllerDiscovery: true
 
 # custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agent to configured destination(s).
 edCustomTags: ""
@@ -61,6 +61,7 @@ archiverProps:
   port: 9292
   # Final archiver endpoint looks like this: http://ed-archiver-svc.my-namespace.dns-suffix:9292
   storageClassName: ""
+  diskSize: 10Gi
 
 # HttpRecorder is a frontend layer which can consume logs with both http and tcp protocols
 # It is deployed as a sidecar for each ED agent. It dumps the incoming logs to filesystem (persisted via PVC) and agents grab from there.
@@ -98,6 +99,13 @@ httpRecorderProps:
 
 # Create secrets with below command:
 # kubectl create secret generic sample-k8-secret-name --namespace=edgedelta --from-literal=sample-k8s-secret-subkey="SECRET_VALUE"
+
+# Configure the deployment type
+deployment:
+  # Can be either Deployment or DaemonSet
+  kind: DaemonSet
+  # Number of pods of the deployment (only applies when kind == Deployment)
+  replicas: 1
 
 # Resource constraints
 
