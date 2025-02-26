@@ -251,7 +251,7 @@ tracerProps:
 compactorProps:
   enabled: true
   port: 9199
-  dataDir: /var/edgedelta-compactor
+  usePVC: true
   storageClass: ""
   diskSize: 30Gi
   replicas: 1
@@ -265,11 +265,11 @@ compactorProps:
       cpu: 2000m
       memory: 2000Mi
     requests:
-      cpu: 1000m
-      memory: 1000Mi
+      cpu: 200m
+      memory: 300Mi
 
 rollUpProps:
-  enabled: false
+  enabled: true
   port: 9200
   replicas: 2
   serviceDNSSuffix: svc.cluster.local

@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 0.1.92](https://img.shields.io/badge/Version-0.1.92-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.92](https://img.shields.io/badge/AppVersion-v0.1.92-informational?style=flat-square)
+![Version: 0.1.93](https://img.shields.io/badge/Version-0.1.93-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.93](https://img.shields.io/badge/AppVersion-v0.1.93-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -39,7 +39,6 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.usePersistentVolume | bool | `false` |  |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
-| compactorProps.dataDir | string | `"/var/edgedelta-compactor"` |  |
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
@@ -47,12 +46,13 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.replicas | int | `1` |  |
 | compactorProps.resources.limits.cpu | string | `"2000m"` |  |
 | compactorProps.resources.limits.memory | string | `"2000Mi"` |  |
-| compactorProps.resources.requests.cpu | string | `"1000m"` |  |
-| compactorProps.resources.requests.memory | string | `"1000Mi"` |  |
+| compactorProps.resources.requests.cpu | string | `"200m"` |  |
+| compactorProps.resources.requests.memory | string | `"300Mi"` |  |
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | compactorProps.storageClass | string | `""` |  |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
+| compactorProps.usePVC | bool | `true` |  |
 | dataPort | string | `""` |  |
 | deployment.kind | string | `"DaemonSet"` |  |
 | deployment.replicas | int | `1` |  |
@@ -102,7 +102,7 @@ Edge Delta Agent Chart for Kubernetes
 | resources.limits.memory | string | `"2048Mi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
-| rollUpProps.enabled | bool | `false` |  |
+| rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `"900MiB"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.replicas | int | `2` |  |
