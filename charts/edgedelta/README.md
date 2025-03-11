@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.30.0](https://img.shields.io/badge/Version-1.30.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.30.0](https://img.shields.io/badge/AppVersion-v1.30.0-informational?style=flat-square)
+![Version: 1.31.0](https://img.shields.io/badge/Version-1.31.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.31.0](https://img.shields.io/badge/AppVersion-v1.31.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -12,7 +12,7 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
 | aggregatorProps.enabledDataTypes.topk | bool | `false` |  |
-| aggregatorProps.goMemLimit | string | `"1800MiB"` |  |
+| aggregatorProps.goMemLimit | string | `""` |  |
 | aggregatorProps.port | int | `9191` |  |
 | aggregatorProps.resources.limits.cpu | string | `"2000m"` |  |
 | aggregatorProps.resources.limits.memory | string | `"2048Mi"` |  |
@@ -33,7 +33,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
-| compactorProps.goMemLimit | string | `"1800MiB"` |  |
+| compactorProps.goMemLimit | string | `""` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
 | compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
@@ -77,7 +77,7 @@ Edge Delta Agent Chart for Kubernetes
 | edWorkflows | string | `""` |  |
 | forceReinstallApplications.enabled | bool | `true` | When set to true, it will delete some of the K8s applications to be reinstalled again |
 | fullnameOverride | string | `""` | Override the full name of resources. |
-| goMemLimit | string | `"1800MiB"` |  |
+| goMemLimit | string | `""` |  |
 | httpProxy | string | `""` |  |
 | httpRecorderProps.enabled | bool | `false` |  |
 | httpRecorderProps.image.fullPath | string | `""` |  |
@@ -139,7 +139,7 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for rollup agents in order to HPA to kick in |
 | rollUpProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | rollUpProps.enabled | bool | `true` |  |
-| rollUpProps.goMemLimit | string | `"900MiB"` |  |
+| rollUpProps.goMemLimit | string | `""` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
 | rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
