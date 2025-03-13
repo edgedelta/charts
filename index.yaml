@@ -9,7 +9,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.31.0/edgedelta-1.31.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.31.0/edgedelta-1.31.0.tgz
     version: 1.31.0
   - apiVersion: v2
     appVersion: v1.30.0
@@ -19,7 +19,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.30.0/edgedelta-1.30.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.30.0/edgedelta-1.30.0.tgz
     version: 1.30.0
   - apiVersion: v2
     appVersion: v1.29.0
@@ -29,7 +29,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.29.0/edgedelta-1.29.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.29.0/edgedelta-1.29.0.tgz
     version: 1.29.0
   - apiVersion: v2
     appVersion: v1.28.0
@@ -39,7 +39,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.28.0/edgedelta-1.28.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.28.0/edgedelta-1.28.0.tgz
     version: 1.28.0
   - apiVersion: v2
     appVersion: v1.27.0
@@ -49,7 +49,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.27.0/edgedelta-1.27.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.27.0/edgedelta-1.27.0.tgz
     version: 1.27.0
   - apiVersion: v2
     appVersion: v1.26.0
@@ -59,7 +59,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.26.0/edgedelta-1.26.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.26.0/edgedelta-1.26.0.tgz
     version: 1.26.0
   - apiVersion: v2
     appVersion: v1.25.0
@@ -69,7 +69,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.25.0/edgedelta-1.25.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.25.0/edgedelta-1.25.0.tgz
     version: 1.25.0
   - apiVersion: v2
     appVersion: v1.24.0
@@ -79,7 +79,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.24.0/edgedelta-1.24.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.24.0/edgedelta-1.24.0.tgz
     version: 1.24.0
   - apiVersion: v2
     appVersion: v1.23.0
@@ -89,7 +89,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.23.0/edgedelta-1.23.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.23.0/edgedelta-1.23.0.tgz
     version: 1.23.0
   - apiVersion: v2
     appVersion: v1.22.0
@@ -99,7 +99,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.22.0/edgedelta-1.22.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.22.0/edgedelta-1.22.0.tgz
     version: 1.22.0
   - apiVersion: v2
     appVersion: v1.21.0
@@ -109,7 +109,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.21.0/edgedelta-1.21.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.21.0/edgedelta-1.21.0.tgz
     version: 1.21.0
   - apiVersion: v2
     appVersion: v1.20.0
@@ -119,7 +119,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.20.0/edgedelta-1.20.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.20.0/edgedelta-1.20.0.tgz
     version: 1.20.0
   - apiVersion: v2
     appVersion: v1.19.0
@@ -129,7 +129,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.19.0/edgedelta-1.19.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.19.0/edgedelta-1.19.0.tgz
     version: 1.19.0
   - apiVersion: v2
     appVersion: v1.18.0
@@ -139,7 +139,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.18.0/edgedelta-1.18.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.18.0/edgedelta-1.18.0.tgz
     version: 1.18.0
   - apiVersion: v2
     appVersion: v1.17.0
@@ -149,7 +149,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.17.0/edgedelta-1.17.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.17.0/edgedelta-1.17.0.tgz
     version: 1.17.0
   - apiVersion: v2
     appVersion: v1.16.0
@@ -159,7 +159,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.16.0/edgedelta-1.16.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.16.0/edgedelta-1.16.0.tgz
     version: 1.16.0
   - apiVersion: v2
     appVersion: v1.15.0
@@ -169,7 +169,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.15.0/edgedelta-1.15.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.15.0/edgedelta-1.15.0.tgz
     version: 1.15.0
   - apiVersion: v2
     appVersion: v1.14.0
@@ -179,7 +179,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.14.0/edgedelta-1.14.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.14.0/edgedelta-1.14.0.tgz
     version: 1.14.0
   - apiVersion: v2
     appVersion: v1.13.0
@@ -189,7 +189,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.13.0/edgedelta-1.13.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.13.0/edgedelta-1.13.0.tgz
     version: 1.13.0
   - apiVersion: v2
     appVersion: v1.12.0
@@ -199,7 +199,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.12.0/edgedelta-1.12.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.12.0/edgedelta-1.12.0.tgz
     version: 1.12.0
   - apiVersion: v2
     appVersion: v1.11.0
@@ -209,7 +209,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.11.0/edgedelta-1.11.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.11.0/edgedelta-1.11.0.tgz
     version: 1.11.0
   - apiVersion: v2
     appVersion: v1.10.0
@@ -219,7 +219,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.10.0/edgedelta-1.10.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.10.0/edgedelta-1.10.0.tgz
     version: 1.10.0
   - apiVersion: v2
     appVersion: v0.1.105
@@ -229,7 +229,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.105/edgedelta-0.1.105.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.105/edgedelta-0.1.105.tgz
     version: 0.1.105
   - apiVersion: v2
     appVersion: v0.1.104
@@ -239,7 +239,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.104/edgedelta-0.1.104.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.104/edgedelta-0.1.104.tgz
     version: 0.1.104
   - apiVersion: v2
     appVersion: v0.1.103
@@ -249,7 +249,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.103/edgedelta-0.1.103.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.103/edgedelta-0.1.103.tgz
     version: 0.1.103
   - apiVersion: v2
     appVersion: v0.1.102
@@ -259,7 +259,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.102/edgedelta-0.1.102.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.102/edgedelta-0.1.102.tgz
     version: 0.1.102
   - apiVersion: v2
     appVersion: v0.1.101
@@ -269,7 +269,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.101/edgedelta-0.1.101.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.101/edgedelta-0.1.101.tgz
     version: 0.1.101
   - apiVersion: v2
     appVersion: v0.1.100
@@ -279,7 +279,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.100/edgedelta-0.1.100.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.100/edgedelta-0.1.100.tgz
     version: 0.1.100
   - apiVersion: v2
     appVersion: v0.1.99
@@ -289,7 +289,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.99/edgedelta-0.1.99.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.99/edgedelta-0.1.99.tgz
     version: 0.1.99
   - apiVersion: v2
     appVersion: v0.1.98
@@ -299,7 +299,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.98/edgedelta-0.1.98.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.98/edgedelta-0.1.98.tgz
     version: 0.1.98
   - apiVersion: v2
     appVersion: v0.1.97
@@ -309,7 +309,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.97/edgedelta-0.1.97.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.97/edgedelta-0.1.97.tgz
     version: 0.1.97
   - apiVersion: v2
     appVersion: v0.1.96
@@ -319,7 +319,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.96/edgedelta-0.1.96.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.96/edgedelta-0.1.96.tgz
     version: 0.1.96
   - apiVersion: v2
     appVersion: v0.1.95
@@ -329,7 +329,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.95/edgedelta-0.1.95.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.95/edgedelta-0.1.95.tgz
     version: 0.1.95
   - apiVersion: v2
     appVersion: v0.1.94
@@ -339,7 +339,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.94/edgedelta-0.1.94.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.94/edgedelta-0.1.94.tgz
     version: 0.1.94
   - apiVersion: v2
     appVersion: v0.1.93
@@ -349,7 +349,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.93/edgedelta-0.1.93.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.93/edgedelta-0.1.93.tgz
     version: 0.1.93
   - apiVersion: v2
     appVersion: v0.1.92
@@ -359,7 +359,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.92/edgedelta-0.1.92.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.92/edgedelta-0.1.92.tgz
     version: 0.1.92
   - apiVersion: v2
     appVersion: v0.1.91
@@ -369,7 +369,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.91/edgedelta-0.1.91.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.91/edgedelta-0.1.91.tgz
     version: 0.1.91
   - apiVersion: v2
     appVersion: v0.1.90
@@ -379,7 +379,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.90/edgedelta-0.1.90.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.90/edgedelta-0.1.90.tgz
     version: 0.1.90
   - apiVersion: v2
     appVersion: v0.1.89
@@ -389,7 +389,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.89/edgedelta-0.1.89.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.89/edgedelta-0.1.89.tgz
     version: 0.1.89
   - apiVersion: v2
     appVersion: v0.1.88
@@ -399,7 +399,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.88/edgedelta-0.1.88.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.88/edgedelta-0.1.88.tgz
     version: 0.1.88
   - apiVersion: v2
     appVersion: v0.1.87
@@ -409,7 +409,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.87/edgedelta-0.1.87.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.87/edgedelta-0.1.87.tgz
     version: 0.1.87
   - apiVersion: v2
     appVersion: v0.1.86
@@ -419,7 +419,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.86/edgedelta-0.1.86.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.86/edgedelta-0.1.86.tgz
     version: 0.1.86
   - apiVersion: v2
     appVersion: v0.1.85
@@ -429,7 +429,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.85/edgedelta-0.1.85.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.85/edgedelta-0.1.85.tgz
     version: 0.1.85
   - apiVersion: v2
     appVersion: v0.1.84
@@ -439,7 +439,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.84/edgedelta-0.1.84.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.84/edgedelta-0.1.84.tgz
     version: 0.1.84
   - apiVersion: v2
     appVersion: v0.1.83
@@ -449,7 +449,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.83/edgedelta-0.1.83.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.83/edgedelta-0.1.83.tgz
     version: 0.1.83
   - apiVersion: v2
     appVersion: v0.1.82
@@ -459,7 +459,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.82/edgedelta-0.1.82.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.82/edgedelta-0.1.82.tgz
     version: 0.1.82
   - apiVersion: v2
     appVersion: v0.1.81
@@ -469,7 +469,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.81/edgedelta-0.1.81.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.81/edgedelta-0.1.81.tgz
     version: 0.1.81
   - apiVersion: v2
     appVersion: v0.1.80
@@ -479,7 +479,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.80/edgedelta-0.1.80.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.80/edgedelta-0.1.80.tgz
     version: 0.1.80
   - apiVersion: v2
     appVersion: v0.1.79
@@ -489,7 +489,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.79/edgedelta-0.1.79.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.79/edgedelta-0.1.79.tgz
     version: 0.1.79
   - apiVersion: v2
     appVersion: v0.1.78
@@ -499,7 +499,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.78/edgedelta-0.1.78.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.78/edgedelta-0.1.78.tgz
     version: 0.1.78
   - apiVersion: v2
     appVersion: v0.1.77
@@ -509,7 +509,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.77/edgedelta-0.1.77.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.77/edgedelta-0.1.77.tgz
     version: 0.1.77
   - apiVersion: v2
     appVersion: v0.1.76
@@ -519,7 +519,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.76/edgedelta-0.1.76.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.76/edgedelta-0.1.76.tgz
     version: 0.1.76
   - apiVersion: v2
     appVersion: v0.1.75
@@ -529,7 +529,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.75/edgedelta-0.1.75.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.75/edgedelta-0.1.75.tgz
     version: 0.1.75
   - apiVersion: v2
     appVersion: v0.1.74
@@ -539,7 +539,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.74/edgedelta-0.1.74.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.74/edgedelta-0.1.74.tgz
     version: 0.1.74
   - apiVersion: v2
     appVersion: v0.1.73
@@ -549,7 +549,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.73/edgedelta-0.1.73.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.73/edgedelta-0.1.73.tgz
     version: 0.1.73
   - apiVersion: v2
     appVersion: v0.1.72
@@ -559,7 +559,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.72/edgedelta-0.1.72.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.72/edgedelta-0.1.72.tgz
     version: 0.1.72
   - apiVersion: v2
     appVersion: v0.1.71
@@ -569,7 +569,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.71/edgedelta-0.1.71.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.71/edgedelta-0.1.71.tgz
     version: 0.1.71
   - apiVersion: v2
     appVersion: v0.1.70
@@ -579,7 +579,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.70/edgedelta-0.1.70.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.70/edgedelta-0.1.70.tgz
     version: 0.1.70
   - apiVersion: v2
     appVersion: v0.1.69
@@ -589,7 +589,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.69/edgedelta-0.1.69.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.69/edgedelta-0.1.69.tgz
     version: 0.1.69
   - apiVersion: v2
     appVersion: v0.1.68
@@ -599,7 +599,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.68/edgedelta-0.1.68.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.68/edgedelta-0.1.68.tgz
     version: 0.1.68
   - apiVersion: v2
     appVersion: v0.1.67
@@ -609,7 +609,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.67/edgedelta-0.1.67.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.67/edgedelta-0.1.67.tgz
     version: 0.1.67
   - apiVersion: v2
     appVersion: v0.1.66
@@ -619,7 +619,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.66/edgedelta-0.1.66.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.66/edgedelta-0.1.66.tgz
     version: 0.1.66
   - apiVersion: v2
     appVersion: v0.1.65
@@ -629,7 +629,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.65/edgedelta-0.1.65.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.65/edgedelta-0.1.65.tgz
     version: 0.1.65
   - apiVersion: v2
     appVersion: v0.1.64
@@ -639,6 +639,6 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-0.1.64/edgedelta-0.1.64.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-0.1.64/edgedelta-0.1.64.tgz
     version: 0.1.64
 generated: "2025-03-11T13:35:30.753933565Z"
