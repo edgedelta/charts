@@ -9,7 +9,7 @@ entries:
     name: edgedelta
     type: application
     urls:
-    - https://github.com/edgedelta/charts-new/releases/download/edgedelta-1.32.0/edgedelta-1.32.0.tgz
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.32.0/edgedelta-1.32.0.tgz
     version: 1.32.0
   - apiVersion: v2
     appVersion: v1.31.0
