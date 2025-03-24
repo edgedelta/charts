@@ -201,14 +201,30 @@ spec:
             - name: GOMEMLIMIT
               value: {{ .Values.goMemLimit }}
             {{- end }}
-            # pass pod name to agent
-            - name: ED_HOST_OVERRIDE
+            - name: ED_K8S_NODE_NAME
               valueFrom:
                 fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: ED_K8S_NAMESPACE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: ED_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
                   fieldPath: metadata.name
             {{- range .Values.envs }}
             - name: {{ .name }}
+              {{- if .value }}
               value: "{{ .value }}"
+              {{- end }}
+              {{- if .valueFrom }}
+              valueFrom:
+                {{ toYaml .valueFrom | nindent 16 }}
+              {{- end }}
             {{- end }}
             {{- range .Values.secrets }}
             - name: {{ .name }}
@@ -230,13 +246,6 @@ spec:
               value: "http://ed-aggregator-svc.{{.Release.Namespace}}.{{.Values.aggregatorProps.serviceDNSSuffix}}:{{.Values.aggregatorProps.port}}"
             - name: ED_AGGREGATOR_ENABLED_DATA_TYPES
               value: {{ join "," (sortAlpha $enabledDataTypes) }}
-            {{- end }}
-            {{- if or .Values.httpRecorderProps.enabled .Values.targetAllocator.enabled }}
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.name
             {{- end }}
             {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.compactorProps.enabled .Values.rollUpProps.enabled .Values.targetAllocator.enabled) }}
             - name: ED_SERVICE_DNS_REQUIRED
@@ -268,8 +277,8 @@ spec:
             {{- end }}
             {{- if .Values.httpRecorderProps.enabled }}
             - mountPath: /var/captured_requests/
-              name: capturedrequests
-              subPathExpr: $(POD_NAME)
+              name: captured_requests
+              subPathExpr: $(ED_K8S_POD_NAME)
             {{- end }}
             {{- if (.Values.volumeProps).volumeMounts }}
               {{- toYaml .Values.volumeProps.volumeMounts | nindent 12 }}
@@ -290,7 +299,7 @@ spec:
             - --custom_responses
             - /.well-known/fastly/logging/challenge=200|*
           env:
-            - name: POD_NAME
+            - name: ED_K8S_POD_NAME
               valueFrom:
                 fieldRef:
                   apiVersion: v1
@@ -306,8 +315,8 @@ spec:
               memory: 56Mi
           volumeMounts:
           - mountPath: /var/captured_requests/
-            name: capturedrequests
-            subPathExpr: $(POD_NAME)
+            name: captured_requests
+            subPathExpr: $(ED_K8S_POD_NAME)
         {{- end }}
       terminationGracePeriodSeconds: 10
       volumes:
@@ -317,7 +326,7 @@ spec:
             name: {{ .Release.Name }}
         {{- end }}
         {{- if .Values.httpRecorderProps.enabled }}
-        - name: capturedrequests
+        - name: captured_requests
           hostPath:
             path: /var/log/
         {{- end }}

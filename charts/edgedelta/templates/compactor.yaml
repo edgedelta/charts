@@ -126,10 +126,21 @@ spec:
           - name: ED_COMPACTOR_DATA_DIR
             value: /var/edgedelta-compactor
           {{- end }}
-          - name: ED_HOST_OVERRIDE
+          - name: ED_K8S_NODE_NAME
             valueFrom:
               fieldRef:
-               fieldPath: metadata.name
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          - name: ED_K8S_NAMESPACE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: ED_K8S_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}
@@ -152,7 +163,7 @@ spec:
             value: "{{ .Values.profilerPort }}"
           {{- end }}
           {{- if .Values.promPort }}
-          - name: PROM_PORT
+          - name: ED_PROM_PORT
             value: "{{ .Values.promPort }}"
           {{- end }}
           - name: ED_TRACE_FILES
@@ -201,9 +212,28 @@ spec:
           - name: GOMEMLIMIT
             value: {{ .Values.compactorProps.goMemLimit }}
           {{- end }}
+          {{- if .Values.compactorProps.envs }}
+          {{- range .Values.compactorProps.envs }}
+          - name: {{ .name }}
+            {{- if .value }}
+            value: "{{ .value }}"
+            {{- end }}
+            {{- if .valueFrom }}
+            valueFrom:
+              {{ toYaml .valueFrom | nindent 14 }}
+            {{- end }}
+          {{- end }}
+          {{- else }}
           {{- range .Values.envs }}
           - name: {{ .name }}
+            {{- if .value }}
             value: "{{ .value }}"
+            {{- end }}
+            {{- if .valueFrom }}
+            valueFrom:
+              {{ toYaml .valueFrom | nindent 14 }}
+            {{- end }}
+          {{- end }}
           {{- end }}
           {{- range .Values.secrets }}
           - name: {{ .name }}

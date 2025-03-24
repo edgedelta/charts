@@ -297,6 +297,9 @@ compactorProps:
     requests:
       cpu: 200m
       memory: 300Mi
+  # envs:
+  # - name: XXX
+  #   value: YYY
   # Configuration of HorizontalPodAutoscaler for compactor agents
   autoscaling:
     # compactorProps.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for compactor agents
@@ -355,6 +358,9 @@ rollUpProps:
     requests:
       cpu: 200m
       memory: 256Mi
+  # envs:
+  # - name: XXX
+  #   value: YYY
   # Configuration of HorizontalPodAutoscaler for rollup agents
   autoscaling:
     # rollUpProps.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for rollup agents

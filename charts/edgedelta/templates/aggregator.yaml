@@ -87,8 +87,21 @@ spec:
           - name: ED_AGGREGATOR_SRC_MAP_PATH
             value: "/edgedelta/data/src_mapping.json"
           {{- end }}
-          - name: ED_HOST_OVERRIDE
-            value: {{ .Chart.Name }}-aggregator
+            - name: ED_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: ED_K8S_NAMESPACE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: ED_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}
@@ -107,7 +120,7 @@ spec:
             value: "{{ .Values.storePort }}"
           {{- end }}
           {{- if .Values.promPort }}
-          - name: PROM_PORT
+          - name: ED_PROM_PORT
             value: "{{ .Values.promPort }}"
           {{- end }}
           {{- if .Values.edAggregatorTraceFiles }}
