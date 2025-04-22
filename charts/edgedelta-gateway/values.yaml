@@ -39,15 +39,8 @@ skipCommonLabels: false
 # custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agent to configured destination(s).
 edCustomTags: ""
 
-# Persisting Cursor props constraints
-persistingCursorProps:
-  enabled: true
-  hostMountPath: "/var/lib/edgedelta"
-  containerMountPath: "/var/lib/edgedelta"
-
-# Docker container properties
-dockerContainerProps:
-  hostPath: "/var/lib/docker/containers"
+gatewayProps:
+  port: 6600
 
 # Volume props will be used for mounting certain volume(s) to the given path(s) for the agent
 # volumeProps:
@@ -60,46 +53,6 @@ dockerContainerProps:
 #         path: /var/lib/kubelet
 #         type: ""
 #       name: varlibkubelet
-
-# Aggregator agent mode properties
-# Agents are deployed as daemonset. an extra aggregator agent is deployed to collect/aggregate metrics
-aggregatorProps:
-  enabled: false
-  port: 9191
-  # serviceDNSSuffix is "svc.cluster.local" by default. It's used to construct endpoint for aggregator agent service so that processor agents can communicate with aggregator.
-  # Final endpoint looks like this: http://ed-aggregator-svc.my-namespace.svc.cluster.local:9191
-  serviceDNSSuffix: "svc.cluster.local"
-  enabledDataTypes:
-    metric: true
-    cluster_pattern_and_sample: false
-    topk: false
-
-  # aggregator can leverage persistent volume to persist internal source related information to recover quickly after restarts/upgrades.
-  # aggregator doesn't necessarily need a persistent volume. It will reconcile overall state  after a restart from other agents by returning them an error and forcing them to share source information
-  usePersistentVolume: false
-  # storageClassName is used if usePersistentVolume=true
-  # If your k8s cluster has specific storage classes you can set storageClassName accordingly.
-  storageClassName: ""
-
-  goMemLimit: ""
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 2048Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-# HttpRecorder is a frontend layer which can consume logs with both http and tcp protocols
-# It is deployed as a sidecar for each ED agent. It dumps the incoming logs to filesystem (persisted via PVC) and agents grab from there.
-httpRecorderProps:
-  enabled: false
-  image:
-    name: httprecorder
-    tag: latest
-    fullPath: ""
-    pullPolicy: IfNotPresent
-  port: 8080
 
 # Custom labels:
 
@@ -126,11 +79,9 @@ httpRecorderProps:
 
 # Configuration of deployment type for processor agents
 deployment:
-  # deployment.kind -- Can be either DaemonSet or Deployment
-  kind: DaemonSet
-  # deployment.replicas -- Number of pods of the deployment (only applies when kind == Deployment). Mutually exclusive with autoscaling
+  # deployment.replicas -- Number of pods of the deployment. Mutually exclusive with autoscaling
   replicas: 1
-  # Configuration of HorizontalPodAutoscaler for processor agents in Deployment mode
+  # Configuration of HorizontalPodAutoscaler for processor agents
   autoscaling:
     # deployment.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for processor agents
     enabled: false
@@ -198,18 +149,9 @@ ports: []
 # - name: port-1
 #   protocol: TCP
 #   port: 80
-#   exposeInHost: true # It will expose port in host, only valid for DaemonSet deployment kind
 # - name: port-2
 #   protocol: UDP
 #   port: 5000
-#   exposeInHost: false
-pushService:
-  type: ClusterIP
-  annotations: {}
-  loadBalancerIP: ""
-  clusterIP: ""
-  sessionAffinity: ""
-  sessionAffinityTimeout: 10800
 
 # Helm overrides
 repository: gcr.io/edgedelta
@@ -311,13 +253,13 @@ compactorProps:
     enabled: false
     # compactorProps.autoscaling.external -- Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/)
     external: false
-    # compactorProps.autoscaling.minReplicas -- Minimum replica count for compactor agents
+    # compactorProps.autoscaling.minReplicas -- Minimum replica count for rollup agents
     minReplicas: 1
-    # compactorProps.autoscaling.maxReplicas -- Maximum replica count for compactor agents
+    # compactorProps.autoscaling.maxReplicas -- Maximum replica count for rollup agents
     maxReplicas: 10
-    # compactorProps.autoscaling.targetForCPUUtilizationPercentage -- Targeted CPU utilization for compactor agents in order to HPA to kick in
+    # compactorProps.autoscaling.targetForCPUUtilizationPercentage -- Targeted CPU utilization for rollup agents in order to HPA to kick in
     targetForCPUUtilizationPercentage: 85
-    # compactorProps.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for compactor agents in order to HPA to kick in
+    # compactorProps.autoscaling.targetForMemoryUtilizationPercentage -- Targeted Memory utilization for rollup agents in order to HPA to kick in
     targetForMemoryUtilizationPercentage:
     # compactorProps.autoscaling.customMetric -- For any custom metrics for targeting, one can use this section
     customMetric:
@@ -430,64 +372,6 @@ ingress:
   #  - hosts:
   #      - host.example.local
   #    secretName: example-tls-secret
-
-forceReinstallApplications:
-  # forceReinstallApplications.enabled -- When set to true, it will delete some of the K8s applications to be reinstalled again
-  enabled: true
-
-targetAllocator:
-  enabled: false
-  port: 8080
-  replicas: 1
-  serviceDNSSuffix: svc.cluster.local
-  tolerations: {}
-  nodeSelector: {}
-  priorityClassName: ""
-  image:
-    name: target-allocator
-    tag: v0.1.1
-    fullPath: ""
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-  updateStrategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-  configuration:
-    config:
-      scrape_configs:
-        - job_name: ed-agent-collector
-          scrape_interval: 10s
-          static_configs:
-            - targets:
-                - 0.0.0.0:8888
-    filter_strategy: relabel-config
-    prometheus_cr: {}
-    # prometheus_cr:
-    #   enabled: true
-    #   pod_monitor_selector:
-    #     matchLabels: {}
-    #     matchExpressions: []
-    #   scrape_interval: 30s
-    #   service_monitor_selector:
-    #     matchLabels: {}
-    #     matchExpressions: []
-  # targetAllocator.topologySpreadConstraints -- Topology spread constraints for target allocator
-  topologySpreadConstraints: []
-  # - maxSkew: 1
-  #   topologyKey: topology.kubernetes.io/zone
-  #   whenUnsatisfiable: ScheduleAnyway
-  #   labelSelector:
-  #     matchLabels:
-  #       edgedelta/agent-type: targetallocator
 
 serviceAccount:
   # serviceAccount.annotations -- Annotations for the service account

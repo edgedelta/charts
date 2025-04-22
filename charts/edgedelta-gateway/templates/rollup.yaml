@@ -121,7 +121,7 @@ spec:
           {{- end }}
         env:
           - name: ED_FLEET_TYPE
-            value: edge
+            value: gateway
           - name: ED_METRIC_ROLLUP_SERVER_PORT
             value: "{{ .Values.rollUpProps.port }}"
           - name: ED_K8S_NODE_NAME

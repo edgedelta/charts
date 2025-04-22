@@ -118,11 +118,13 @@ spec:
             containerPort: {{ .Values.profilerPort }}
           {{- end }}
         env:
+          - name: ED_FLEET_TYPE
+            value: edge
           - name: ED_AGENT_MODE
             value: compactor
           - name: ED_COMPACTOR_PORT
             value: "{{ .Values.compactorProps.port }}"
-          {{- if .Values.compactorProps.usePVC}}
+          {{- if .Values.compactorProps.usePVC }}
           - name: ED_COMPACTOR_DATA_DIR
             value: /var/edgedelta-compactor
           {{- end }}
@@ -141,6 +143,17 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.name
+          {{- if .Values.coordinatorProps.enabled }}
+          - name: ED_COORDINATOR_CLIENT_ENABLED
+            value: "1"
+          {{- if .Values.coordinatorProps.endpoint }}
+          - name: ED_COORDINATOR_CLIENT_ENDPOINT
+            value: "{{ .Values.coordinatorProps.endpoint }}"
+          {{- else if .Values.coordinatorProps.connectBackendCoordinator }}
+          - name: ED_COORDINATOR_USE_BACKEND
+            value: "1"
+          {{- end }}
+          {{- end }}
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}

@@ -116,13 +116,15 @@ spec:
           {{- end }}
           {{- end }}
           env:
+            - name: ED_FLEET_TYPE
+              value: edge
             {{- if .Values.apiKey }}
-            - name:  ED_API_KEY
+            - name: ED_API_KEY
               value: {{ .Values.apiKey | quote }}
             {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
             {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
             {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
-            - name:  ED_API_KEY
+            - name: ED_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secretApiKey.name }}
@@ -216,6 +218,17 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
+            {{- if .Values.coordinatorProps.enabled }}
+            - name: ED_COORDINATOR_CLIENT_ENABLED
+              value: "1"
+            {{- if .Values.coordinatorProps.endpoint }}
+            - name: ED_COORDINATOR_CLIENT_ENDPOINT
+              value: "{{ .Values.coordinatorProps.endpoint }}"
+            {{- else if .Values.coordinatorProps.connectBackendCoordinator }}
+            - name: ED_COORDINATOR_USE_BACKEND
+              value: "1"
+            {{- end }}
+            {{- end }}
             {{- range .Values.envs }}
             - name: {{ .name }}
               {{- if .value }}

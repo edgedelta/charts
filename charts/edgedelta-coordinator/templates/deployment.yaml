@@ -1,11 +1,8 @@
-{{- if eq .Values.deployment.kind "DaemonSet" -}}
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: {{ include "edgedelta.fullname" . }}
   namespace: {{ .Release.Namespace }}
-  annotations:
-    prometheus.io/scrape: "true"
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
     {{- if .Values.labels }}
@@ -13,11 +10,12 @@ metadata:
     {{- end }}
     edgedelta/agent-type: processor
 spec:
+  replicas: 1
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
       edgedelta/agent-type: processor
-  updateStrategy:
+  strategy:
   {{- if .Values.updateStrategy }}
     {{- toYaml .Values.updateStrategy | nindent 4 }}
   {{- else }}
@@ -50,8 +48,6 @@ spec:
       {{- end }}
       {{- end }}
         edgedelta/agent-type: processor
-        version: v1
-        kubernetes.io/cluster-service: "true"
     spec:
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -69,6 +65,10 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
       {{- if .Values.podSecurity.securityContextConstraints.create -}}
       {{- if and .Values.podSecurity.seLinuxContext .Values.podSecurity.seLinuxContext.seLinuxOptions }}
       securityContext:
@@ -83,11 +83,6 @@ spec:
           type: "spc_t"
           level: "s0"
       {{- end }}
-      {{- if .Values.tracerProps.enabled }}
-      hostPID: true
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
-      {{- end }}
       containers:
         # agent container
         - name: {{ .Chart.Name }}-agent
@@ -99,43 +94,33 @@ spec:
             - -c
             - /var/edgedelta/config.yml
           {{- end }}
-          {{ $usePorts := gt (len .Values.ports) 0 }}
-          {{- if or .Values.storePort .Values.profilerPort .Values.promPort $usePorts }}
           ports:
-          {{- end }}
+            - name: coordinator
+              containerPort: {{ .Values.coordinatorProps.port }}
           {{- if .Values.storePort }}
             - name: metrics
-              hostPort: {{ .Values.storePort }}
               containerPort: {{ .Values.storePort }}
           {{- end }}
           {{- if .Values.profilerPort }}
             - name: profiler
-              hostPort: {{ .Values.profilerPort }}
               containerPort: {{ .Values.profilerPort }}
-          {{- end }}
-          {{- if .Values.promPort }}
-            - name: prom
-              containerPort: {{ .Values.promPort }}
-          {{- end }}
-          {{- if $usePorts }}
-          {{- range .Values.ports }}
-            - name: {{ .name }}
-              containerPort: {{ .port }}
-              {{- if .exposeInHost }}
-              hostPort: {{ .port }}
-              {{- end }}
-          {{- end }}
           {{- end }}
           env:
             - name: ED_FLEET_TYPE
-              value: edge
+              value: coordinator
+            - name: ED_COORDINATOR_SERVER_ENABLED
+              value: "1"
+            - name: ED_COORDINATOR_SERVER_PORT
+              value: "{{ .Values.coordinatorProps.port }}"
+            - name: ED_COORDINATOR_USE_BACKEND
+              value: "1"
             {{- if .Values.apiKey }}
-            - name: ED_API_KEY
+            - name:  ED_API_KEY
               value: {{ .Values.apiKey | quote }}
             {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
             {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
             {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
-            - name: ED_API_KEY
+            - name:  ED_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secretApiKey.name }}
@@ -143,35 +128,31 @@ spec:
             {{- end }}
             {{- end }}
             {{- if .Values.storePort }}
-            - name: STORE_PORT
+            - name:  STORE_PORT
               value: "{{ .Values.storePort }}"
             {{- end }}
             {{- if .Values.profilerPort }}
             - name: PROFILER_PORT
               value: "{{ .Values.profilerPort }}"
-            {{- end }}
-            {{- if .Values.promPort }}
-            - name: ED_PROM_PORT
-              value: "{{ .Values.promPort }}"
-            {{- end }}
+          {{- end }}
             {{- if .Values.edTraceFiles }}
-            - name: ED_TRACE_FILES
-              value: {{ .Values.edTraceFiles | quote }}
+            - name:  ED_TRACE_FILES
+              value: {{ .Values.edTraceFile | quote }}
             {{- end }}
             {{- if .Values.edApiEndpoint }}
-            - name: ED_API_ENDPOINT
+            - name:  ED_API_ENDPOINT
               value: {{ .Values.edApiEndpoint }}
             {{- end }}
             {{- if .Values.edBackendDisabled }}
-            - name: ED_BACKEND_DISABLED
+            - name:  ED_BACKEND_DISABLED
               value: "{{ .Values.edBackendDisabled }}"
             {{- end }}
             {{- if .Values.edSkipConfDownload }}
-            - name: ED_SKIP_CONF_DOWNLOAD
+            - name:  ED_SKIP_CONF_DOWNLOAD
               value: "{{ .Values.edSkipConfDownload }}"
             {{- end }}
             {{- if .Values.edTagOverride }}
-            - name: ED_TAG_OVERRIDE
+            - name:  ED_TAG_OVERRIDE
               value: {{ .Values.edTagOverride }}
             {{- end }}
             {{- if .Values.edSkipTlsVerify }}
@@ -179,15 +160,15 @@ spec:
               value: "{{ .Values.edSkipTlsVerify }}"
             {{- end }}
             {{- if .Values.edOrgID }}
-            - name: ED_ORG_ID
+            - name:  ED_ORG_ID
               value: {{ .Values.edOrgID }}
             {{- end }}
             {{- if .Values.edSuppressionMode }}
-            - name: ED_SUPPRESSION_MODE
+            - name:  ED_SUPPRESSION_MODE
               value: "{{ .Values.edSuppressionMode }}"
             {{- end }}
             {{- if .Values.edWorkflows }}
-            - name: ED_WORKFLOWS
+            - name:  ED_WORKFLOWS
               value: {{ .Values.edWorkflows }}
             {{- end }}
              {{- if .Values.edEnableControllerDiscovery }}
@@ -195,19 +176,19 @@ spec:
               value: "1"
             {{- end }}
             {{- if .Values.edWorkflowPrefixes }}
-            - name: ED_WORKFLOW_PREFIXES
+            - name:  ED_WORKFLOW_PREFIXES
               value: {{ .Values.edWorkflowPrefixes }}
             {{- end }}
             {{- if .Values.httpProxy }}
-            - name: HTTP_PROXY
+            - name:  HTTP_PROXY
               value: {{ .Values.httpProxy }}
             {{- end }}
             {{- if .Values.httpsProxy }}
-            - name: HTTPS_PROXY
+            - name:  HTTPS_PROXY
               value: {{ .Values.httpsProxy }}
             {{- end }}
             {{- if .Values.noProxy }}
-            - name: NO_PROXY
+            - name:  NO_PROXY
               value: {{ .Values.noProxy }}
             {{- end }}
             {{- if .Values.edCustomTags }}
@@ -233,17 +214,6 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
-            {{- if .Values.coordinatorProps.enabled }}
-            - name: ED_COORDINATOR_CLIENT_ENABLED
-              value: "1"
-            {{- if .Values.coordinatorProps.endpoint }}
-            - name: ED_COORDINATOR_CLIENT_ENDPOINT
-              value: "{{ .Values.coordinatorProps.endpoint }}"
-            {{- else if .Values.coordinatorProps.connectBackendCoordinator }}
-            - name: ED_COORDINATOR_USE_BACKEND
-              value: "1"
-            {{- end }}
-            {{- end }}
             {{- range .Values.envs }}
             - name: {{ .name }}
               {{- if .value }}
@@ -261,30 +231,6 @@ spec:
                   name: {{ .secretKeyRef.name }}
                   key: {{ .secretKeyRef.key }}
             {{- end }}
-            {{- if .Values.aggregatorProps.enabled }}
-            {{ $enabledDataTypes := list }}
-            {{- range $key, $value := .Values.aggregatorProps.enabledDataTypes }}
-            {{- if $value }}
-              {{ $enabledDataTypes = append $enabledDataTypes $key }}
-            {{- end }}
-            {{- end }}
-            - name: ED_AGENT_MODE
-              value: processor
-            - name: ED_AGGREGATOR_DESTINATION
-              value: "http://ed-aggregator-svc.{{.Release.Namespace}}.{{.Values.aggregatorProps.serviceDNSSuffix}}:{{.Values.aggregatorProps.port}}"
-            - name: ED_AGGREGATOR_ENABLED_DATA_TYPES
-              value: {{ join "," (sortAlpha $enabledDataTypes) }}
-            {{- end }}
-            {{- if .Values.tracerProps.enabled }}
-            - name: TRACER_SERVER_PORT
-              value: "{{ .Values.tracerProps.port }}"
-            - name: ED_ENABLE_TRAFFIC_TRACER
-              value: "1"
-            {{- end }}
-            {{- if and (.Values.tracerProps.enabled) (or .Values.aggregatorProps.enabled .Values.compactorProps.enabled .Values.rollUpProps.enabled .Values.targetAllocator.enabled) }}
-            - name: ED_SERVICE_DNS_REQUIRED
-              value: "1"
-            {{- end }}
             {{- if .Values.compactorProps.enabled }}
             - name: ED_COMPACT_SERVICE_ENDPOINT
               value: ed-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
@@ -295,145 +241,24 @@ spec:
             - name: ED_METRIC_ROLLUP_DESTINATION_OVERRIDE
               value: ed-rollup-svc.{{.Release.Namespace}}.{{.Values.rollUpProps.serviceDNSSuffix}}:{{.Values.rollUpProps.port}}
             {{- end }}
-            {{- if .Values.targetAllocator.enabled }}
-            - name: ED_TARGET_ALLOCATOR_ENABLED
-              value: "1"
-            - name: ED_TARGET_ALLOCATOR_DESTINATION_OVERRIDE
-              value: http://ed-target-allocator-svc.{{.Release.Namespace}}.{{.Values.targetAllocator.serviceDNSSuffix}}:{{.Values.targetAllocator.port}}
-            {{- end }}
-          {{- if .Values.tracerProps.enabled }}
-          securityContext:
-            privileged: true
-          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: varlog
-              mountPath: /var/log
-              readOnly: true
-            - name: varlibdockercontainers
-              mountPath: {{ .Values.dockerContainerProps.hostPath }}
-              readOnly: true
             {{- if .Values.edConfigContent }}
             - name: config-volume
               mountPath: /var/edgedelta
             {{- end }}
-            {{- if .Values.persistingCursorProps.enabled }}
-            - name: persisting-cursor-storage
-              mountPath: {{ .Values.persistingCursorProps.containerMountPath }}
-            {{- end }}
-            {{- if .Values.httpRecorderProps.enabled }}
-            - mountPath: /var/captured_requests/
-              name: captured_requests
-              subPathExpr: $(ED_K8S_POD_NAME)
-            {{- end }}
-            {{- if .Values.tracerProps.enabled }}
-            - name: cgroup
-              mountPath: /sys/fs/cgroup
-            - name: debugfs
-              mountPath: /sys/kernel/debug
-            - name: netns
-              mountPath: /var/run/netns
-            - name: proc
-              mountPath: /proc
-            {{- end }}
             {{- if (.Values.volumeProps).volumeMounts }}
               {{- toYaml .Values.volumeProps.volumeMounts | nindent 12 }}
             {{- end }}
-        {{- if .Values.httpRecorderProps.enabled }}
-        # httprecorder container
-        - name: {{ .Chart.Name }}-httprecorder
-          image: {{ .Values.httpRecorderProps.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.httpRecorderProps.image.name .Values.httpRecorderProps.image.tag) }}
-          imagePullPolicy: {{ .Values.httpRecorderProps.image.pullPolicy }}
-          command:
-            - /edgedelta/httprecorder
-            - --port
-            - "{{ .Values.httpRecorderProps.port }}"
-            - --record_directory
-            - /var/captured_requests/
-            - --record_modes
-            - body
-            - --custom_responses
-            - /.well-known/fastly/logging/challenge=200|*
-          env:
-            - name: ED_K8S_POD_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.name
-          ports:
-          - containerPort: {{.Values.httpRecorderProps.port}}
-            name: http
-            protocol: TCP
-          resources:
-            limits:
-              memory: 1Gi
-            requests:
-              memory: 56Mi
-          volumeMounts:
-          - mountPath: /var/captured_requests/
-            name: captured_requests
-            subPathExpr: $(ED_K8S_POD_NAME)
-        {{- end }}
       terminationGracePeriodSeconds: 10
       volumes:
-        - name: varlog
-          hostPath:
-            path: /var/log
-        - name: varlibdockercontainers
-          hostPath:
-            path: {{ .Values.dockerContainerProps.hostPath }}
         {{- if .Values.edConfigContent }}
         - name: config-volume
           configMap:
             name: {{ .Release.Name }}
         {{- end }}
-        {{- if .Values.persistingCursorProps.enabled }}
-        - name: persisting-cursor-storage
-          hostPath:
-            path: {{ .Values.persistingCursorProps.hostMountPath }}
-            type: DirectoryOrCreate
-        {{- end }}
-        {{- if .Values.httpRecorderProps.enabled }}
-        - name: capturedrequests
-          hostPath:
-            path: /var/log/
-        {{- end }}
-        {{- if .Values.tracerProps.enabled }}
-        - name: cgroup
-          hostPath:
-            path: /sys/fs/cgroup
-        - name: debugfs
-          hostPath:
-            path: /sys/kernel/debug
-        - name: netns
-          hostPath:
-            path: /var/run/netns
-        - name: proc
-          hostPath:
-            path: /proc
-        {{- end }}
         {{- if (.Values.volumeProps).volumes }}
           {{- toYaml .Values.volumeProps.volumes | nindent 8 }}
         {{- end }}
-{{- if .Values.httpRecorderProps.enabled }}
----
-# Service for httprecorder
-apiVersion: v1
-kind: Service
-metadata:
-  name: ed-httprecorder-svc
-  namespace: {{ .Release.Namespace }}
-  labels:
-    version: v1
-    kubernetes.io/cluster-service: "true"
-spec:
-  selector:
-    {{- include "edgedelta.labels" . | nindent 4 }}
-    edgedelta/agent-type: processor
-  ports:
-  - port: {{ .Values.httpRecorderProps.port }}
-    name: httprecorder-port
-{{- end }}
-{{- end -}}

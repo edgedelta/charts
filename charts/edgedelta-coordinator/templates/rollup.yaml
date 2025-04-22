@@ -121,7 +121,7 @@ spec:
           {{- end }}
         env:
           - name: ED_FLEET_TYPE
-            value: edge
+            value: coordinator
           - name: ED_METRIC_ROLLUP_SERVER_PORT
             value: "{{ .Values.rollUpProps.port }}"
           - name: ED_K8S_NODE_NAME
@@ -139,17 +139,10 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.name
-          {{- if .Values.coordinatorProps.enabled }}
           - name: ED_COORDINATOR_CLIENT_ENABLED
             value: "1"
-          {{- if .Values.coordinatorProps.endpoint }}
           - name: ED_COORDINATOR_CLIENT_ENDPOINT
-            value: "{{ .Values.coordinatorProps.endpoint }}"
-          {{- else if .Values.coordinatorProps.connectBackendCoordinator }}
-          - name: ED_COORDINATOR_USE_BACKEND
-            value: "1"
-          {{- end }}
-          {{- end }}
+            value: "ed-coordinator-svc.{{.Release.Namespace}}.{{.Values.coordinatorProps.serviceDNSSuffix}}:{{.Values.coordinatorProps.port}}"
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}

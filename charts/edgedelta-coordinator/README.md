@@ -1,26 +1,13 @@
-# edgedelta
+# edgedelta-coordinator
 
 ![Version: 1.35.0](https://img.shields.io/badge/Version-1.35.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.35.0](https://img.shields.io/badge/AppVersion-v1.35.0-informational?style=flat-square)
 
-Edge Delta Agent Chart for Kubernetes
+Edge Delta Coordinator Agent Chart for Kubernetes
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| aggregatorProps.enabled | bool | `false` |  |
-| aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
-| aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
-| aggregatorProps.enabledDataTypes.topk | bool | `false` |  |
-| aggregatorProps.goMemLimit | string | `""` |  |
-| aggregatorProps.port | int | `9191` |  |
-| aggregatorProps.resources.limits.cpu | string | `"2000m"` |  |
-| aggregatorProps.resources.limits.memory | string | `"2048Mi"` |  |
-| aggregatorProps.resources.requests.cpu | string | `"200m"` |  |
-| aggregatorProps.resources.requests.memory | string | `"256Mi"` |  |
-| aggregatorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
-| aggregatorProps.storageClassName | string | `""` |  |
-| aggregatorProps.usePersistentVolume | bool | `false` |  |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
 | compactorProps.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
@@ -50,21 +37,8 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | compactorProps.usePVC | bool | `false` |  |
-| coordinatorProps.connectBackendCoordinator | bool | `false` |  |
-| coordinatorProps.enabled | bool | `false` |  |
-| coordinatorProps.endpoint | string | `""` |  |
-| deployment.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
-| deployment.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
-| deployment.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for processor agents |
-| deployment.autoscaling.external | bool | `false` | Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/) |
-| deployment.autoscaling.maxReplicas | int | `10` | Maximum replica count for rollup agents |
-| deployment.autoscaling.minReplicas | int | `1` | Minimum replica count for rollup agents |
-| deployment.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for rollup agents in order to HPA to kick in |
-| deployment.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
-| deployment.kind | string | `"DaemonSet"` | Can be either DaemonSet or Deployment |
-| deployment.replicas | int | `1` | Number of pods of the deployment (only applies when kind == Deployment). Mutually exclusive with autoscaling |
-| deployment.topologySpreadConstraints | list | `[]` | Topology spread constraints for processor agents while in Deployment mode |
-| dockerContainerProps.hostPath | string | `"/var/lib/docker/containers"` |  |
+| coordinatorProps.port | int | `5555` |  |
+| coordinatorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | edAggregatorTraceFiles | string | `""` |  |
 | edBackendDisabled | string | `""` |  |
 | edConfigContent | string | `""` |  |
@@ -78,16 +52,9 @@ Edge Delta Agent Chart for Kubernetes
 | edTraceFiles | string | `""` |  |
 | edWorkflowPrefixes | string | `""` |  |
 | edWorkflows | string | `""` |  |
-| forceReinstallApplications.enabled | bool | `true` | When set to true, it will delete some of the K8s applications to be reinstalled again |
 | fullnameOverride | string | `""` | Override the full name of resources. |
 | goMemLimit | string | `""` |  |
 | httpProxy | string | `""` |  |
-| httpRecorderProps.enabled | bool | `false` |  |
-| httpRecorderProps.image.fullPath | string | `""` |  |
-| httpRecorderProps.image.name | string | `"httprecorder"` |  |
-| httpRecorderProps.image.pullPolicy | string | `"IfNotPresent"` |  |
-| httpRecorderProps.image.tag | string | `"latest"` |  |
-| httpRecorderProps.port | int | `8080` |  |
 | httpsProxy | string | `""` |  |
 | image.fullPath | string | `""` |  |
 | image.name | string | `"agent"` |  |
@@ -107,9 +74,6 @@ Edge Delta Agent Chart for Kubernetes
 | networkPolicy.type | string | `"cilium"` | Type of the network policy to use. Can be: * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | noProxy | string | `""` |  |
 | nodeSelector | object | `{}` |  |
-| persistingCursorProps.containerMountPath | string | `"/var/lib/edgedelta"` |  |
-| persistingCursorProps.enabled | bool | `true` |  |
-| persistingCursorProps.hostMountPath | string | `"/var/lib/edgedelta"` |  |
 | podSecurity.apparmor.enabled | bool | `false` | If true, it will enable apparmor for the pods |
 | podSecurity.apparmor.profile | string | `"unconfined"` | If apparmor enabled, it will be the profile for apparmor enforcement for the pods |
 | podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH"]` | Allowed capabilities |
@@ -118,16 +82,9 @@ Edge Delta Agent Chart for Kubernetes
 | podSecurity.seccompProfiles | list | `["runtime/default"]` | Allowed seccomp profiles |
 | podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SecurityContextConstraints resource for pods |
 | podSecurity.volumes | list | `["configMap","downwardAPI","emptyDir","hostPath","secret"]` | Allowed volumes types |
-| ports | list | `[]` |  |
 | priorityClassName | string | `""` |  |
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
-| pushService.annotations | object | `{}` |  |
-| pushService.clusterIP | string | `""` |  |
-| pushService.loadBalancerIP | string | `""` |  |
-| pushService.sessionAffinity | string | `""` |  |
-| pushService.sessionAffinityTimeout | int | `10800` |  |
-| pushService.type | string | `"ClusterIP"` |  |
 | repository | string | `"gcr.io/edgedelta"` |  |
 | resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2Gi"` |  |
@@ -147,7 +104,7 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.priorityClassName | string | `""` |  |
-| rollUpProps.replicas | int | `2` |  |
+| rollUpProps.replicas | int | `1` |  |
 | rollUpProps.resources.limits.cpu | string | `"1000m"` |  |
 | rollUpProps.resources.limits.memory | string | `"1Gi"` |  |
 | rollUpProps.resources.requests.cpu | string | `"200m"` |  |
@@ -163,38 +120,10 @@ Edge Delta Agent Chart for Kubernetes
 | secretApiKey.value | string | `""` |  |
 | serviceAccount.annotations | object | `{}` | Annotations for the service account |
 | serviceAccount.labels | object | `{}` | Labels for the service account |
-| serviceMonitor | object | `{"enabled":false}` | it will be used enable prometheus to scrape metrics from processor agents |
-| serviceMonitor.enabled | bool | `false` | If true, create ServiceMonitor for processor agents |
 | skipCommonLabels | bool | `false` |  |
 | storePort | string | `""` |  |
-| targetAllocator.configuration.config.scrape_configs[0].job_name | string | `"ed-agent-collector"` |  |
-| targetAllocator.configuration.config.scrape_configs[0].scrape_interval | string | `"10s"` |  |
-| targetAllocator.configuration.config.scrape_configs[0].static_configs[0].targets[0] | string | `"0.0.0.0:8888"` |  |
-| targetAllocator.configuration.filter_strategy | string | `"relabel-config"` |  |
-| targetAllocator.configuration.prometheus_cr | object | `{}` |  |
-| targetAllocator.enabled | bool | `false` |  |
-| targetAllocator.image.fullPath | string | `""` |  |
-| targetAllocator.image.name | string | `"target-allocator"` |  |
-| targetAllocator.image.pullPolicy | string | `"IfNotPresent"` |  |
-| targetAllocator.image.pullSecrets | list | `[]` |  |
-| targetAllocator.image.tag | string | `"v0.1.1"` |  |
-| targetAllocator.nodeSelector | object | `{}` |  |
-| targetAllocator.port | int | `8080` |  |
-| targetAllocator.priorityClassName | string | `""` |  |
-| targetAllocator.replicas | int | `1` |  |
-| targetAllocator.resources.limits.cpu | string | `"1000m"` |  |
-| targetAllocator.resources.limits.memory | string | `"1Gi"` |  |
-| targetAllocator.resources.requests.cpu | string | `"200m"` |  |
-| targetAllocator.resources.requests.memory | string | `"256Mi"` |  |
-| targetAllocator.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
-| targetAllocator.tolerations | object | `{}` |  |
-| targetAllocator.topologySpreadConstraints | list | `[]` | Topology spread constraints for target allocator |
-| targetAllocator.updateStrategy.rollingUpdate.maxSurge | int | `1` |  |
-| targetAllocator.updateStrategy.rollingUpdate.maxUnavailable | int | `0` |  |
-| targetAllocator.updateStrategy.type | string | `"RollingUpdate"` |  |
 | tolerations | object | `{}` |  |
-| tracerProps.enabled | bool | `true` |  |
-| tracerProps.port | int | `9595` |  |
+| topologySpreadConstraints | list | `[]` | Topology spread constraints for coordinator agent |
 | updateStrategy.rollingUpdate.maxUnavailable | int | `1` |  |
 | updateStrategy.type | string | `"RollingUpdate"` |  |
 

@@ -1,30 +1,30 @@
-{{- if .Values.rollUpProps.enabled }}
+{{- if .Values.compactorProps.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "edgedelta.fullname" . }}-rollup
+  name: {{ include "edgedelta.fullname" . }}-compactor
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
-    edgedelta/agent-type: rollup
+    edgedelta/agent-type: compactor
 spec:
-  {{- if not (or .Values.rollUpProps.autoscaling.enabled .Values.rollUpProps.autoscaling.external) }}
-  replicas: {{ default 2 .Values.rollUpProps.replicas }}
+  {{- if not (or .Values.compactorProps.autoscaling.enabled .Values.compactorProps.autoscaling.external) }}
+  replicas: {{ default 1 .Values.compactorProps.replicas }}
   {{- end }}
+  podManagementPolicy: {{ .Values.compactorProps.podManagementPolicy | default "Parallel" }}
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
-      edgedelta/agent-type: rollup
-  strategy:
-  {{- if .Values.rollUpProps.updateStrategy }}
-    {{- toYaml .Values.rollUpProps.updateStrategy | nindent 4 }}
+      edgedelta/agent-type: compactor
+  serviceName: ed-compactor-svc
+  updateStrategy:
+  {{- if .Values.compactorProps.updateStrategy }}
+    {{- toYaml .Values.compactorProps.updateStrategy | nindent 4 }}
   {{- else }}
     type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
   {{- end }}
   template:
     metadata:
@@ -50,35 +50,37 @@ spec:
         edgedelta/api-key-sha: {{ index $lookupResult.data .Values.secretApiKey.key | b64dec | sha256sum | substr 0 48 }}
       {{- end }}
       {{- end }}
-        edgedelta/agent-type: rollup
+        edgedelta/agent-type: compactor
+        version: v1
+        kubernetes.io/cluster-service: "true"
     spec:
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- toYaml .Values.image.pullSecrets | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "edgedelta.fullname" . }}
-      {{- if .Values.rollUpProps.tolerations }}
+      {{- if .Values.compactorProps.tolerations }}
       tolerations:
-        {{- toYaml .Values.rollUpProps.tolerations | nindent 8 }}
+        {{- toYaml .Values.compactorProps.tolerations | nindent 8 }}
       {{- else if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
-      {{- if .Values.rollUpProps.nodeSelector }}
+      {{- if .Values.compactorProps.nodeSelector }}
       nodeSelector:
-        {{- toYaml .Values.rollUpProps.nodeSelector | nindent 8 }}
+        {{- toYaml .Values.compactorProps.nodeSelector | nindent 8 }}
       {{- else if .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.rollUpProps.priorityClassName }}
-      priorityClassName: {{ .Values.rollUpProps.priorityClassName }}
+      {{- if .Values.compactorProps.priorityClassName }}
+      priorityClassName: {{ .Values.compactorProps.priorityClassName }}
       {{- else if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
-      {{- if .Values.rollUpProps.topologySpreadConstraints }}
+      {{- if .Values.compactorProps.topologySpreadConstraints }}
       topologySpreadConstraints:
-        {{- toYaml .Values.rollUpProps.topologySpreadConstraints | nindent 8 }}
+        {{- toYaml .Values.compactorProps.topologySpreadConstraints | nindent 8 }}
       {{- end }}
       {{- if .Values.podSecurity.securityContextConstraints.create -}}
       {{- if and .Values.podSecurity.seLinuxContext .Values.podSecurity.seLinuxContext.seLinuxOptions }}
@@ -95,7 +97,7 @@ spec:
           level: "s0"
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-rollup
+      - name: {{ .Chart.Name }}-compactor
         image: {{ .Values.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.image.name (.Values.image.tag | default .Chart.AppVersion)) }}
         {{- if .Values.edConfigContent }}
         command:
@@ -105,8 +107,8 @@ spec:
           - /var/edgedelta/config.yml
         {{- end }}
         ports:
-          - name: rollup
-            containerPort: {{ .Values.rollUpProps.port }}
+          - name: compactor
+            containerPort: {{ .Values.compactorProps.port }}
           {{- if .Values.storePort }}
           - name: metrics
             containerPort: {{ .Values.storePort }}
@@ -115,15 +117,17 @@ spec:
           - name: profiler
             containerPort: {{ .Values.profilerPort }}
           {{- end }}
-          {{- if .Values.promPort }}
-          - name: prom
-            containerPort: {{ .Values.promPort }}
-          {{- end }}
         env:
           - name: ED_FLEET_TYPE
-            value: edge
-          - name: ED_METRIC_ROLLUP_SERVER_PORT
-            value: "{{ .Values.rollUpProps.port }}"
+            value: gateway
+          - name: ED_AGENT_MODE
+            value: compactor
+          - name: ED_COMPACTOR_PORT
+            value: "{{ .Values.compactorProps.port }}"
+          {{- if .Values.compactorProps.usePVC}}
+          - name: ED_COMPACTOR_DATA_DIR
+            value: /var/edgedelta-compactor
+          {{- end }}
           - name: ED_K8S_NODE_NAME
             valueFrom:
               fieldRef:
@@ -217,12 +221,12 @@ spec:
           - name:  ED_CUSTOM_TAGS
             value: "{{ .Values.edCustomTags }}"
           {{- end }}
-          {{- if .Values.rollUpProps.goMemLimit }}
+          {{- if .Values.compactorProps.goMemLimit }}
           - name: GOMEMLIMIT
-            value: {{ .Values.rollUpProps.goMemLimit }}
+            value: {{ .Values.compactorProps.goMemLimit }}
           {{- end }}
-          {{- if .Values.rollUpProps.envs }}
-          {{- range .Values.rollUpProps.envs }}
+          {{- if .Values.compactorProps.envs }}
+          {{- range .Values.compactorProps.envs }}
           - name: {{ .name }}
             {{- if .value }}
             value: "{{ .value }}"
@@ -251,30 +255,43 @@ spec:
                 name: {{ .secretKeyRef.name }}
                 key: {{ .secretKeyRef.key }}
           {{- end }}
-          {{- if .Values.compactorProps.enabled }}
-          - name: ED_COMPACT_SERVICE_ENDPOINT
-            value: ed-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
-          {{- end }}
         resources:
-          {{- toYaml .Values.rollUpProps.resources | nindent 12 }}
+          {{- toYaml .Values.compactorProps.resources | nindent 12 }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{- if .Values.edConfigContent }}
         volumeMounts:
+          {{- if .Values.compactorProps.usePVC}}
+          - name: compactor-data
+            mountPath: /var/edgedelta-compactor
+          {{- end }}
+          {{- if .Values.edConfigContent }}
           - name: config-volume
             mountPath: /var/edgedelta
-        {{- end }}
+          {{- end }}
       terminationGracePeriodSeconds: 60
-      {{- if .Values.edConfigContent }}
       volumes:
+      {{- if .Values.edConfigContent }}
         - name: config-volume
           configMap:
             name: {{ .Release.Name }}
       {{- end }}
+  {{- if .Values.compactorProps.usePVC}}
+  volumeClaimTemplates:
+  - metadata:
+      name: compactor-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.compactorProps.storageClass }}
+      storageClassName: {{ .Values.compactorProps.storageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.compactorProps.diskSize }}
+  {{- end }}
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: ed-rollup-svc
+  name: ed-compactor-svc
   namespace: {{ .Release.Namespace }}
   labels:
     version: v1
@@ -285,16 +302,16 @@ spec:
     {{- if .Values.labels }}
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
-    edgedelta/agent-type: rollup
+    edgedelta/agent-type: compactor
   ports:
-    - port: {{ .Values.rollUpProps.port }}
-      name: rollup-port
-{{- if .Values.rollUpProps.autoscaling.enabled }}
+    - port: {{ .Values.compactorProps.port }}
+      name: compactor-port
+{{- if .Values.compactorProps.autoscaling.enabled }}
 ---
 apiVersion: {{ template "autoscaling.apiVersion" . }}
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "edgedelta.fullname" . }}-rollup
+  name: {{ include "edgedelta.fullname" . }}-compactor
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
@@ -302,33 +319,33 @@ metadata:
       {{- toYaml .Values.labels | nindent 4 }}
     {{- end }}
 spec:
-  minReplicas: {{ .Values.rollUpProps.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.rollUpProps.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.compactorProps.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.compactorProps.autoscaling.maxReplicas }}
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
-    name: {{ include "edgedelta.fullname" . }}-rollup
+    kind: StatefulSet
+    name: {{ include "edgedelta.fullname" . }}-compactor
   metrics:
-    {{- if .Values.rollUpProps.autoscaling.targetForMemoryUtilizationPercentage }}
+    {{- if .Values.compactorProps.autoscaling.targetForMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.rollUpProps.autoscaling.targetForMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.compactorProps.autoscaling.targetForMemoryUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.rollUpProps.autoscaling.targetForCPUUtilizationPercentage }}
+    {{- if .Values.compactorProps.autoscaling.targetForCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.rollUpProps.autoscaling.targetForCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.compactorProps.autoscaling.targetForCPUUtilizationPercentage }}
     {{- end }}
-    {{- with .Values.rollUpProps.autoscaling.customMetric -}}
+    {{- with .Values.compactorProps.autoscaling.customMetric -}}
     {{ toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.rollUpProps.autoscaling.behavior }}
+  {{- with .Values.compactorProps.autoscaling.behavior }}
   behavior:
   {{- toYaml . | nindent 4 }}
   {{- end }}
