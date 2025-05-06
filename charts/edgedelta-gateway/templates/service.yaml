@@ -1,26 +1,8 @@
+{{- $pipelineId := .Values.secretApiKey.value | default .Values.apiKey }}
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ include "edgedelta.fullname" . }}-svc
-  namespace: {{ .Release.Namespace }}
-  labels:
-    version: v1
-    kubernetes.io/cluster-service: "true"
-spec:
-  selector:
-    {{- include "edgedelta.labels" . | nindent 4 }}
-    {{- if .Values.labels }}
-      {{- toYaml .Values.labels | nindent 4 }}
-    {{- end }}
-    edgedelta/agent-type: processor
-  ports:
-    - port: {{ .Values.gatewayProps.port }}
-      name: gateway-port
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: {{ include "edgedelta.fullname" . }}-headless-svc
+  name: {{ include "edgedelta.dnsSafeShortHash" $pipelineId }}-gw-svc
   namespace: {{ .Release.Namespace }}
   labels:
     version: v1

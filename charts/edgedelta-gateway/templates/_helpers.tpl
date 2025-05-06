@@ -74,3 +74,20 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Generates a short, DNS-compatible hash from a given pipeline ID.
+*/}}
+{{- define "edgedelta.dnsSafeShortHash" -}}
+{{- $pipelineId := . -}}
+{{- $hash := sha256sum $pipelineId -}}
+{{- $length := 8 -}}
+{{- $multiply := int (mul $length 2) -}}
+{{- $shortened := substr 0 $multiply $hash -}}
+{{- /* Ensure first character is a letter for DNS compatibility */ -}}
+{{- $firstChar := substr 0 1 $shortened -}}
+{{- if not (regexMatch "[a-zA-Z]" $firstChar) -}}
+{{-   $shortened = print "p" (substr 1 $multiply $shortened) -}}
+{{- end -}}
+{{- $shortened -}}
+{{- end -}}

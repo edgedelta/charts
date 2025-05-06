@@ -10,7 +10,7 @@ secretApiKey:
   enable: false # set true when creating template from charts
 
 # Predefined environment variables
-# See: https://docs.edgedelta.com/installation/environment-variables
+# See: https://docs.edgedelta.com/helm-values/
 
 storePort: ""
 profilerPort: ""
@@ -20,6 +20,7 @@ httpsProxy: ""
 noProxy: ""
 edBackendDisabled: ""
 edTagOverride: ""
+edClusterName: ""
 edSuppressionMode: ""
 edSkipConfDownload: ""
 edWorkflows: ""
@@ -80,7 +81,7 @@ gatewayProps:
 # Configuration of deployment type for processor agents
 deployment:
   # deployment.replicas -- Number of pods of the deployment. Mutually exclusive with autoscaling
-  replicas: 1
+  replicas: 2
   # Configuration of HorizontalPodAutoscaler for processor agents
   autoscaling:
     # deployment.autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for processor agents
@@ -140,7 +141,6 @@ updateStrategy:
 coordinatorProps:
   enabled: false
   endpoint: ""
-  connectBackendCoordinator: false
 
 # ports will define which extra ports should be exposed in order to send data to agents
 ports: []
@@ -216,21 +216,13 @@ serviceMonitor:
 
 instructionURL: "https://app.edgedelta.com"
 
-tracerProps:
-  enabled: true
-  port: 9595
-
 compactorProps:
   enabled: true
   port: 9199
-  usePVC: false
-  storageClass: ""
-  diskSize: 30Gi
   # compactorProps.replicas -- Number of compactor agents to be created statically, mutually exclusive with autoscaling
   replicas: 1
   serviceDNSSuffix: svc.cluster.local
   traceFiles: ""
-  podManagementPolicy: "OrderedReady"
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
@@ -289,7 +281,6 @@ rollUpProps:
   port: 9200
   replicas: 2
   serviceDNSSuffix: svc.cluster.local
-  podManagementPolicy: "OrderedReady"
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
@@ -344,34 +335,6 @@ rollUpProps:
   #   labelSelector:
   #     matchLabels:
   #       edgedelta/agent-type: rollup
-
-# Configuration for Ingress to add in front of ports defined above,
-# requires Kubernetes >= 1.19
-ingress:
-  # ingress.enabled -- If set to true, we will create and use an Ingress resource
-  enabled: false
-  # ingress.class -- Specify the [ingressClassName](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)
-  class: ""
-  # ingress.annotations -- Set annotations for further ingress configuration
-  annotations:
-    {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  # ingress.hosts -- Configure the hosts and paths
-  hosts: []
-  #  - host: host.example.local
-  #    paths:
-  #      - path: /
-  #        pathType: ImplementationSpecific
-  #        # Specify the port name or number from ports section
-  #        port:
-  #          name: ""
-  #          number: ""
-  # ingress.tls -- TLS configurations
-  tls: []
-  #  - hosts:
-  #      - host.example.local
-  #    secretName: example-tls-secret
 
 serviceAccount:
   # serviceAccount.annotations -- Annotations for the service account

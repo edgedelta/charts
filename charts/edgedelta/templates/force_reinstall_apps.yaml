@@ -101,18 +101,15 @@ spec:
             - -c
             - |-
               version=$(helm list -n {{ .Release.Namespace }} -ojson | jq -r 'map(select(.name == "{{ .Release.Name }}")) | .[0].app_version');
-              if [[ ! "$version" > "v1.10.0-rc.14" ]]; then
               {{- if or (eq .Values.deployment.kind "DaemonSet") (eq .Values.deployment.kind "Deployment") }}
+              if [[ ! "$version" > "v1.10.0-rc.14" ]]; then
               {{- if eq .Values.deployment.kind "DaemonSet" }}
                 kubectl delete daemonset {{ include "edgedelta.fullname" . }} -n {{ .Release.Namespace }};
               {{- else }}
                 kubectl delete deployment {{ include "edgedelta.fullname" . }} -n {{ .Release.Namespace }};
               {{- end }}
-              {{- end }}
-              {{- if .Values.compactorProps.enabled }}
-                kubectl -n {{ .Release.Namespace }} delete statefulset {{ include "edgedelta.fullname" . }}-compactor;
-              {{- end }}
               fi
+              {{- end }}
       restartPolicy: Never
   backoffLimit: 6
 {{- end }}

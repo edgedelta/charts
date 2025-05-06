@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.35.0](https://img.shields.io/badge/Version-1.35.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.35.0](https://img.shields.io/badge/AppVersion-v1.35.0-informational?style=flat-square)
+![Version: 1.36.0](https://img.shields.io/badge/Version-1.36.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.36.0](https://img.shields.io/badge/AppVersion-v1.36.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -31,11 +31,9 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.autoscaling.minReplicas | int | `1` | Minimum replica count for compactor agents |
 | compactorProps.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for compactor agents in order to HPA to kick in |
 | compactorProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for compactor agents in order to HPA to kick in |
-| compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
-| compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.priorityClassName | string | `""` |  |
 | compactorProps.replicas | int | `1` | Number of compactor agents to be created statically, mutually exclusive with autoscaling |
@@ -44,13 +42,10 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.resources.requests.cpu | string | `"200m"` |  |
 | compactorProps.resources.requests.memory | string | `"300Mi"` |  |
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
-| compactorProps.storageClass | string | `""` |  |
 | compactorProps.tolerations | object | `{}` |  |
 | compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
-| compactorProps.usePVC | bool | `false` |  |
-| coordinatorProps.connectBackendCoordinator | bool | `false` |  |
 | coordinatorProps.enabled | bool | `false` |  |
 | coordinatorProps.endpoint | string | `""` |  |
 | deployment.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
@@ -67,6 +62,7 @@ Edge Delta Agent Chart for Kubernetes
 | dockerContainerProps.hostPath | string | `"/var/lib/docker/containers"` |  |
 | edAggregatorTraceFiles | string | `""` |  |
 | edBackendDisabled | string | `""` |  |
+| edClusterName | string | `""` |  |
 | edConfigContent | string | `""` |  |
 | edCustomTags | string | `""` |  |
 | edDisableLeaderElection | string | `""` |  |
@@ -144,7 +140,6 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `""` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
-| rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.priorityClassName | string | `""` |  |
 | rollUpProps.replicas | int | `2` |  |

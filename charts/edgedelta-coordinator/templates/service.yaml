@@ -1,11 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ed-coordinator-svc
+  name: {{ include "edgedelta.fullname" . }}-coordinator-svc
   namespace: {{ .Release.Namespace }}
   labels:
     version: v1
     kubernetes.io/cluster-service: "true"
+    edgedelta/service-type: "coordinator"
 spec:
   selector:
     {{- include "edgedelta.labels" . | nindent 4 }}

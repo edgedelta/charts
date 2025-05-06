@@ -28,7 +28,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: edgedelta-processor-metrics
+  name: {{ include "edgedelta.fullname" .}}-processor-metrics
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}
@@ -58,7 +58,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: edgedelta-rollup-metrics
+  name: {{ include "edgedelta.fullname" .}}-rollup-metrics
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "edgedelta.labels" . | nindent 4 }}

@@ -1,6 +1,6 @@
 {{- if .Values.compactorProps.enabled }}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "edgedelta.fullname" . }}-compactor
   namespace: {{ .Release.Namespace }}
@@ -14,17 +14,17 @@ spec:
   {{- if not (or .Values.compactorProps.autoscaling.enabled .Values.compactorProps.autoscaling.external) }}
   replicas: {{ default 1 .Values.compactorProps.replicas }}
   {{- end }}
-  podManagementPolicy: {{ .Values.compactorProps.podManagementPolicy | default "Parallel" }}
   selector:
     matchLabels:
       {{- include "edgedelta.selectorLabels" . | nindent 6 }}
       edgedelta/agent-type: compactor
-  serviceName: ed-compactor-svc
-  updateStrategy:
+  strategy:
   {{- if .Values.compactorProps.updateStrategy }}
     {{- toYaml .Values.compactorProps.updateStrategy | nindent 4 }}
   {{- else }}
     type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   {{- end }}
   template:
     metadata:
@@ -124,10 +124,6 @@ spec:
             value: compactor
           - name: ED_COMPACTOR_PORT
             value: "{{ .Values.compactorProps.port }}"
-          {{- if .Values.compactorProps.usePVC}}
-          - name: ED_COMPACTOR_DATA_DIR
-            value: /var/edgedelta-compactor
-          {{- end }}
           - name: ED_K8S_NODE_NAME
             valueFrom:
               fieldRef:
@@ -189,6 +185,10 @@ spec:
           {{- if .Values.edTagOverride }}
           - name: ED_TAG_OVERRIDE
             value: {{ .Values.edTagOverride }}
+          {{- end }}
+          {{- if .Values.edClusterName }}
+          - name: ED_CLUSTER_NAME
+            value: {{ .Values.edClusterName }}
           {{- end }}
           {{- if .Values.edSkipTlsVerify }}
           - name: ED_SKIP_K8S_TLS_VERIFY
@@ -252,10 +252,6 @@ spec:
           {{- toYaml .Values.compactorProps.resources | nindent 12 }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
-          {{- if .Values.compactorProps.usePVC}}
-          - name: compactor-data
-            mountPath: /var/edgedelta-compactor
-          {{- end }}
           {{- if .Values.edConfigContent }}
           - name: config-volume
             mountPath: /var/edgedelta
@@ -267,24 +263,11 @@ spec:
           configMap:
             name: {{ .Release.Name }}
       {{- end }}
-  {{- if .Values.compactorProps.usePVC}}
-  volumeClaimTemplates:
-  - metadata:
-      name: compactor-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      {{- if .Values.compactorProps.storageClass }}
-      storageClassName: {{ .Values.compactorProps.storageClass }}
-      {{- end }}
-      resources:
-        requests:
-          storage: {{ .Values.compactorProps.diskSize }}
-  {{- end }}
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: ed-compactor-svc
+  name: {{ include "edgedelta.fullname" . }}-compactor-svc
   namespace: {{ .Release.Namespace }}
   labels:
     version: v1
@@ -316,7 +299,7 @@ spec:
   maxReplicas: {{ .Values.compactorProps.autoscaling.maxReplicas }}
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: StatefulSet
+    kind: Deployment
     name: {{ include "edgedelta.fullname" . }}-compactor
   metrics:
     {{- if .Values.compactorProps.autoscaling.targetForMemoryUtilizationPercentage }}

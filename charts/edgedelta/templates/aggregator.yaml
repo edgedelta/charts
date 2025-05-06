@@ -143,6 +143,10 @@ spec:
           - name: ED_TAG_OVERRIDE
             value: {{ .Values.edTagOverride }}
           {{- end }}
+          {{- if .Values.edClusterName }}
+          - name: ED_CLUSTER_NAME
+            value: {{ .Values.edClusterName }}
+          {{- end }}
           {{- if .Values.edOrgID }}
           - name: ED_ORG_ID
             value: {{ .Values.edOrgID }}

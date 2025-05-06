@@ -159,6 +159,10 @@ spec:
             - name:  ED_TAG_OVERRIDE
               value: {{ .Values.edTagOverride }}
             {{- end }}
+            {{- if .Values.edClusterName }}
+            - name:  ED_CLUSTER_NAME
+              value: {{ .Values.edClusterName }}
+            {{- end }}
             {{- if .Values.edSkipTlsVerify }}
             - name: ED_SKIP_K8S_TLS_VERIFY
               value: "{{ .Values.edSkipTlsVerify }}"
@@ -224,9 +228,6 @@ spec:
             {{- if .Values.coordinatorProps.endpoint }}
             - name: ED_COORDINATOR_CLIENT_ENDPOINT
               value: "{{ .Values.coordinatorProps.endpoint }}"
-            {{- else if .Values.coordinatorProps.connectBackendCoordinator }}
-            - name: ED_COORDINATOR_USE_BACKEND
-              value: "1"
             {{- end }}
             {{- end }}
             {{- range .Values.envs }}
@@ -266,13 +267,13 @@ spec:
             {{- end }}
             {{- if .Values.compactorProps.enabled }}
             - name: ED_COMPACT_SERVICE_ENDPOINT
-              value: ed-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
+              value: {{ include "edgedelta.fullname" . }}-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
             {{- end }}
             {{- if .Values.rollUpProps.enabled }}
             - name: ED_METRIC_ROLLUP_ENABLED
               value: "1"
             - name: ED_METRIC_ROLLUP_DESTINATION_OVERRIDE
-              value: ed-rollup-svc.{{.Release.Namespace}}.{{.Values.rollUpProps.serviceDNSSuffix}}:{{.Values.rollUpProps.port}}
+              value: {{ include "edgedelta.fullname" . }}-rollup-svc.{{.Release.Namespace}}.{{.Values.rollUpProps.serviceDNSSuffix}}:{{.Values.rollUpProps.port}}
             {{- end }}
             {{- if .Values.targetAllocator.enabled }}
             - name: ED_TARGET_ALLOCATOR_ENABLED

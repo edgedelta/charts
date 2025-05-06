@@ -8,12 +8,11 @@ metadata:
 users:
 - system:serviceaccount:{{ .Release.Namespace }}:{{ include "edgedelta.fullname" . }}
 # Allow host ports when any host port being used
-{{ $usePorts := gt (len .Values.ports) 0 }}
-allowHostPorts: {{ or .Values.storePort .Values.profilerPort $usePorts }}
+allowHostPorts: false
 # Allow host PID when eBPF tracer is enabled
-allowHostPID: {{ .Values.tracerProps.enabled }}
+allowHostPID: false
 # Allow host PID when eBPF tracer is enabled
-allowHostNetwork: {{ .Values.tracerProps.enabled }}
+allowHostNetwork: false
 # Allow hostPath for eBPF and container logs
 volumes:
 {{ toYaml .Values.podSecurity.volumes | indent 2 }}
@@ -33,7 +32,7 @@ allowedCapabilities:
 #
 allowHostDirVolumePlugin: true
 allowHostIPC: false
-allowPrivilegedContainer: {{ or .Values.podSecurity.privileged .Values.tracerProps.enabled }}
+allowPrivilegedContainer: {{ or .Values.podSecurity.privileged }}
 allowedFlexVolumes: []
 defaultAddCapabilities: []
 fsGroup:

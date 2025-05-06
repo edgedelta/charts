@@ -1,6 +1,6 @@
 # edgedelta-gateway
 
-![Version: 1.35.0](https://img.shields.io/badge/Version-1.35.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.35.0](https://img.shields.io/badge/AppVersion-v1.35.0-informational?style=flat-square)
+![Version: 1.36.0](https://img.shields.io/badge/Version-1.36.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.36.0](https://img.shields.io/badge/AppVersion-v1.36.0-informational?style=flat-square)
 
 Edge Delta Gateway Agent Chart for Kubernetes
 
@@ -18,11 +18,9 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | compactorProps.autoscaling.minReplicas | int | `1` | Minimum replica count for rollup agents |
 | compactorProps.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for rollup agents in order to HPA to kick in |
 | compactorProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
-| compactorProps.diskSize | string | `"30Gi"` |  |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
-| compactorProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.priorityClassName | string | `""` |  |
 | compactorProps.replicas | int | `1` | Number of compactor agents to be created statically, mutually exclusive with autoscaling |
@@ -31,13 +29,10 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | compactorProps.resources.requests.cpu | string | `"200m"` |  |
 | compactorProps.resources.requests.memory | string | `"300Mi"` |  |
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
-| compactorProps.storageClass | string | `""` |  |
 | compactorProps.tolerations | object | `{}` |  |
 | compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
-| compactorProps.usePVC | bool | `false` |  |
-| coordinatorProps.connectBackendCoordinator | bool | `false` |  |
 | coordinatorProps.enabled | bool | `false` |  |
 | coordinatorProps.endpoint | string | `""` |  |
 | deployment.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
@@ -48,10 +43,11 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | deployment.autoscaling.minReplicas | int | `1` | Minimum replica count for rollup agents |
 | deployment.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for rollup agents in order to HPA to kick in |
 | deployment.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
-| deployment.replicas | int | `1` | Number of pods of the deployment. Mutually exclusive with autoscaling |
+| deployment.replicas | int | `2` | Number of pods of the deployment. Mutually exclusive with autoscaling |
 | deployment.topologySpreadConstraints | list | `[]` | Topology spread constraints for processor agents while in Deployment mode |
 | edAggregatorTraceFiles | string | `""` |  |
 | edBackendDisabled | string | `""` |  |
+| edClusterName | string | `""` |  |
 | edConfigContent | string | `""` |  |
 | edCustomTags | string | `""` |  |
 | edDisableLeaderElection | string | `""` |  |
@@ -73,11 +69,6 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets | list | `[]` |  |
 | image.tag | string | `""` |  |
-| ingress.annotations | object | `{}` | Set annotations for further ingress configuration |
-| ingress.class | string | `""` | Specify the [ingressClassName](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class) |
-| ingress.enabled | bool | `false` | If set to true, we will create and use an Ingress resource |
-| ingress.hosts | list | `[]` | Configure the hosts and paths |
-| ingress.tls | list | `[]` | TLS configurations |
 | instructionURL | string | `"https://app.edgedelta.com"` |  |
 | nameOverride | string | `""` | Override the name of resources. |
 | networkPolicy | object | `{"cilium":{"dnsSelector":{"toEndpoints":[{"matchLabels":{"k8s:io.kubernetes.pod.namespace":"kube-system","k8s:k8s-app":"kube-dns"}}]}},"enabled":false,"type":"cilium"}` | Manage NetworkPolicy |
@@ -114,7 +105,6 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `""` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
-| rollUpProps.podManagementPolicy | string | `"OrderedReady"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.priorityClassName | string | `""` |  |
 | rollUpProps.replicas | int | `2` |  |
@@ -138,8 +128,6 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | skipCommonLabels | bool | `false` |  |
 | storePort | string | `""` |  |
 | tolerations | object | `{}` |  |
-| tracerProps.enabled | bool | `true` |  |
-| tracerProps.port | int | `9595` |  |
 | updateStrategy.rollingUpdate.maxUnavailable | int | `1` |  |
 | updateStrategy.type | string | `"RollingUpdate"` |  |
 

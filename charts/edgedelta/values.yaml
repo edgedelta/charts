@@ -10,7 +10,7 @@ secretApiKey:
   enable: false # set true when creating template from charts
 
 # Predefined environment variables
-# See: https://docs.edgedelta.com/installation/environment-variables
+# See: https://docs.edgedelta.com/helm-values/
 
 storePort: ""
 profilerPort: ""
@@ -20,6 +20,7 @@ httpsProxy: ""
 noProxy: ""
 edBackendDisabled: ""
 edTagOverride: ""
+edClusterName: ""
 edSuppressionMode: ""
 edSkipConfDownload: ""
 edWorkflows: ""
@@ -189,7 +190,6 @@ updateStrategy:
 coordinatorProps:
   enabled: false
   endpoint: ""
-  connectBackendCoordinator: false
 
 # ports will define which extra ports should be exposed in order to send data to agents
 ports: []
@@ -281,14 +281,10 @@ tracerProps:
 compactorProps:
   enabled: true
   port: 9199
-  usePVC: false
-  storageClass: ""
-  diskSize: 30Gi
   # compactorProps.replicas -- Number of compactor agents to be created statically, mutually exclusive with autoscaling
   replicas: 1
   serviceDNSSuffix: svc.cluster.local
   traceFiles: ""
-  podManagementPolicy: "OrderedReady"
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
@@ -347,7 +343,6 @@ rollUpProps:
   port: 9200
   replicas: 2
   serviceDNSSuffix: svc.cluster.local
-  podManagementPolicy: "OrderedReady"
   tolerations: {}
   nodeSelector: {}
   priorityClassName: ""
