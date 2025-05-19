@@ -235,16 +235,6 @@ spec:
                   name: {{ .secretKeyRef.name }}
                   key: {{ .secretKeyRef.key }}
             {{- end }}
-            {{- if .Values.compactorProps.enabled }}
-            - name: ED_COMPACT_SERVICE_ENDPOINT
-              value: {{ include "edgedelta.fullname" . }}-compactor-svc.{{.Release.Namespace}}.{{.Values.compactorProps.serviceDNSSuffix}}:{{.Values.compactorProps.port}}
-            {{- end }}
-            {{- if .Values.rollUpProps.enabled }}
-            - name: ED_METRIC_ROLLUP_ENABLED
-              value: "1"
-            - name: ED_METRIC_ROLLUP_DESTINATION_OVERRIDE
-              value: {{ include "edgedelta.fullname" . }}-rollup-svc.{{.Release.Namespace}}.{{.Values.rollUpProps.serviceDNSSuffix}}:{{.Values.rollUpProps.port}}
-            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}

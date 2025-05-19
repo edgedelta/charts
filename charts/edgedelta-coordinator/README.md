@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 1.36.0](https://img.shields.io/badge/Version-1.36.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.36.0](https://img.shields.io/badge/AppVersion-v1.36.0-informational?style=flat-square)
+![Version: 1.37.0](https://img.shields.io/badge/Version-1.37.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.37.0](https://img.shields.io/badge/AppVersion-v1.37.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
@@ -10,29 +10,6 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 |-----|------|---------|-------------|
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
-| compactorProps.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
-| compactorProps.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
-| compactorProps.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for compactor agents |
-| compactorProps.autoscaling.external | bool | `false` | Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/) |
-| compactorProps.autoscaling.maxReplicas | int | `10` | Maximum replica count for compactor agents |
-| compactorProps.autoscaling.minReplicas | int | `1` | Minimum replica count for compactor agents |
-| compactorProps.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for compactor agents in order to HPA to kick in |
-| compactorProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for compactor agents in order to HPA to kick in |
-| compactorProps.enabled | bool | `true` |  |
-| compactorProps.goMemLimit | string | `""` |  |
-| compactorProps.nodeSelector | object | `{}` |  |
-| compactorProps.port | int | `9199` |  |
-| compactorProps.priorityClassName | string | `""` |  |
-| compactorProps.replicas | int | `1` | Number of compactor agents to be created statically, mutually exclusive with autoscaling |
-| compactorProps.resources.limits.cpu | string | `"2000m"` |  |
-| compactorProps.resources.limits.memory | string | `"2Gi"` |  |
-| compactorProps.resources.requests.cpu | string | `"200m"` |  |
-| compactorProps.resources.requests.memory | string | `"300Mi"` |  |
-| compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
-| compactorProps.tolerations | object | `{}` |  |
-| compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
-| compactorProps.traceFiles | string | `""` |  |
-| compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | coordinatorProps.port | int | `5555` |  |
 | coordinatorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | edAggregatorTraceFiles | string | `""` |  |
@@ -82,29 +59,6 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | resources.limits.memory | string | `"2Gi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
-| rollUpProps.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
-| rollUpProps.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
-| rollUpProps.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for rollup agents |
-| rollUpProps.autoscaling.external | bool | `false` | Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/) |
-| rollUpProps.autoscaling.maxReplicas | int | `10` | Maximum replica count for rollup agents |
-| rollUpProps.autoscaling.minReplicas | int | `2` | Minimum replica count for rollup agents |
-| rollUpProps.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for rollup agents in order to HPA to kick in |
-| rollUpProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
-| rollUpProps.enabled | bool | `true` |  |
-| rollUpProps.goMemLimit | string | `""` |  |
-| rollUpProps.nodeSelector | object | `{}` |  |
-| rollUpProps.port | int | `9200` |  |
-| rollUpProps.priorityClassName | string | `""` |  |
-| rollUpProps.replicas | int | `1` |  |
-| rollUpProps.resources.limits.cpu | string | `"1000m"` |  |
-| rollUpProps.resources.limits.memory | string | `"1Gi"` |  |
-| rollUpProps.resources.requests.cpu | string | `"200m"` |  |
-| rollUpProps.resources.requests.memory | string | `"256Mi"` |  |
-| rollUpProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
-| rollUpProps.tolerations | object | `{}` |  |
-| rollUpProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for rollup agents |
-| rollUpProps.updateStrategy.rollingUpdate.maxUnavailable | int | `1` |  |
-| rollUpProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | secretApiKey.enable | bool | `false` |  |
 | secretApiKey.key | string | `"ed-api-key"` |  |
 | secretApiKey.name | string | `"ed-api-key"` |  |
