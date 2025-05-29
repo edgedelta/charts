@@ -74,3 +74,10 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Secret name for API key
+*/}}
+{{- define "apiKeySecretName" -}}
+{{- .Values.secretApiKey.name | default (printf "%s-api-key" (include "edgedelta.fullname" .)) -}}
+{{- end -}}

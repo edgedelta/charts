@@ -42,8 +42,8 @@ spec:
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
-      {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+      {{- if .Values.secretApiKey.key }}
+      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
       {{- if .Values.secretApiKey.value }}
         edgedelta/api-key-sha: {{ .Values.secretApiKey.value | sha256sum | substr 0 48 }}
       {{- else if $lookupResult }}
@@ -78,7 +78,7 @@ spec:
         seLinuxOptions:
 {{ toYaml .Values.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
       {{- end }}
-      {{- else if eq  (include "isOpenShift" .) "true"}}
+      {{- else if eq (include "isOpenShift" .) "true"}}
       securityContext:
         seLinuxOptions:
           user: "system_u"
@@ -121,13 +121,13 @@ spec:
             {{- if .Values.apiKey }}
             - name: ED_API_KEY
               value: {{ .Values.apiKey | quote }}
-            {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-            {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+            {{- else if .Values.secretApiKey.key }}
+            {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
             {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
             - name: ED_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secretApiKey.name }}
+                  name: {{ include "apiKeySecretName" . }}
                   key: {{ .Values.secretApiKey.key }}
             {{- end }}
             {{- end }}
@@ -138,10 +138,10 @@ spec:
             {{- if .Values.profilerPort }}
             - name: PROFILER_PORT
               value: "{{ .Values.profilerPort }}"
-          {{- end }}
+            {{- end }}
             {{- if .Values.edTraceFiles }}
-            - name:  ED_TRACE_FILES
-              value: {{ .Values.edTraceFile | quote }}
+            - name: ED_TRACE_FILES
+              value: {{ .Values.edTraceFiles | quote }}
             {{- end }}
             {{- if .Values.edApiEndpoint }}
             - name:  ED_API_ENDPOINT
@@ -207,6 +207,11 @@ spec:
             - name: GOMEMLIMIT
               value: {{ .Values.goMemLimit }}
             {{- end }}
+            - name: ED_HOST_OVERRIDE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
             - name: ED_K8S_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -298,8 +303,8 @@ spec:
               {{- toYaml .Values.volumeProps.volumeMounts | nindent 12 }}
             {{- end }}
         {{- if .Values.httpRecorderProps.enabled }}
-        # httprecorder container
-        - name: {{ .Chart.Name }}-httprecorder
+        # http recorder container
+        - name: {{ .Chart.Name }}-http-recorder
           image: {{ .Values.httpRecorderProps.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.httpRecorderProps.image.name .Values.httpRecorderProps.image.tag) }}
           imagePullPolicy: {{ .Values.httpRecorderProps.image.pullPolicy }}
           command:
@@ -349,7 +354,7 @@ spec:
         {{- end }}
 {{- if .Values.httpRecorderProps.enabled }}
 ---
-# Service for httprecorder
+# Service for http recorder
 apiVersion: v1
 kind: Service
 metadata:
@@ -361,7 +366,7 @@ spec:
     edgedelta/agent-type: processor
   ports:
   - port: {{ .Values.httpRecorderProps.port }}
-    name: httprecorder-port
+    name: http-recorder-port
 {{- end }}
 {{- if .Values.deployment.autoscaling.enabled }}
 ---

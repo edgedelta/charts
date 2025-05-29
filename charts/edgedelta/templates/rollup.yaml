@@ -42,8 +42,8 @@ spec:
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
-      {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+      {{- if .Values.secretApiKey.key }}
+      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
       {{- if .Values.secretApiKey.value }}
         edgedelta/api-key-sha: {{ .Values.secretApiKey.value | sha256sum | substr 0 48 }}
       {{- else if $lookupResult }}
@@ -86,7 +86,7 @@ spec:
         seLinuxOptions:
 {{ toYaml .Values.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
       {{- end }}
-      {{- else if eq  (include "isOpenShift" .) "true"}}
+      {{- else if eq (include "isOpenShift" .) "true"}}
       securityContext:
         seLinuxOptions:
           user: "system_u"
@@ -124,6 +124,11 @@ spec:
             value: edge
           - name: ED_METRIC_ROLLUP_SERVER_PORT
             value: "{{ .Values.rollUpProps.port }}"
+          - name: ED_HOST_OVERRIDE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
           - name: ED_K8S_NODE_NAME
             valueFrom:
               fieldRef:
@@ -150,13 +155,13 @@ spec:
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}
-          {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+          {{- else if .Values.secretApiKey.key }}
+          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
           {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
           - name: ED_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.secretApiKey.name }}
+                name: {{ include "apiKeySecretName" . }}
                 key: {{ .Values.secretApiKey.key }}
           {{- end }}
           {{- end }}
@@ -172,8 +177,10 @@ spec:
           - name: ED_PROM_PORT
             value: "{{ .Values.promPort }}"
           {{- end }}
+          {{- if .Values.edTraceFiles }}
           - name: ED_TRACE_FILES
-            value: {{ .Values.compactorProps.traceFiles | quote }}
+            value: {{ .Values.edTraceFiles | quote }}
+          {{- end }}
           {{- if .Values.edApiEndpoint }}
           - name: ED_API_ENDPOINT
             value: {{ .Values.edApiEndpoint }}

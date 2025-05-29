@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: force-reinstall-apps
+  name: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: "pre-upgrade"
@@ -46,7 +46,7 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: force-reinstall-apps
+  name: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: "pre-upgrade"
@@ -58,7 +58,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: force-reinstall-apps
+  name: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: "pre-upgrade"
@@ -68,17 +68,17 @@ metadata:
     app: force-reinstall-apps
 subjects:
   - kind: ServiceAccount
-    name: force-reinstall-apps
+    name: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: force-reinstall-apps
+  name: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: force-reinstall-apps
+  name: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: "pre-upgrade"
@@ -89,7 +89,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: force-reinstall-apps
+      serviceAccountName: {{ include "edgedelta.fullname" . }}-force-reinstall-apps
       containers:
         - name: force-reinstall-apps
           image: dtzar/helm-kubectl:latest

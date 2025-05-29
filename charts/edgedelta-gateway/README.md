@@ -1,6 +1,6 @@
 # edgedelta-gateway
 
-![Version: 1.37.0](https://img.shields.io/badge/Version-1.37.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.37.0](https://img.shields.io/badge/AppVersion-v1.37.0-informational?style=flat-square)
+![Version: 1.38.0](https://img.shields.io/badge/Version-1.38.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.38.0](https://img.shields.io/badge/AppVersion-v1.38.0-informational?style=flat-square)
 
 Edge Delta Gateway Agent Chart for Kubernetes
 
@@ -119,7 +119,7 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | rollUpProps.updateStrategy.type | string | `"RollingUpdate"` |  |
 | secretApiKey.enable | bool | `false` |  |
 | secretApiKey.key | string | `"ed-api-key"` |  |
-| secretApiKey.name | string | `"ed-api-key"` |  |
+| secretApiKey.name | string | `""` |  |
 | secretApiKey.value | string | `""` |  |
 | serviceAccount.annotations | object | `{}` | Annotations for the service account |
 | serviceAccount.labels | object | `{}` | Labels for the service account |

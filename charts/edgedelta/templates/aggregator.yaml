@@ -28,8 +28,8 @@ spec:
       {{- if .Values.labels }}
         {{- toYaml .Values.labels | nindent 8 }}
       {{- end }}
-      {{- if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+      {{- if .Values.secretApiKey.key }}
+      {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
       {{- if .Values.secretApiKey.value }}
         edgedelta/api-key-sha: {{ .Values.secretApiKey.value | sha256sum | substr 0 48 }}
       {{- else if $lookupResult }}
@@ -105,13 +105,13 @@ spec:
           {{- if .Values.apiKey }}
           - name: ED_API_KEY
             value: {{ .Values.apiKey | quote }}
-          {{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+          {{- else if .Values.secretApiKey.key }}
+          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
           {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
           - name: ED_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.secretApiKey.name }}
+                name: {{ include "apiKeySecretName" . }}
                 key: {{ .Values.secretApiKey.key }}
           {{- end }}
           {{- end }}

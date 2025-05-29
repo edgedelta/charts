@@ -1,8 +1,8 @@
 1. Visit {{ .Values.instructionURL | default "https://app.edgedelta.com" }}
 {{- if .Values.apiKey }}
 2. Find the configuration with {{ .Values.apiKey | quote }} on {{ .Values.instructionURL | default "https://app.edgedelta.com" }} to check if agents are active
-{{- else if and .Values.secretApiKey.name .Values.secretApiKey.key }}
-{{ $lookupResult := lookup "v1" "Secret" .Release.Namespace .Values.secretApiKey.name }}
+{{- else if .Values.secretApiKey.key }}
+{{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
 {{- if .Values.secretApiKey.value }}
 2. Find the configuration with {{ .Values.secretApiKey.value }} on {{ .Values.instructionURL | default "https://app.edgedelta.com" }} to check if agents are active
 {{- else if $lookupResult }}

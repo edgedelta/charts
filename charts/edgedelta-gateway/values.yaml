@@ -4,7 +4,7 @@
 apiKey: ""
 
 secretApiKey:
-  name: "ed-api-key"
+  name: ""
   key: "ed-api-key"
   value: ""
   enable: false # set true when creating template from charts

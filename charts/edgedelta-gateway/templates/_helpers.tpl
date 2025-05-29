@@ -91,3 +91,10 @@ Generates a short, DNS-compatible hash from a given pipeline ID.
 {{- end -}}
 {{- $shortened -}}
 {{- end -}}
+
+{{/*
+Secret name for API key
+*/}}
+{{- define "apiKeySecretName" -}}
+{{- .Values.secretApiKey.name | default (printf "%s-api-key" (include "edgedelta.fullname" .)) -}}
+{{- end -}}
