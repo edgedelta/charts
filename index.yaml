@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   edgedelta:
   - apiVersion: v2
+    appVersion: v1.39.0
+    created: "2025-05-30T02:27:55.466272771Z"
+    description: Edge Delta Agent Chart for Kubernetes
+    digest: bb03c6e6290ab52d890dc6fe8c10afa6390c7a7b1d5a46dad8680204fff91ff3
+    name: edgedelta
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-1.39.0/edgedelta-1.39.0.tgz
+    version: 1.39.0
+  - apiVersion: v2
     appVersion: v1.38.0
     created: "2025-05-29T19:59:45.630400654Z"
     description: Edge Delta Agent Chart for Kubernetes
@@ -713,6 +723,16 @@ entries:
     version: 0.1.64
   edgedelta-coordinator:
   - apiVersion: v2
+    appVersion: v1.39.0
+    created: "2025-05-30T02:27:55.584150409Z"
+    description: Edge Delta Coordinator Agent Chart for Kubernetes
+    digest: ee4e22099aa57445e1d5e9cd3d4a53e4b07a241e4fd3ac4dfa51fd4c75f428cb
+    name: edgedelta-coordinator
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-coordinator-1.39.0/edgedelta-coordinator-1.39.0.tgz
+    version: 1.39.0
+  - apiVersion: v2
     appVersion: v1.38.0
     created: "2025-05-29T19:59:45.799506901Z"
     description: Edge Delta Coordinator Agent Chart for Kubernetes
@@ -754,6 +774,16 @@ entries:
     version: 1.35.0
   edgedelta-gateway:
   - apiVersion: v2
+    appVersion: v1.39.0
+    created: "2025-05-30T02:27:55.678058252Z"
+    description: Edge Delta Gateway Agent Chart for Kubernetes
+    digest: 020108f09c7402bdd556bb2a0bd5da9ec25205eb18abde284ff702aeff6391c6
+    name: edgedelta-gateway
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-gateway-1.39.0/edgedelta-gateway-1.39.0.tgz
+    version: 1.39.0
+  - apiVersion: v2
     appVersion: v1.38.0
     created: "2025-05-29T19:59:45.986900141Z"
     description: Edge Delta Gateway Agent Chart for Kubernetes
@@ -793,4 +823,4 @@ entries:
     urls:
     - https://github.com/edgedelta/charts/releases/download/edgedelta-gateway-1.35.0/edgedelta-gateway-1.35.0.tgz
     version: 1.35.0
-generated: "2025-05-29T19:59:45.987248729Z"
+generated: "2025-05-30T02:27:55.678443181Z"
