@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   edgedelta:
   - apiVersion: v2
+    appVersion: v2.0.0
+    created: "2025-06-17T12:40:36.277524841Z"
+    description: Edge Delta Agent Chart for Kubernetes
+    digest: a5411979e0fddb60f73e46b431d0454f384e39db64fd7de2bb3cc979b4ac5a7f
+    name: edgedelta
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-2.0.0/edgedelta-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     appVersion: v1.39.0
     created: "2025-05-30T02:27:55.466272771Z"
     description: Edge Delta Agent Chart for Kubernetes
@@ -723,6 +733,16 @@ entries:
     version: 0.1.64
   edgedelta-coordinator:
   - apiVersion: v2
+    appVersion: v2.0.0
+    created: "2025-06-17T12:40:36.417030499Z"
+    description: Edge Delta Coordinator Agent Chart for Kubernetes
+    digest: 721cc9eed01c4ff858a233bc64779e72b243cdb19b03686b71c3008e7bd86701
+    name: edgedelta-coordinator
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-coordinator-2.0.0/edgedelta-coordinator-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     appVersion: v1.39.0
     created: "2025-05-30T02:27:55.584150409Z"
     description: Edge Delta Coordinator Agent Chart for Kubernetes
@@ -774,6 +794,16 @@ entries:
     version: 1.35.0
   edgedelta-gateway:
   - apiVersion: v2
+    appVersion: v2.0.0
+    created: "2025-06-17T12:40:36.557521678Z"
+    description: Edge Delta Gateway Agent Chart for Kubernetes
+    digest: e7178c97b69ed1db495834b8b82217d3848eaf7867cf12f04a9e8c4caf846b6a
+    name: edgedelta-gateway
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/edgedelta-gateway-2.0.0/edgedelta-gateway-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     appVersion: v1.39.0
     created: "2025-05-30T02:27:55.678058252Z"
     description: Edge Delta Gateway Agent Chart for Kubernetes
@@ -823,4 +853,4 @@ entries:
     urls:
     - https://github.com/edgedelta/charts/releases/download/edgedelta-gateway-1.35.0/edgedelta-gateway-1.35.0.tgz
     version: 1.35.0
-generated: "2025-05-30T02:27:55.678443181Z"
+generated: "2025-06-17T12:40:36.557877341Z"
