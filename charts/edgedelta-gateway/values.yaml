@@ -40,8 +40,6 @@ skipCommonLabels: false
 # custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agent to configured destination(s).
 edCustomTags: ""
 
-gatewayProps:
-  port: 6600
 
 # Volume props will be used for mounting certain volume(s) to the given path(s) for the agent
 # volumeProps:
@@ -108,6 +106,12 @@ deployment:
       #        averageValue: 1k
     # deployment.autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
     behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60  # Slower scale-up
+        policies:
+        - type: Percent
+          value: 50 # Scale up by 50% max
+          periodSeconds: 60
       scaleDown:
         stabilizationWindowSeconds: 300
   # deployment.topologySpreadConstraints -- Topology spread constraints for processor agents while in Deployment mode
@@ -139,7 +143,7 @@ updateStrategy:
     maxUnavailable: 1
 
 coordinatorProps:
-  enabled: false
+  enabled: true
   endpoint: ""
 
 # ports will define which extra ports should be exposed in order to send data to agents

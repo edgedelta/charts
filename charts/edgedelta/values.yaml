@@ -188,7 +188,7 @@ updateStrategy:
     maxUnavailable: 1
 
 coordinatorProps:
-  enabled: false
+  enabled: true
   endpoint: ""
 
 # ports will define which extra ports should be exposed in order to send data to agents

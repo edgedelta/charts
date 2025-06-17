@@ -1,6 +1,6 @@
 # edgedelta-gateway
 
-![Version: 1.39.0](https://img.shields.io/badge/Version-1.39.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.39.0](https://img.shields.io/badge/AppVersion-v1.39.0-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.0.0](https://img.shields.io/badge/AppVersion-v2.0.0-informational?style=flat-square)
 
 Edge Delta Gateway Agent Chart for Kubernetes
 
@@ -33,9 +33,9 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
-| coordinatorProps.enabled | bool | `false` |  |
+| coordinatorProps.enabled | bool | `true` |  |
 | coordinatorProps.endpoint | string | `""` |  |
-| deployment.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
+| deployment.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300},"scaleUp":{"policies":[{"periodSeconds":60,"type":"Percent","value":50}],"stabilizationWindowSeconds":60}}` | Configure separate scale-up and scale-down behaviors |
 | deployment.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
 | deployment.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for processor agents |
 | deployment.autoscaling.external | bool | `false` | Set to `true` if using an external autoscaler like [KEDA](https://keda.sh/) |
@@ -60,7 +60,6 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | edWorkflowPrefixes | string | `""` |  |
 | edWorkflows | string | `""` |  |
 | fullnameOverride | string | `""` | Override the full name of resources. |
-| gatewayProps.port | int | `6600` |  |
 | goMemLimit | string | `""` |  |
 | httpProxy | string | `""` |  |
 | httpsProxy | string | `""` |  |

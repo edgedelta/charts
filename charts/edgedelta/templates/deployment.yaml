@@ -228,12 +228,13 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.name
             {{- if .Values.coordinatorProps.enabled }}
-            - name: ED_COORDINATOR_CLIENT_ENABLED
-              value: "1"
             {{- if .Values.coordinatorProps.endpoint }}
             - name: ED_COORDINATOR_CLIENT_ENDPOINT
               value: "{{ .Values.coordinatorProps.endpoint }}"
             {{- end }}
+            {{- else }}
+            - name: ED_COORDINATOR_CLIENT_DISABLED
+              value: "1"
             {{- end }}
             {{- range .Values.envs }}
             - name: {{ .name }}

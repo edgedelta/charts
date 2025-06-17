@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 1.39.0](https://img.shields.io/badge/Version-1.39.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.39.0](https://img.shields.io/badge/AppVersion-v1.39.0-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.0.0](https://img.shields.io/badge/AppVersion-v2.0.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -46,7 +46,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
 | compactorProps.traceFiles | string | `""` |  |
 | compactorProps.updateStrategy.type | string | `"RollingUpdate"` |  |
-| coordinatorProps.enabled | bool | `false` |  |
+| coordinatorProps.enabled | bool | `true` |  |
 | coordinatorProps.endpoint | string | `""` |  |
 | deployment.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
 | deployment.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
