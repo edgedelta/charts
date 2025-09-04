@@ -230,6 +230,10 @@ spec:
           - name: GOMEMLIMIT
             value: {{ .Values.compactorProps.goMemLimit }}
           {{- end }}
+          {{- if .Values.edAIEventEndpoint }}
+          - name: ED_AI_EVENT_ENDPOINT
+            value: {{ .Values.edAIEventEndpoint }}
+          {{- end }}
           {{- if .Values.compactorProps.envs }}
           {{- range .Values.compactorProps.envs }}
           - name: {{ .name }}

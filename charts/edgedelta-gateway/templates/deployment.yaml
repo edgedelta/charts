@@ -206,6 +206,10 @@ spec:
             - name: GOMEMLIMIT
               value: {{ .Values.goMemLimit }}
             {{- end }}
+            {{- if .Values.edAIEventEndpoint }}
+            - name: ED_AI_EVENT_ENDPOINT
+              value: {{ .Values.edAIEventEndpoint }}
+            {{- end }}
             - name: ED_HOST_OVERRIDE
               valueFrom:
                 fieldRef:

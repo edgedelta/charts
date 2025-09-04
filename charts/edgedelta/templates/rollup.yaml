@@ -230,6 +230,10 @@ spec:
           - name: GOMEMLIMIT
             value: {{ .Values.rollUpProps.goMemLimit }}
           {{- end }}
+          {{- if .Values.edAIEventEndpoint }}
+          - name: ED_AI_EVENT_ENDPOINT
+            value: {{ .Values.edAIEventEndpoint }}
+          {{- end }}
           {{- if .Values.rollUpProps.envs }}
           {{- range .Values.rollUpProps.envs }}
           - name: {{ .name }}
