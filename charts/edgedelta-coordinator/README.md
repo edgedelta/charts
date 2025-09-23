@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 2.5.0](https://img.shields.io/badge/Version-2.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.0](https://img.shields.io/badge/AppVersion-v2.5.0-informational?style=flat-square)
+![Version: 2.6.0](https://img.shields.io/badge/Version-2.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.6.0](https://img.shields.io/badge/AppVersion-v2.6.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
@@ -52,6 +52,7 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SecurityContextConstraints resource for pods |
 | podSecurity.volumes | list | `["configMap","downwardAPI","emptyDir","hostPath","secret"]` | Allowed volumes types |
 | priorityClassName | string | `""` |  |
+| priorityClasses | string | `nil` |  |
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
 | repository | string | `"gcr.io/edgedelta"` |  |

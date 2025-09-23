@@ -395,3 +395,10 @@ podSecurity:
 
   # podSecurity.privileged -- If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true
   privileged: false
+
+priorityClasses:
+# priorityClasses: -- Create priority classes for Edge Delta components
+#   - name: edgedelta-priority-class
+#     value: 2000000
+#     description: "The priority class for Edge Delta components"
+#     preemptionPolicy: PreemptLowerPriority
