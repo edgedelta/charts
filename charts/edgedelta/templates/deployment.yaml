@@ -118,6 +118,8 @@ spec:
           env:
             - name: ED_FLEET_TYPE
               value: edge
+            - name: ED_DISABLE_SAMPLE_COLLECTOR
+              value: "1"
             {{- if .Values.apiKey }}
             - name: ED_API_KEY
               value: {{ .Values.apiKey | quote }}

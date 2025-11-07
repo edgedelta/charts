@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 2.6.0](https://img.shields.io/badge/Version-2.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.6.0](https://img.shields.io/badge/AppVersion-v2.6.0-informational?style=flat-square)
+![Version: 2.7.0](https://img.shields.io/badge/Version-2.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.7.0](https://img.shields.io/badge/AppVersion-v2.7.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
@@ -43,6 +43,13 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | networkPolicy.type | string | `"cilium"` | Type of the network policy to use. Can be: * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | noProxy | string | `""` |  |
 | nodeSelector | object | `{}` |  |
+| persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| persistence.annotations | object | `{}` |  |
+| persistence.enabled | bool | `true` |  |
+| persistence.existingClaim | string | `""` |  |
+| persistence.mountPath | string | `"/edgedelta/data"` |  |
+| persistence.size | string | `"1Gi"` |  |
+| persistence.storageClassName | string | `""` |  |
 | podSecurity.apparmor.enabled | bool | `false` | If true, it will enable apparmor for the pods |
 | podSecurity.apparmor.profile | string | `"unconfined"` | If apparmor enabled, it will be the profile for apparmor enforcement for the pods |
 | podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH"]` | Allowed capabilities |

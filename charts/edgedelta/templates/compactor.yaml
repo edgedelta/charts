@@ -120,6 +120,8 @@ spec:
         env:
           - name: ED_FLEET_TYPE
             value: edge
+          - name: ED_DISABLE_SAMPLE_COLLECTOR
+            value: "1"
           - name: ED_AGENT_MODE
             value: compactor
           - name: ED_COMPACTOR_PORT

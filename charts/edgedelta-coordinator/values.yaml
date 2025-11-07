@@ -40,6 +40,23 @@ skipCommonLabels: false
 # custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agents to configured destination(s).
 edCustomTags: ""
 
+# Persistent storage for coordinator data (auth, etc.)
+persistence:
+  enabled: true
+  # Generic data directory that will contain subdirectories like auth/, etc.
+  mountPath: /edgedelta/data
+  # Storage class name (leave empty for default)
+  storageClassName: ""
+  # Storage size
+  size: 1Gi
+  # Access mode
+  accessModes:
+    - ReadWriteOnce
+  # Define any annotation KVs to be set on the PVC
+  annotations: {}
+  # Use existing PVC (if empty, a new PVC will be created)
+  existingClaim: ""
+
 # Volume props will be used for mounting certain volume(s) to the given path(s) for the agents
 # volumeProps:
 #   volumeMounts:

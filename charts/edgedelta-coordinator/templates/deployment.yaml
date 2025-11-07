@@ -108,12 +108,16 @@ spec:
           env:
             - name: ED_FLEET_TYPE
               value: coordinator
+            - name: ED_DISABLE_SAMPLE_COLLECTOR
+              value: "1"
             - name: ED_COORDINATOR_SERVER_ENABLED
               value: "1"
             - name: ED_COORDINATOR_SERVER_PORT
               value: "{{ .Values.coordinatorProps.port }}"
             - name: ED_COORDINATOR_USE_BACKEND
               value: "1"
+            - name: ED_DATA_PATH
+              value: {{ coalesce .Values.persistence.mountPath "/edgedelta/data" | quote }}
             {{- if .Values.apiKey }}
             - name:  ED_API_KEY
               value: {{ .Values.apiKey | quote }}
@@ -248,6 +252,8 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
+            - name: data-volume
+              mountPath: {{ coalesce .Values.persistence.mountPath "/edgedelta/data" }}
             {{- if .Values.edConfigContent }}
             - name: config-volume
               mountPath: /var/edgedelta
@@ -257,6 +263,13 @@ spec:
             {{- end }}
       terminationGracePeriodSeconds: 10
       volumes:
+        - name: data-volume
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ coalesce .Values.persistence.existingClaim (include "edgedelta.fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
         {{- if .Values.edConfigContent }}
         - name: config-volume
           configMap:
