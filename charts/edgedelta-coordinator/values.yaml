@@ -34,6 +34,46 @@ goMemLimit: ""
 
 edEnableControllerDiscovery: true
 
+# ClusterRole rules configuration
+# These rules define the RBAC permissions for the EdgeDelta coordinator
+# You can customize these rules to match your cluster's security requirements
+clusterRoleRules:
+  - apiGroups: [""]
+    resources:
+      - namespaces
+      - pods
+      - pods/log
+      - events
+      - nodes
+      - nodes/metrics
+      - services
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["watch", "list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["watch", "list"]
+
+# Additional ClusterRole rules for watching Custom Resource Definitions (CRDs)
+# These rules are ADDED to the clusterRoleRules above
+# Use this to grant the agent permission to watch custom resources like ArgoCD, Prometheus Operator, etc.
+# Example:
+# additionalClusterRoleRules:
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["applications", "appprojects"]
+#     verbs: ["get", "list", "watch"]
+additionalClusterRoleRules: []
+
 # skipping adding common labels for helm charts into direct helm to k8s yaml file creation.
 skipCommonLabels: false
 

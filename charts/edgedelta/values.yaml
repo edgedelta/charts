@@ -34,6 +34,75 @@ goMemLimit: ""
 
 edEnableControllerDiscovery: true
 
+# ClusterRole rules configuration
+# These rules define the RBAC permissions for the EdgeDelta agent
+# You can customize these rules to match your cluster's security requirements
+#
+# To use a minimal baseline (e.g., v2.11.0 compatible), remove the newer apiGroups:
+# - events.k8s.io, autoscaling, networking.k8s.io, rbac.authorization.k8s.io
+# - Remove configmaps, secrets, replicationcontrollers, serviceaccounts, persistentvolumes from core
+# - Change apps/batch verbs from ["get", "list", "watch"] to ["watch", "list"]
+clusterRoleRules:
+  - apiGroups: [""]
+    resources:
+      - namespaces
+      - pods
+      - pods/log
+      - events
+      - nodes
+      - nodes/metrics
+      - services
+      - endpoints
+      - configmaps
+      - secrets
+      - replicationcontrollers
+      - serviceaccounts
+      - persistentvolumes
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["events.k8s.io"]
+    resources: ["events"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles", "clusterrolebindings"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+
+# Additional ClusterRole rules for watching Custom Resource Definitions (CRDs)
+# These rules are ADDED to the clusterRoleRules above
+# Use this to grant the agent permission to watch custom resources like ArgoCD, Prometheus Operator, etc.
+# Example:
+# additionalClusterRoleRules:
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["applications", "appprojects"]
+#     verbs: ["get", "list", "watch"]
+#   - apiGroups: ["monitoring.coreos.com"]
+#     resources: ["prometheusrules", "servicemonitors"]
+#     verbs: ["get", "list", "watch"]
+additionalClusterRoleRules: []
+
 # skipping adding common labels for helm charts into direct helm to k8s yaml file creation.
 skipCommonLabels: false
 

@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 2.11.0](https://img.shields.io/badge/Version-2.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.11.0](https://img.shields.io/badge/AppVersion-v2.11.0-informational?style=flat-square)
+![Version: 2.12.0](https://img.shields.io/badge/Version-2.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.12.0](https://img.shields.io/badge/AppVersion-v2.12.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
@@ -8,8 +8,50 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| additionalClusterRoleRules | list | `[]` |  |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
+| clusterRoleRules[0].apiGroups[0] | string | `""` |  |
+| clusterRoleRules[0].resources[0] | string | `"namespaces"` |  |
+| clusterRoleRules[0].resources[1] | string | `"pods"` |  |
+| clusterRoleRules[0].resources[2] | string | `"pods/log"` |  |
+| clusterRoleRules[0].resources[3] | string | `"events"` |  |
+| clusterRoleRules[0].resources[4] | string | `"nodes"` |  |
+| clusterRoleRules[0].resources[5] | string | `"nodes/metrics"` |  |
+| clusterRoleRules[0].resources[6] | string | `"services"` |  |
+| clusterRoleRules[0].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[0].verbs[1] | string | `"watch"` |  |
+| clusterRoleRules[0].verbs[2] | string | `"list"` |  |
+| clusterRoleRules[1].apiGroups[0] | string | `""` |  |
+| clusterRoleRules[1].resources[0] | string | `"events"` |  |
+| clusterRoleRules[1].verbs[0] | string | `"create"` |  |
+| clusterRoleRules[2].apiGroups[0] | string | `"coordination.k8s.io"` |  |
+| clusterRoleRules[2].resources[0] | string | `"leases"` |  |
+| clusterRoleRules[2].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[2].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[2].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[2].verbs[3] | string | `"create"` |  |
+| clusterRoleRules[2].verbs[4] | string | `"update"` |  |
+| clusterRoleRules[2].verbs[5] | string | `"patch"` |  |
+| clusterRoleRules[2].verbs[6] | string | `"delete"` |  |
+| clusterRoleRules[3].apiGroups[0] | string | `"metrics.k8s.io"` |  |
+| clusterRoleRules[3].resources[0] | string | `"pods"` |  |
+| clusterRoleRules[3].resources[1] | string | `"nodes"` |  |
+| clusterRoleRules[3].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[3].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[3].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[4].apiGroups[0] | string | `"apps"` |  |
+| clusterRoleRules[4].resources[0] | string | `"daemonsets"` |  |
+| clusterRoleRules[4].resources[1] | string | `"deployments"` |  |
+| clusterRoleRules[4].resources[2] | string | `"replicasets"` |  |
+| clusterRoleRules[4].resources[3] | string | `"statefulsets"` |  |
+| clusterRoleRules[4].verbs[0] | string | `"watch"` |  |
+| clusterRoleRules[4].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[5].apiGroups[0] | string | `"batch"` |  |
+| clusterRoleRules[5].resources[0] | string | `"jobs"` |  |
+| clusterRoleRules[5].resources[1] | string | `"cronjobs"` |  |
+| clusterRoleRules[5].verbs[0] | string | `"watch"` |  |
+| clusterRoleRules[5].verbs[1] | string | `"list"` |  |
 | coordinatorProps.port | int | `5555` |  |
 | coordinatorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | edAggregatorTraceFiles | string | `""` |  |

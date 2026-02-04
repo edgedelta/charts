@@ -34,12 +34,55 @@ goMemLimit: ""
 
 edEnableControllerDiscovery: true
 
+# ClusterRole rules configuration
+# These rules define the RBAC permissions for the EdgeDelta gateway
+# You can customize these rules to match your cluster's security requirements
+clusterRoleRules:
+  - apiGroups: [""]
+    resources:
+      - namespaces
+      - pods
+      - pods/log
+      - events
+      - nodes
+      - nodes/metrics
+      - services
+      - endpoints
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["watch", "list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["watch", "list"]
+
+# Additional ClusterRole rules for watching Custom Resource Definitions (CRDs)
+# These rules are ADDED to the clusterRoleRules above
+# Use this to grant the agent permission to watch custom resources like ArgoCD, Prometheus Operator, etc.
+# Example:
+# additionalClusterRoleRules:
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["applications", "appprojects"]
+#     verbs: ["get", "list", "watch"]
+additionalClusterRoleRules: []
+
 # skipping adding common labels for helm charts into direct helm to k8s yaml file creation.
 skipCommonLabels: false
 
 # custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agent to configured destination(s).
 edCustomTags: ""
-
 
 # Volume props will be used for mounting certain volume(s) to the given path(s) for the agent
 # volumeProps:
@@ -107,11 +150,11 @@ deployment:
     # deployment.autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
     behavior:
       scaleUp:
-        stabilizationWindowSeconds: 60  # Slower scale-up
+        stabilizationWindowSeconds: 60 # Slower scale-up
         policies:
-        - type: Percent
-          value: 50 # Scale up by 50% max
-          periodSeconds: 60
+          - type: Percent
+            value: 50 # Scale up by 50% max
+            periodSeconds: 60
       scaleDown:
         stabilizationWindowSeconds: 300
   # deployment.topologySpreadConstraints -- Topology spread constraints for processor agents while in Deployment mode

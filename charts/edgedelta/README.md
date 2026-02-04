@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 2.11.0](https://img.shields.io/badge/Version-2.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.11.0](https://img.shields.io/badge/AppVersion-v2.11.0-informational?style=flat-square)
+![Version: 2.12.0](https://img.shields.io/badge/Version-2.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.12.0](https://img.shields.io/badge/AppVersion-v2.12.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -8,6 +8,7 @@ Edge Delta Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| additionalClusterRoleRules | list | `[]` |  |
 | aggregatorProps.enabled | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.cluster_pattern_and_sample | bool | `false` |  |
 | aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
@@ -23,6 +24,81 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.usePersistentVolume | bool | `false` |  |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
+| clusterRoleRules[0].apiGroups[0] | string | `""` |  |
+| clusterRoleRules[0].resources[0] | string | `"namespaces"` |  |
+| clusterRoleRules[0].resources[10] | string | `"replicationcontrollers"` |  |
+| clusterRoleRules[0].resources[11] | string | `"serviceaccounts"` |  |
+| clusterRoleRules[0].resources[12] | string | `"persistentvolumes"` |  |
+| clusterRoleRules[0].resources[1] | string | `"pods"` |  |
+| clusterRoleRules[0].resources[2] | string | `"pods/log"` |  |
+| clusterRoleRules[0].resources[3] | string | `"events"` |  |
+| clusterRoleRules[0].resources[4] | string | `"nodes"` |  |
+| clusterRoleRules[0].resources[5] | string | `"nodes/metrics"` |  |
+| clusterRoleRules[0].resources[6] | string | `"services"` |  |
+| clusterRoleRules[0].resources[7] | string | `"endpoints"` |  |
+| clusterRoleRules[0].resources[8] | string | `"configmaps"` |  |
+| clusterRoleRules[0].resources[9] | string | `"secrets"` |  |
+| clusterRoleRules[0].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[0].verbs[1] | string | `"watch"` |  |
+| clusterRoleRules[0].verbs[2] | string | `"list"` |  |
+| clusterRoleRules[10].apiGroups[0] | string | `"batch"` |  |
+| clusterRoleRules[10].resources[0] | string | `"jobs"` |  |
+| clusterRoleRules[10].resources[1] | string | `"cronjobs"` |  |
+| clusterRoleRules[10].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[10].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[10].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[1].apiGroups[0] | string | `""` |  |
+| clusterRoleRules[1].resources[0] | string | `"events"` |  |
+| clusterRoleRules[1].verbs[0] | string | `"create"` |  |
+| clusterRoleRules[2].apiGroups[0] | string | `"events.k8s.io"` |  |
+| clusterRoleRules[2].resources[0] | string | `"events"` |  |
+| clusterRoleRules[2].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[2].verbs[1] | string | `"watch"` |  |
+| clusterRoleRules[2].verbs[2] | string | `"list"` |  |
+| clusterRoleRules[3].apiGroups[0] | string | `"discovery.k8s.io"` |  |
+| clusterRoleRules[3].resources[0] | string | `"endpointslices"` |  |
+| clusterRoleRules[3].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[3].verbs[1] | string | `"watch"` |  |
+| clusterRoleRules[3].verbs[2] | string | `"list"` |  |
+| clusterRoleRules[4].apiGroups[0] | string | `"coordination.k8s.io"` |  |
+| clusterRoleRules[4].resources[0] | string | `"leases"` |  |
+| clusterRoleRules[4].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[4].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[4].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[4].verbs[3] | string | `"create"` |  |
+| clusterRoleRules[4].verbs[4] | string | `"update"` |  |
+| clusterRoleRules[4].verbs[5] | string | `"patch"` |  |
+| clusterRoleRules[4].verbs[6] | string | `"delete"` |  |
+| clusterRoleRules[5].apiGroups[0] | string | `"metrics.k8s.io"` |  |
+| clusterRoleRules[5].resources[0] | string | `"pods"` |  |
+| clusterRoleRules[5].resources[1] | string | `"nodes"` |  |
+| clusterRoleRules[5].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[5].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[5].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[6].apiGroups[0] | string | `"autoscaling"` |  |
+| clusterRoleRules[6].resources[0] | string | `"horizontalpodautoscalers"` |  |
+| clusterRoleRules[6].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[6].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[6].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[7].apiGroups[0] | string | `"networking.k8s.io"` |  |
+| clusterRoleRules[7].resources[0] | string | `"ingresses"` |  |
+| clusterRoleRules[7].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[7].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[7].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[8].apiGroups[0] | string | `"rbac.authorization.k8s.io"` |  |
+| clusterRoleRules[8].resources[0] | string | `"clusterroles"` |  |
+| clusterRoleRules[8].resources[1] | string | `"clusterrolebindings"` |  |
+| clusterRoleRules[8].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[8].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[8].verbs[2] | string | `"watch"` |  |
+| clusterRoleRules[9].apiGroups[0] | string | `"apps"` |  |
+| clusterRoleRules[9].resources[0] | string | `"daemonsets"` |  |
+| clusterRoleRules[9].resources[1] | string | `"deployments"` |  |
+| clusterRoleRules[9].resources[2] | string | `"replicasets"` |  |
+| clusterRoleRules[9].resources[3] | string | `"statefulsets"` |  |
+| clusterRoleRules[9].verbs[0] | string | `"get"` |  |
+| clusterRoleRules[9].verbs[1] | string | `"list"` |  |
+| clusterRoleRules[9].verbs[2] | string | `"watch"` |  |
 | compactorProps.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
 | compactorProps.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
 | compactorProps.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for compactor agents |
