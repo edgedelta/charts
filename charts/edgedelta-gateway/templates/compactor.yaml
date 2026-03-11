@@ -274,6 +274,110 @@ spec:
           - name: config-volume
             mountPath: /var/edgedelta
           {{- end }}
+      {{- if .Values.watcherProps.enabled }}
+      # watcher container
+      - name: {{ .Chart.Name }}-watcher
+        image: {{ .Values.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.image.name (.Values.image.tag | default .Chart.AppVersion)) }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+          # Agent mode MUST be watcher
+          - name: ED_AGENT_MODE
+            value: watcher
+          # Watcher-specific configuration
+          {{- if .Values.watcherProps.targetContainerName }}
+          - name: ED_WATCHER_TARGET_CONTAINER
+            value: "{{ .Values.watcherProps.targetContainerName }}"
+          {{- else }}
+          # Default to compactor agent container name
+          - name: ED_WATCHER_TARGET_CONTAINER
+            value: {{ .Chart.Name }}-compactor
+          {{- end }}
+          {{- if .Values.watcherProps.checkInterval }}
+          - name: ED_WATCHER_CHECK_INTERVAL
+            value: "{{ .Values.watcherProps.checkInterval }}"
+          {{- end }}
+          - name: ED_FLEET_TYPE
+            value: gateway
+          - name: ED_DISABLE_SAMPLE_COLLECTOR
+            value: "1"
+          {{- if .Values.apiKey }}
+          - name: ED_API_KEY
+            value: {{ .Values.apiKey | quote }}
+          {{- else if .Values.secretApiKey.key }}
+          {{ $lookupResult := lookup "v1" "Secret" .Release.Namespace (include "apiKeySecretName" .) }}
+          {{- if or $lookupResult .Values.secretApiKey.value .Values.secretApiKey.enable }}
+          - name: ED_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "apiKeySecretName" . }}
+                key: {{ .Values.secretApiKey.key }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.edApiEndpoint }}
+          - name: ED_API_ENDPOINT
+            value: {{ .Values.edApiEndpoint }}
+          {{- end }}
+          {{- if .Values.edBackendDisabled }}
+          - name: ED_BACKEND_DISABLED
+            value: "{{ .Values.edBackendDisabled }}"
+          {{- end }}
+          {{- if .Values.edTagOverride }}
+          - name: ED_TAG_OVERRIDE
+            value: {{ .Values.edTagOverride }}
+          {{- end }}
+          {{- if .Values.edClusterName }}
+          - name: ED_CLUSTER_NAME
+            value: {{ .Values.edClusterName }}
+          {{- end }}
+          {{- if .Values.edSkipTlsVerify }}
+          - name: ED_SKIP_K8S_TLS_VERIFY
+            value: "{{ .Values.edSkipTlsVerify }}"
+          {{- end }}
+          {{- if .Values.edOrgID }}
+          - name: ED_ORG_ID
+            value: {{ .Values.edOrgID }}
+          {{- end }}
+          {{- if .Values.edCustomTags }}
+          - name: ED_CUSTOM_TAGS
+            value: "{{ .Values.edCustomTags }}"
+          {{- end }}
+          {{- if .Values.compactorProps.goMemLimit }}
+          - name: GOMEMLIMIT
+            value: {{ .Values.compactorProps.goMemLimit }}
+          {{- end }}
+          # Downward API fields (REQUIRED for watcher to identify pod)
+          - name: ED_HOST_OVERRIDE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          - name: ED_K8S_NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          - name: ED_K8S_NAMESPACE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: ED_K8S_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          {{- if .Values.coordinatorProps.enabled }}
+          {{- if .Values.coordinatorProps.endpoint }}
+          - name: ED_COORDINATOR_CLIENT_ENDPOINT
+            value: "{{ .Values.coordinatorProps.endpoint }}"
+          {{- end }}
+          {{- else }}
+          - name: ED_COORDINATOR_CLIENT_DISABLED
+            value: "1"
+          {{- end }}
+        resources:
+          {{- toYaml .Values.watcherProps.resources | nindent 10 }}
+      {{- end }}
       terminationGracePeriodSeconds: 60
       volumes:
       {{- if .Values.edConfigContent }}

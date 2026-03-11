@@ -171,6 +171,26 @@ httpRecorderProps:
     pullPolicy: IfNotPresent
   port: 8080
 
+# Watcher properties
+# Watcher is deployed as a sidecar container to monitor the main agent's health
+# It watches for issues like OOM kills, crash loops, evictions, and scheduling failures
+watcherProps:
+  enabled: false
+  # Target container name to monitor (defaults to main agent container)
+  # Empty string means auto-detect using chart name
+  targetContainerName: ""
+  # Check interval for monitoring (e.g., "30s", "1m")
+  # Empty string uses watcher default (30s)
+  checkInterval: ""
+  # Resource constraints for watcher sidecar
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
 # Custom labels:
 
 # labels:
