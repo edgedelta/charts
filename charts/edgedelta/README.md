@@ -1,6 +1,6 @@
 # edgedelta
 
-![Version: 2.13.0](https://img.shields.io/badge/Version-2.13.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.13.0](https://img.shields.io/badge/AppVersion-v2.13.0-informational?style=flat-square)
+![Version: 2.14.0](https://img.shields.io/badge/Version-2.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.14.0](https://img.shields.io/badge/AppVersion-v2.14.0-informational?style=flat-square)
 
 Edge Delta Agent Chart for Kubernetes
 
@@ -14,6 +14,7 @@ Edge Delta Agent Chart for Kubernetes
 | aggregatorProps.enabledDataTypes.metric | bool | `true` |  |
 | aggregatorProps.enabledDataTypes.topk | bool | `false` |  |
 | aggregatorProps.goMemLimit | string | `""` |  |
+| aggregatorProps.podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
 | aggregatorProps.port | int | `9191` |  |
 | aggregatorProps.resources.limits.cpu | string | `"2000m"` |  |
 | aggregatorProps.resources.limits.memory | string | `"2048Mi"` |  |
@@ -110,6 +111,7 @@ Edge Delta Agent Chart for Kubernetes
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
+| compactorProps.podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.priorityClassName | string | `""` |  |
 | compactorProps.replicas | int | `1` | Number of compactor agents to be created statically, mutually exclusive with autoscaling |
@@ -185,6 +187,7 @@ Edge Delta Agent Chart for Kubernetes
 | podSecurity.apparmor.enabled | bool | `false` | If true, it will enable apparmor for the pods |
 | podSecurity.apparmor.profile | string | `"unconfined"` | If apparmor enabled, it will be the profile for apparmor enforcement for the pods |
 | podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH"]` | Allowed capabilities |
+| podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` | Policy for changing ownership and permissions of volumes. Only takes effect when fsGroup is also set. "OnRootMismatch" only changes permissions if the root dir doesn't match, "Always" recursively changes on every pod start. |
 | podSecurity.privileged | bool | `false` | If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true |
 | podSecurity.seLinuxContext | object | Must run as spc_t (For reference, please refer here: https://access.redhat.com/solutions/7025337) | Provide seLinuxContext configuration for SCC |
 | podSecurity.seccompProfiles | list | `["runtime/default"]` | Allowed seccomp profiles |
@@ -217,6 +220,7 @@ Edge Delta Agent Chart for Kubernetes
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `""` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
+| rollUpProps.podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.priorityClassName | string | `""` |  |
 | rollUpProps.replicas | int | `2` |  |

@@ -77,7 +77,7 @@ additionalClusterRoleRules: []
 # skipping adding common labels for helm charts into direct helm to k8s yaml file creation.
 skipCommonLabels: false
 
-# custom tags are comma separated key:val pairs. these are going to be attached to all outgoing data from agents to configured destination(s).
+# custom tags are pipe separated key:val pairs. these are going to be attached to all outgoing data from agents to configured destination(s).
 edCustomTags: ""
 
 # Persistent storage for coordinator data (auth, etc.)
@@ -291,6 +291,11 @@ podSecurity:
 
   # podSecurity.privileged -- If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true
   privileged: false
+
+  # podSecurity.fsGroupChangePolicy -- Policy for changing ownership and permissions of volumes.
+  # Only takes effect when fsGroup is also set. "OnRootMismatch" only changes permissions if
+  # the root dir doesn't match, "Always" recursively changes on every pod start.
+  fsGroupChangePolicy: "OnRootMismatch"
 
 priorityClasses:
 # priorityClasses: -- Create priority classes for Edge Delta components

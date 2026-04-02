@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 2.13.0](https://img.shields.io/badge/Version-2.13.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.13.0](https://img.shields.io/badge/AppVersion-v2.13.0-informational?style=flat-square)
+![Version: 2.14.0](https://img.shields.io/badge/Version-2.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.14.0](https://img.shields.io/badge/AppVersion-v2.14.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
@@ -95,6 +95,7 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | podSecurity.apparmor.enabled | bool | `false` | If true, it will enable apparmor for the pods |
 | podSecurity.apparmor.profile | string | `"unconfined"` | If apparmor enabled, it will be the profile for apparmor enforcement for the pods |
 | podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH"]` | Allowed capabilities |
+| podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` | Policy for changing ownership and permissions of volumes. Only takes effect when fsGroup is also set. "OnRootMismatch" only changes permissions if the root dir doesn't match, "Always" recursively changes on every pod start. |
 | podSecurity.privileged | bool | `false` | If true, allow to run privileged containers. If eBPF tracer is enabled, this will be automatically true |
 | podSecurity.seLinuxContext | object | Must run as spc_t (For reference, please refer here: https://access.redhat.com/solutions/7025337) | Provide seLinuxContext configuration for SCC |
 | podSecurity.seccompProfiles | list | `["runtime/default"]` | Allowed seccomp profiles |

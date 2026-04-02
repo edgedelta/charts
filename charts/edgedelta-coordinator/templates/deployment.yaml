@@ -69,20 +69,22 @@ spec:
       topologySpreadConstraints:
         {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
       {{- end }}
-      {{- if .Values.podSecurity.securityContextConstraints.create -}}
-      {{- if and .Values.podSecurity.seLinuxContext .Values.podSecurity.seLinuxContext.seLinuxOptions }}
       securityContext:
+        {{- if .Values.podSecurity.fsGroupChangePolicy }}
+        fsGroupChangePolicy: {{ .Values.podSecurity.fsGroupChangePolicy }}
+        {{- end }}
+        {{- if .Values.podSecurity.securityContextConstraints.create -}}
+        {{- if and .Values.podSecurity.seLinuxContext .Values.podSecurity.seLinuxContext.seLinuxOptions }}
         seLinuxOptions:
 {{ toYaml .Values.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
-      {{- end }}
-      {{- else if eq (include "isOpenShift" .) "true"}}
-      securityContext:
+        {{- end }}
+        {{- else if eq (include "isOpenShift" .) "true"}}
         seLinuxOptions:
           user: "system_u"
           role: "system_r"
           type: "spc_t"
           level: "s0"
-      {{- end }}
+        {{- end }}
       containers:
         # agent container
         - name: {{ .Chart.Name }}-agent

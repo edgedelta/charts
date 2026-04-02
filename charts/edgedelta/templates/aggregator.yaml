@@ -54,6 +54,12 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
+      securityContext:
+        {{- if .Values.aggregatorProps.podSecurity.fsGroupChangePolicy }}
+        fsGroupChangePolicy: {{ .Values.aggregatorProps.podSecurity.fsGroupChangePolicy }}
+        {{- else if .Values.podSecurity.fsGroupChangePolicy }}
+        fsGroupChangePolicy: {{ .Values.podSecurity.fsGroupChangePolicy }}
+        {{- end }}
       containers:
       - name: {{ .Chart.Name }}-aggregator
         image: {{ .Values.image.fullPath | default (printf "%s/%s:%s" .Values.repository .Values.image.name (.Values.image.tag | default .Chart.AppVersion)) }}
