@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 2.20.0](https://img.shields.io/badge/Version-2.20.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.20.0](https://img.shields.io/badge/AppVersion-v2.20.0-informational?style=flat-square)
+![Version: 2.21.0](https://img.shields.io/badge/Version-2.21.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.21.0](https://img.shields.io/badge/AppVersion-v2.21.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
