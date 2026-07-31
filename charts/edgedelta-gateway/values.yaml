@@ -34,6 +34,13 @@ goMemLimit: ""
 
 edEnableControllerDiscovery: true
 
+rbac:
+  # rbac.scope -- RBAC scope. Supported values are cluster and namespace.
+  scope: cluster
+  namespaced:
+    # rbac.namespaced.rules -- Rules for the namespace-scoped Role.
+    rules: []
+
 # ClusterRole rules configuration
 # These rules define the RBAC permissions for the EdgeDelta gateway
 # You can customize these rules to match your cluster's security requirements

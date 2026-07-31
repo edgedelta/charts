@@ -140,6 +140,8 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
 | repository | string | `"gcr.io/edgedelta"` |  |
+| rbac.namespaced.rules | list | `[]` | Rules for the namespace-scoped Role. |
+| rbac.scope | string | `"cluster"` | RBAC scope. Supported values are cluster and namespace. |
 | resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2Gi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
