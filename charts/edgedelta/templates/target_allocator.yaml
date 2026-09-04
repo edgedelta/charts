@@ -80,10 +80,26 @@ spec:
           containerPort: {{ .Values.targetAllocator.port }}
         resources:
           {{- toYaml .Values.targetAllocator.resources | nindent 12 }}
+        {{- with .Values.targetAllocator.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.targetAllocator.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.targetAllocator.startupProbe }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.targetAllocator.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
         - name: config-volume
           mountPath: /conf
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: {{ .Values.targetAllocator.terminationGracePeriodSeconds | default 60 }}
       volumes:
       - name: config-volume
         configMap:

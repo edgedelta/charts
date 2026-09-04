@@ -1,0 +1,38 @@
+{{- /* One PodDisruptionBudget per enabled workload; set exactly one of minAvailable or maxUnavailable. */ -}}
+{{- $fullname := include "edgedelta.fullname" . -}}
+{{- $pdbs := list -}}
+{{- $pdbs = append $pdbs (dict "name" $fullname "type" "processor" "workload" true "cfg" .Values.deployment.podDisruptionBudget) -}}
+{{- $pdbs = append $pdbs (dict "name" (printf "%s-compactor" $fullname) "type" "compactor" "workload" .Values.compactorProps.enabled "cfg" .Values.compactorProps.podDisruptionBudget) -}}
+{{- $pdbs = append $pdbs (dict "name" (printf "%s-rollup" $fullname) "type" "rollup" "workload" .Values.rollUpProps.enabled "cfg" .Values.rollUpProps.podDisruptionBudget) -}}
+{{- range $pdbs }}
+{{- if and .workload .cfg .cfg.enabled }}
+{{- $hasMinAvailable := not (kindIs "invalid" .cfg.minAvailable) }}
+{{- $hasMaxUnavailable := not (kindIs "invalid" .cfg.maxUnavailable) }}
+{{- if and $hasMinAvailable $hasMaxUnavailable }}
+{{- fail (printf "%s.podDisruptionBudget: set only one of minAvailable or maxUnavailable" .type) }}
+{{- end }}
+{{- if not (or $hasMinAvailable $hasMaxUnavailable) }}
+{{- fail (printf "%s.podDisruptionBudget: one of minAvailable or maxUnavailable is required" .type) }}
+{{- end }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "edgedelta.labels" $ | nindent 4 }}
+    edgedelta/agent-type: {{ .type }}
+spec:
+  {{- if $hasMinAvailable }}
+  minAvailable: {{ .cfg.minAvailable }}
+  {{- end }}
+  {{- if $hasMaxUnavailable }}
+  maxUnavailable: {{ .cfg.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "edgedelta.selectorLabels" $ | nindent 6 }}
+      edgedelta/agent-type: {{ .type }}
+{{- end }}
+{{- end }}

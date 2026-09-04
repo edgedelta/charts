@@ -276,6 +276,22 @@ spec:
           {{- end }}
         resources:
           {{- toYaml .Values.rollUpProps.resources | nindent 12 }}
+        {{- with .Values.rollUpProps.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.rollUpProps.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.rollUpProps.startupProbe }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.rollUpProps.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         {{- if .Values.edConfigContent }}
         volumeMounts:
@@ -386,7 +402,7 @@ spec:
         resources:
           {{- toYaml .Values.watcherProps.resources | nindent 10 }}
       {{- end }}
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: {{ .Values.rollUpProps.terminationGracePeriodSeconds | default 60 }}
       {{- if .Values.edConfigContent }}
       volumes:
         - name: config-volume

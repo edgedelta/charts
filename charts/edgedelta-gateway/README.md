@@ -1,6 +1,6 @@
 # edgedelta-gateway
 
-![Version: 2.23.0](https://img.shields.io/badge/Version-2.23.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.23.0](https://img.shields.io/badge/AppVersion-v2.23.0-informational?style=flat-square)
+![Version: 2.24.0](https://img.shields.io/badge/Version-2.24.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.24.0](https://img.shields.io/badge/AppVersion-v2.24.0-informational?style=flat-square)
 
 Edge Delta Gateway Agent Chart for Kubernetes
 
@@ -8,56 +8,11 @@ Edge Delta Gateway Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| additionalClusterRoleRules | list | `[]` |  |
+| additionalClusterRoleRules | list | `[]` | ClusterRole rules added to clusterRoleRules, for custom resources such as ArgoCD or Prometheus Operator CRDs. Each rule optionally accepts resourceNames to restrict it to specific named resources. See the example above. |
+| additionalRoleRules | list | `[]` | Role rules added to roleRules, for namespaced custom resources. Each rule optionally accepts resourceNames to restrict it to specific named resources. See the example above. |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
-| clusterRoleRules[0].apiGroups[0] | string | `""` |  |
-| clusterRoleRules[0].resources[0] | string | `"namespaces"` |  |
-| clusterRoleRules[0].resources[1] | string | `"pods"` |  |
-| clusterRoleRules[0].resources[2] | string | `"pods/log"` |  |
-| clusterRoleRules[0].resources[3] | string | `"events"` |  |
-| clusterRoleRules[0].resources[4] | string | `"nodes"` |  |
-| clusterRoleRules[0].resources[5] | string | `"nodes/metrics"` |  |
-| clusterRoleRules[0].resources[6] | string | `"services"` |  |
-| clusterRoleRules[0].resources[7] | string | `"endpoints"` |  |
-| clusterRoleRules[0].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[0].verbs[1] | string | `"watch"` |  |
-| clusterRoleRules[0].verbs[2] | string | `"list"` |  |
-| clusterRoleRules[1].apiGroups[0] | string | `""` |  |
-| clusterRoleRules[1].resources[0] | string | `"events"` |  |
-| clusterRoleRules[1].verbs[0] | string | `"create"` |  |
-| clusterRoleRules[2].apiGroups[0] | string | `"discovery.k8s.io"` |  |
-| clusterRoleRules[2].resources[0] | string | `"endpointslices"` |  |
-| clusterRoleRules[2].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[2].verbs[1] | string | `"watch"` |  |
-| clusterRoleRules[2].verbs[2] | string | `"list"` |  |
-| clusterRoleRules[3].apiGroups[0] | string | `"coordination.k8s.io"` |  |
-| clusterRoleRules[3].resources[0] | string | `"leases"` |  |
-| clusterRoleRules[3].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[3].verbs[1] | string | `"list"` |  |
-| clusterRoleRules[3].verbs[2] | string | `"watch"` |  |
-| clusterRoleRules[3].verbs[3] | string | `"create"` |  |
-| clusterRoleRules[3].verbs[4] | string | `"update"` |  |
-| clusterRoleRules[3].verbs[5] | string | `"patch"` |  |
-| clusterRoleRules[3].verbs[6] | string | `"delete"` |  |
-| clusterRoleRules[4].apiGroups[0] | string | `"metrics.k8s.io"` |  |
-| clusterRoleRules[4].resources[0] | string | `"pods"` |  |
-| clusterRoleRules[4].resources[1] | string | `"nodes"` |  |
-| clusterRoleRules[4].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[4].verbs[1] | string | `"list"` |  |
-| clusterRoleRules[4].verbs[2] | string | `"watch"` |  |
-| clusterRoleRules[5].apiGroups[0] | string | `"apps"` |  |
-| clusterRoleRules[5].resources[0] | string | `"daemonsets"` |  |
-| clusterRoleRules[5].resources[1] | string | `"deployments"` |  |
-| clusterRoleRules[5].resources[2] | string | `"replicasets"` |  |
-| clusterRoleRules[5].resources[3] | string | `"statefulsets"` |  |
-| clusterRoleRules[5].verbs[0] | string | `"watch"` |  |
-| clusterRoleRules[5].verbs[1] | string | `"list"` |  |
-| clusterRoleRules[6].apiGroups[0] | string | `"batch"` |  |
-| clusterRoleRules[6].resources[0] | string | `"jobs"` |  |
-| clusterRoleRules[6].resources[1] | string | `"cronjobs"` |  |
-| clusterRoleRules[6].verbs[0] | string | `"watch"` |  |
-| clusterRoleRules[6].verbs[1] | string | `"list"` |  |
+| clusterRoleRules | list | see the clusterRoleRules list in values.yaml | RBAC rules of the ClusterRole created when rbac.scope is cluster. Customize these rules to match your cluster's security requirements. Each rule optionally accepts resourceNames to restrict it to specific named resources. |
 | compactorProps.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
 | compactorProps.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
 | compactorProps.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for compactor agents |
@@ -68,16 +23,22 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | compactorProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | compactorProps.enabled | bool | `true` |  |
 | compactorProps.goMemLimit | string | `""` |  |
+| compactorProps.lifecycle | object | `{}` |  |
+| compactorProps.livenessProbe | object | `{}` |  |
 | compactorProps.nodeSelector | object | `{}` |  |
+| compactorProps.podDisruptionBudget | object | `{"enabled":false,"maxUnavailable":null,"minAvailable":null}` | Set exactly one of minAvailable or maxUnavailable. |
 | compactorProps.podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
 | compactorProps.port | int | `9199` |  |
 | compactorProps.priorityClassName | string | `""` |  |
+| compactorProps.readinessProbe | object | `{}` |  |
 | compactorProps.replicas | int | `1` | Number of compactor agents to be created statically, mutually exclusive with autoscaling |
 | compactorProps.resources.limits.cpu | string | `"2000m"` |  |
 | compactorProps.resources.limits.memory | string | `"2Gi"` |  |
 | compactorProps.resources.requests.cpu | string | `"200m"` |  |
 | compactorProps.resources.requests.memory | string | `"300Mi"` |  |
 | compactorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
+| compactorProps.startupProbe | object | `{}` |  |
+| compactorProps.terminationGracePeriodSeconds | int | `60` |  |
 | compactorProps.tolerations | object | `{}` |  |
 | compactorProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for compactor agents |
 | compactorProps.traceFiles | string | `""` |  |
@@ -92,7 +53,13 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | deployment.autoscaling.minReplicas | int | `1` | Minimum replica count for rollup agents |
 | deployment.autoscaling.targetForCPUUtilizationPercentage | int | `85` | Targeted CPU utilization for rollup agents in order to HPA to kick in |
 | deployment.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
+| deployment.lifecycle | object | `{}` |  |
+| deployment.livenessProbe | object | `{}` |  |
+| deployment.podDisruptionBudget | object | `{"enabled":false,"maxUnavailable":null,"minAvailable":null}` | Set exactly one of minAvailable or maxUnavailable. |
+| deployment.readinessProbe | object | `{}` |  |
 | deployment.replicas | int | `2` | Number of pods of the deployment. Mutually exclusive with autoscaling |
+| deployment.startupProbe | object | `{}` |  |
+| deployment.terminationGracePeriodSeconds | int | `10` |  |
 | deployment.topologySpreadConstraints | list | `[]` | Topology spread constraints for processor agents while in Deployment mode |
 | edAggregatorTraceFiles | string | `""` |  |
 | edBackendDisabled | string | `""` |  |
@@ -139,11 +106,13 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | priorityClasses | string | `nil` |  |
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
+| rbac.scope | string | `"cluster"` | Scope of the RBAC resources created for the EdgeDelta gateway. Supported values are cluster and namespace. cluster creates a ClusterRole and ClusterRoleBinding from clusterRoleRules below. namespace creates a Role and RoleBinding in the release namespace from roleRules below. |
 | repository | string | `"gcr.io/edgedelta"` |  |
 | resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2Gi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
+| roleRules | list | see the roleRules list in values.yaml | RBAC rules of the Role created when rbac.scope is namespace. A Role cannot grant access to cluster-scoped resources, so node level metrics and cluster wide discovery are not available with namespace scope. Each rule optionally accepts resourceNames to restrict it to specific named resources. |
 | rollUpProps.autoscaling.behavior | object | `{"scaleDown":{"stabilizationWindowSeconds":300}}` | Configure separate scale-up and scale-down behaviors |
 | rollUpProps.autoscaling.customMetric | object | `{}` | For any custom metrics for targeting, one can use this section |
 | rollUpProps.autoscaling.enabled | bool | `false` | Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for rollup agents |
@@ -154,16 +123,22 @@ Edge Delta Gateway Agent Chart for Kubernetes
 | rollUpProps.autoscaling.targetForMemoryUtilizationPercentage | string | `nil` | Targeted Memory utilization for rollup agents in order to HPA to kick in |
 | rollUpProps.enabled | bool | `true` |  |
 | rollUpProps.goMemLimit | string | `""` |  |
+| rollUpProps.lifecycle | object | `{}` |  |
+| rollUpProps.livenessProbe | object | `{}` |  |
 | rollUpProps.nodeSelector | object | `{}` |  |
+| rollUpProps.podDisruptionBudget | object | `{"enabled":false,"maxUnavailable":null,"minAvailable":null}` | Set exactly one of minAvailable or maxUnavailable. |
 | rollUpProps.podSecurity.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
 | rollUpProps.port | int | `9200` |  |
 | rollUpProps.priorityClassName | string | `""` |  |
+| rollUpProps.readinessProbe | object | `{}` |  |
 | rollUpProps.replicas | int | `2` |  |
 | rollUpProps.resources.limits.cpu | string | `"1000m"` |  |
 | rollUpProps.resources.limits.memory | string | `"1Gi"` |  |
 | rollUpProps.resources.requests.cpu | string | `"200m"` |  |
 | rollUpProps.resources.requests.memory | string | `"256Mi"` |  |
 | rollUpProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
+| rollUpProps.startupProbe | object | `{}` |  |
+| rollUpProps.terminationGracePeriodSeconds | int | `60` |  |
 | rollUpProps.tolerations | object | `{}` |  |
 | rollUpProps.topologySpreadConstraints | list | `[]` | Topology spread constraints for rollup agents |
 | rollUpProps.updateStrategy.rollingUpdate.maxUnavailable | int | `1` |  |

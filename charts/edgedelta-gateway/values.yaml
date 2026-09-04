@@ -34,9 +34,17 @@ goMemLimit: ""
 
 edEnableControllerDiscovery: true
 
-# ClusterRole rules configuration
-# These rules define the RBAC permissions for the EdgeDelta gateway
-# You can customize these rules to match your cluster's security requirements
+# RBAC configuration
+rbac:
+  # rbac.scope -- Scope of the RBAC resources created for the EdgeDelta gateway. Supported values are cluster and namespace.
+  # cluster creates a ClusterRole and ClusterRoleBinding from clusterRoleRules below.
+  # namespace creates a Role and RoleBinding in the release namespace from roleRules below.
+  scope: cluster
+
+# clusterRoleRules -- RBAC rules of the ClusterRole created when rbac.scope is cluster.
+# Customize these rules to match your cluster's security requirements.
+# Each rule optionally accepts resourceNames to restrict it to specific named resources.
+# @default -- see the clusterRoleRules list in values.yaml
 clusterRoleRules:
   - apiGroups: [""]
     resources:
@@ -68,15 +76,67 @@ clusterRoleRules:
     resources: ["jobs", "cronjobs"]
     verbs: ["watch", "list"]
 
-# Additional ClusterRole rules for watching Custom Resource Definitions (CRDs)
-# These rules are ADDED to the clusterRoleRules above
-# Use this to grant the agent permission to watch custom resources like ArgoCD, Prometheus Operator, etc.
 # Example:
 # additionalClusterRoleRules:
 #   - apiGroups: ["argoproj.io"]
 #     resources: ["applications", "appprojects"]
 #     verbs: ["get", "list", "watch"]
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["appprojects"]
+#     resourceNames: ["default"]
+#     verbs: ["get"]
+
+# additionalClusterRoleRules -- ClusterRole rules added to clusterRoleRules, for custom resources
+# such as ArgoCD or Prometheus Operator CRDs. Each rule optionally accepts resourceNames to
+# restrict it to specific named resources. See the example above.
 additionalClusterRoleRules: []
+
+# roleRules -- RBAC rules of the Role created when rbac.scope is namespace. A Role cannot grant
+# access to cluster-scoped resources, so node level metrics and cluster wide discovery are not
+# available with namespace scope. Each rule optionally accepts resourceNames to restrict it to
+# specific named resources.
+# @default -- see the roleRules list in values.yaml
+roleRules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - events
+      - services
+      - endpoints
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["watch", "list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["watch", "list"]
+
+# Example:
+# additionalRoleRules:
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["applications", "appprojects"]
+#     verbs: ["get", "list", "watch"]
+#   - apiGroups: ["argoproj.io"]
+#     resources: ["appprojects"]
+#     resourceNames: ["default"]
+#     verbs: ["get"]
+
+# additionalRoleRules -- Role rules added to roleRules, for namespaced custom resources. Each rule
+# optionally accepts resourceNames to restrict it to specific named resources. See the example above.
+additionalRoleRules: []
 
 # skipping adding common labels for helm charts into direct helm to k8s yaml file creation.
 skipCommonLabels: false
@@ -185,6 +245,16 @@ deployment:
   #   labelSelector:
   #     matchLabels:
   #       edgedelta/agent-type: processor
+  livenessProbe: {}
+  readinessProbe: {}
+  startupProbe: {}
+  lifecycle: {}
+  terminationGracePeriodSeconds: 10
+  # deployment.podDisruptionBudget -- Set exactly one of minAvailable or maxUnavailable.
+  podDisruptionBudget:
+    enabled: false
+    minAvailable:
+    maxUnavailable:
 
 # Resource constraints
 annotations: {}
@@ -344,6 +414,16 @@ compactorProps:
   #   labelSelector:
   #     matchLabels:
   #       edgedelta/agent-type: compactor
+  livenessProbe: {}
+  readinessProbe: {}
+  startupProbe: {}
+  lifecycle: {}
+  terminationGracePeriodSeconds: 60
+  # compactorProps.podDisruptionBudget -- Set exactly one of minAvailable or maxUnavailable.
+  podDisruptionBudget:
+    enabled: false
+    minAvailable:
+    maxUnavailable:
 
 rollUpProps:
   enabled: true
@@ -406,6 +486,16 @@ rollUpProps:
   #   labelSelector:
   #     matchLabels:
   #       edgedelta/agent-type: rollup
+  livenessProbe: {}
+  readinessProbe: {}
+  startupProbe: {}
+  lifecycle: {}
+  terminationGracePeriodSeconds: 60
+  # rollUpProps.podDisruptionBudget -- Set exactly one of minAvailable or maxUnavailable.
+  podDisruptionBudget:
+    enabled: false
+    minAvailable:
+    maxUnavailable:
 
 serviceAccount:
   # serviceAccount.annotations -- Annotations for the service account

@@ -1,6 +1,6 @@
 # edgedelta-coordinator
 
-![Version: 2.23.0](https://img.shields.io/badge/Version-2.23.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.23.0](https://img.shields.io/badge/AppVersion-v2.23.0-informational?style=flat-square)
+![Version: 2.24.0](https://img.shields.io/badge/Version-2.24.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.24.0](https://img.shields.io/badge/AppVersion-v2.24.0-informational?style=flat-square)
 
 Edge Delta Coordinator Agent Chart for Kubernetes
 
@@ -8,50 +8,11 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| additionalClusterRoleRules | list | `[]` |  |
+| additionalClusterRoleRules | list | `[]` | ClusterRole rules added to clusterRoleRules, for custom resources such as ArgoCD or Prometheus Operator CRDs. Each rule optionally accepts resourceNames to restrict it to specific named resources. See the example above. |
+| additionalRoleRules | list | `[]` | Role rules added to roleRules, for namespaced custom resources. Each rule optionally accepts resourceNames to restrict it to specific named resources. See the example above. |
 | annotations | object | `{}` |  |
 | apiKey | string | `""` |  |
-| clusterRoleRules[0].apiGroups[0] | string | `""` |  |
-| clusterRoleRules[0].resources[0] | string | `"namespaces"` |  |
-| clusterRoleRules[0].resources[1] | string | `"pods"` |  |
-| clusterRoleRules[0].resources[2] | string | `"pods/log"` |  |
-| clusterRoleRules[0].resources[3] | string | `"events"` |  |
-| clusterRoleRules[0].resources[4] | string | `"nodes"` |  |
-| clusterRoleRules[0].resources[5] | string | `"nodes/metrics"` |  |
-| clusterRoleRules[0].resources[6] | string | `"services"` |  |
-| clusterRoleRules[0].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[0].verbs[1] | string | `"watch"` |  |
-| clusterRoleRules[0].verbs[2] | string | `"list"` |  |
-| clusterRoleRules[1].apiGroups[0] | string | `""` |  |
-| clusterRoleRules[1].resources[0] | string | `"events"` |  |
-| clusterRoleRules[1].verbs[0] | string | `"create"` |  |
-| clusterRoleRules[2].apiGroups[0] | string | `"coordination.k8s.io"` |  |
-| clusterRoleRules[2].resources[0] | string | `"leases"` |  |
-| clusterRoleRules[2].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[2].verbs[1] | string | `"list"` |  |
-| clusterRoleRules[2].verbs[2] | string | `"watch"` |  |
-| clusterRoleRules[2].verbs[3] | string | `"create"` |  |
-| clusterRoleRules[2].verbs[4] | string | `"update"` |  |
-| clusterRoleRules[2].verbs[5] | string | `"patch"` |  |
-| clusterRoleRules[2].verbs[6] | string | `"delete"` |  |
-| clusterRoleRules[3].apiGroups[0] | string | `"metrics.k8s.io"` |  |
-| clusterRoleRules[3].resources[0] | string | `"pods"` |  |
-| clusterRoleRules[3].resources[1] | string | `"nodes"` |  |
-| clusterRoleRules[3].verbs[0] | string | `"get"` |  |
-| clusterRoleRules[3].verbs[1] | string | `"list"` |  |
-| clusterRoleRules[3].verbs[2] | string | `"watch"` |  |
-| clusterRoleRules[4].apiGroups[0] | string | `"apps"` |  |
-| clusterRoleRules[4].resources[0] | string | `"daemonsets"` |  |
-| clusterRoleRules[4].resources[1] | string | `"deployments"` |  |
-| clusterRoleRules[4].resources[2] | string | `"replicasets"` |  |
-| clusterRoleRules[4].resources[3] | string | `"statefulsets"` |  |
-| clusterRoleRules[4].verbs[0] | string | `"watch"` |  |
-| clusterRoleRules[4].verbs[1] | string | `"list"` |  |
-| clusterRoleRules[5].apiGroups[0] | string | `"batch"` |  |
-| clusterRoleRules[5].resources[0] | string | `"jobs"` |  |
-| clusterRoleRules[5].resources[1] | string | `"cronjobs"` |  |
-| clusterRoleRules[5].verbs[0] | string | `"watch"` |  |
-| clusterRoleRules[5].verbs[1] | string | `"list"` |  |
+| clusterRoleRules | list | see the clusterRoleRules list in values.yaml | RBAC rules of the ClusterRole created when rbac.scope is cluster. Customize these rules to match your cluster's security requirements. Each rule optionally accepts resourceNames to restrict it to specific named resources. |
 | coordinatorProps.port | int | `5555` |  |
 | coordinatorProps.serviceDNSSuffix | string | `"svc.cluster.local"` |  |
 | edAggregatorTraceFiles | string | `""` |  |
@@ -78,6 +39,8 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | image.pullSecrets | list | `[]` |  |
 | image.tag | string | `""` |  |
 | instructionURL | string | `"https://app.edgedelta.com"` |  |
+| lifecycle | object | `{}` |  |
+| livenessProbe | object | `{}` |  |
 | nameOverride | string | `""` | Override the name of resources. |
 | networkPolicy | object | `{"cilium":{"dnsSelector":{"toEndpoints":[{"matchLabels":{"k8s:io.kubernetes.pod.namespace":"kube-system","k8s:k8s-app":"kube-dns"}}]}},"enabled":false,"type":"cilium"}` | Manage NetworkPolicy |
 | networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
@@ -105,11 +68,14 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | priorityClasses | string | `nil` |  |
 | profilerPort | string | `""` |  |
 | promPort | string | `""` |  |
+| rbac.scope | string | `"cluster"` | Scope of the RBAC resources created for the EdgeDelta coordinator. Supported values are cluster and namespace. cluster creates a ClusterRole and ClusterRoleBinding from clusterRoleRules below. namespace creates a Role and RoleBinding in the release namespace from roleRules below. |
+| readinessProbe | object | `{}` |  |
 | repository | string | `"gcr.io/edgedelta"` |  |
 | resources.limits.cpu | string | `"2000m"` |  |
 | resources.limits.memory | string | `"2Gi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"256Mi"` |  |
+| roleRules | list | see the roleRules list in values.yaml | RBAC rules of the Role created when rbac.scope is namespace. A Role cannot grant access to cluster-scoped resources, so node level metrics and cluster wide discovery are not available with namespace scope. Each rule optionally accepts resourceNames to restrict it to specific named resources. |
 | secretApiKey.enable | bool | `false` |  |
 | secretApiKey.key | string | `"ed-api-key"` |  |
 | secretApiKey.name | string | `""` |  |
@@ -117,7 +83,9 @@ Edge Delta Coordinator Agent Chart for Kubernetes
 | serviceAccount.annotations | object | `{}` | Annotations for the service account |
 | serviceAccount.labels | object | `{}` | Labels for the service account |
 | skipCommonLabels | bool | `false` |  |
+| startupProbe | object | `{}` |  |
 | storePort | string | `""` |  |
+| terminationGracePeriodSeconds | int | `10` |  |
 | tolerations | object | `{}` |  |
 | topologySpreadConstraints | list | `[]` | Topology spread constraints for coordinator agent |
 | updateStrategy.rollingUpdate.maxUnavailable | int | `1` |  |

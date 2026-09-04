@@ -214,8 +214,24 @@ spec:
           {{- end }}
         resources:
           {{- toYaml .Values.aggregatorProps.resources | nindent 10 }}
+        {{- with .Values.aggregatorProps.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.aggregatorProps.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.aggregatorProps.startupProbe }}
+        startupProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.aggregatorProps.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         imagePullPolicy: Always
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: {{ .Values.aggregatorProps.terminationGracePeriodSeconds | default 10 }}
       volumes:
         {{- if .Values.aggregatorProps.usePersistentVolume }}
         - name: aggregator-data
