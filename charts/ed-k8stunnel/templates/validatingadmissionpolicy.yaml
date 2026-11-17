@@ -1,0 +1,110 @@
+{{- /*
+Backstop for workload and node updates by the tunnel ServiceAccount; pod delete and /scale are excluded.
+Requires the v1 admission API (Kubernetes 1.30+); older clusters rely on the shim.
+*/ -}}
+{{- if and (eq .Values.ceiling "operate") (.Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1/ValidatingAdmissionPolicy") }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}-operate
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["UPDATE"]
+        resources: ["deployments", "statefulsets", "daemonsets"]
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["UPDATE"]
+        resources: ["nodes"]
+  matchConditions:
+    - name: tunnel-service-account
+      expression: 'request.userInfo.username == "system:serviceaccount:{{ .Release.Namespace }}:{{ include "ed-k8stunnel.serviceAccountName" . }}"'
+  variables:
+    # Dynamic specs allow field-wise comparisons across the workload and Node schemas.
+    - name: newSpec
+      expression: 'dyn(object.spec)'
+    - name: oldSpec
+      expression: 'dyn(oldObject.spec)'
+    - name: isWorkload
+      expression: 'object.kind in ["Deployment", "StatefulSet", "DaemonSet"]'
+    - name: newTemplate
+      expression: 'variables.isWorkload ? variables.newSpec.template : {}'
+    - name: oldTemplate
+      expression: 'variables.isWorkload ? variables.oldSpec.template : {}'
+    - name: newTemplateMetadata
+      expression: 'has(variables.newTemplate.metadata) ? variables.newTemplate.metadata : {}'
+    - name: oldTemplateMetadata
+      expression: 'has(variables.oldTemplate.metadata) ? variables.oldTemplate.metadata : {}'
+    - name: newTemplateAnnotations
+      expression: 'has(variables.newTemplateMetadata.annotations) ? variables.newTemplateMetadata.annotations : {}'
+    - name: oldTemplateAnnotations
+      expression: 'has(variables.oldTemplateMetadata.annotations) ? variables.oldTemplateMetadata.annotations : {}'
+    - name: restartedAt
+      expression: '"kubectl.kubernetes.io/restartedAt"'
+    - name: newAnnotations
+      expression: 'has(object.metadata.annotations) ? object.metadata.annotations : {}'
+    - name: oldAnnotations
+      expression: 'has(oldObject.metadata.annotations) ? oldObject.metadata.annotations : {}'
+    # The API server increments this annotation when a DaemonSet template changes.
+    - name: daemonSetGeneration
+      expression: 'object.kind == "DaemonSet" ? "deprecated.daemonset.template.generation" : ""'
+    - name: newTaints
+      expression: 'has(variables.newSpec.taints) ? variables.newSpec.taints : []'
+    - name: oldTaints
+      expression: 'has(variables.oldSpec.taints) ? variables.oldSpec.taints : []'
+  validations:
+    # Object metadata: labels, annotations, finalizers and ownerReferences stay as they are.
+    - expression: >-
+        (has(object.metadata.labels) ? object.metadata.labels : {}) == (has(oldObject.metadata.labels) ? oldObject.metadata.labels : {}) &&
+        variables.newAnnotations.all(k, k == variables.daemonSetGeneration || (k in variables.oldAnnotations && variables.newAnnotations[k] == variables.oldAnnotations[k])) &&
+        variables.oldAnnotations.all(k, k == variables.daemonSetGeneration || k in variables.newAnnotations) &&
+        (has(object.metadata.finalizers) ? object.metadata.finalizers : []) == (has(oldObject.metadata.finalizers) ? oldObject.metadata.finalizers : []) &&
+        (has(object.metadata.ownerReferences) ? object.metadata.ownerReferences : []) == (has(oldObject.metadata.ownerReferences) ? oldObject.metadata.ownerReferences : [])
+      message: "the tunnel may not change labels, annotations, finalizers or ownerReferences"
+    # Workload spec: only the pod template may change (replicas go through /scale, which is not matched here).
+    - expression: >-
+        !variables.isWorkload ||
+        (variables.newSpec.all(k, k == "template" || (k in variables.oldSpec && variables.newSpec[k] == variables.oldSpec[k])) &&
+         variables.oldSpec.all(k, k == "template" || k in variables.newSpec))
+      message: "the tunnel may only change the pod template"
+    # Pod template: the spec is unchanged entirely, and in metadata only the rollout restart stamp may change.
+    - expression: >-
+        !variables.isWorkload ||
+        (variables.newTemplate.all(k, k == "metadata" || (k in variables.oldTemplate && variables.newTemplate[k] == variables.oldTemplate[k])) &&
+         variables.oldTemplate.all(k, k == "metadata" || k in variables.newTemplate))
+      message: "the tunnel may only annotate the pod template"
+    - expression: >-
+        !variables.isWorkload ||
+        (variables.newTemplateMetadata.all(k, k == "annotations" || (k in variables.oldTemplateMetadata && variables.newTemplateMetadata[k] == variables.oldTemplateMetadata[k])) &&
+         variables.oldTemplateMetadata.all(k, k == "annotations" || k in variables.newTemplateMetadata))
+      message: "the tunnel may only annotate the pod template"
+    - expression: >-
+        !variables.isWorkload ||
+        (variables.newTemplateAnnotations.all(k, k == variables.restartedAt || (k in variables.oldTemplateAnnotations && variables.newTemplateAnnotations[k] == variables.oldTemplateAnnotations[k])) &&
+         variables.oldTemplateAnnotations.all(k, k == variables.restartedAt || k in variables.newTemplateAnnotations))
+      message: "the tunnel may only set the kubectl.kubernetes.io/restartedAt pod template annotation"
+    # Preserve NoExecute taints and refuse clearing the final taint, including through null patches.
+    - expression: >-
+        object.kind != "Node" ||
+        (variables.newSpec.all(k, k in ["unschedulable", "taints"] || (k in variables.oldSpec && variables.newSpec[k] == variables.oldSpec[k])) &&
+         variables.oldSpec.all(k, k in ["unschedulable", "taints"] || k in variables.newSpec) &&
+         variables.newTaints.filter(t, t.effect == "NoExecute") == variables.oldTaints.filter(t, t.effect == "NoExecute") &&
+         (size(variables.oldTaints) == 0 || size(variables.newTaints) > 0))
+      message: "the tunnel may only cordon, uncordon or taint (NoSchedule/PreferNoSchedule) a node"
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}-operate
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+spec:
+  policyName: {{ include "ed-k8stunnel.fullname" . }}-operate
+  validationActions: [Deny]
+{{- end }}

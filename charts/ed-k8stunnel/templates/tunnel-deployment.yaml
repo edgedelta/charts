@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ed-k8stunnel.tunnelName" . }}
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "ed-k8stunnel.tunnelSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ed-k8stunnel.tunnelSelectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "ed-k8stunnel.tunnelName" . }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        fsGroup: 65532
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: install-launcher
+          image: {{ include "ed-k8stunnel.image" (dict "repository" .Values.image.repository "tag" .Values.image.tag "digest" .Values.image.digest "defaultTag" .Chart.AppVersion) | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/edgedelta/k8stunnel"]
+          args: ["transport", "--install=/launcher/k8stunnel"]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            {{- toYaml .Values.tunnel.resources | nindent 12 }}
+          volumeMounts:
+            - name: launcher
+              mountPath: /launcher
+      containers:
+        - name: cloudflared
+          image: {{ include "ed-k8stunnel.image" (dict "repository" .Values.tunnel.image.repository "tag" .Values.tunnel.image.tag "digest" .Values.tunnel.image.digest "defaultTag" "") | quote }}
+          command: ["/launcher/k8stunnel"]
+          args:
+            - transport
+            - --binary={{ .Values.tunnel.binaryPath }}
+            - --
+            {{- tpl (toYaml .Values.tunnel.args) . | nindent 12 }}
+          ports:
+            - name: tunnel-metrics
+              containerPort: {{ int .Values.ports.tunnelMetrics }}
+          startupProbe:
+            httpGet:
+              path: /ready
+              port: tunnel-metrics
+            periodSeconds: 5
+            failureThreshold: 720
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: tunnel-metrics
+            periodSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            {{- toYaml .Values.tunnel.resources | nindent 12 }}
+          volumeMounts:
+            - name: launcher
+              mountPath: /launcher
+              readOnly: true
+            - name: tunnel-token
+              mountPath: /var/lib/edgedelta/state
+              readOnly: true
+      volumes:
+        - name: launcher
+          emptyDir:
+            sizeLimit: 32Mi
+        - name: tunnel-token
+          secret:
+            secretName: {{ include "ed-k8stunnel.stateSecretName" . }}
+            optional: true
+            items:
+              - key: tunnelToken
+                path: tunnelToken
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "ed-k8stunnel.tunnelName" . }}
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+automountServiceAccountToken: false

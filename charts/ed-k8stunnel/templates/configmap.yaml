@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}-config
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    {{- include "ed-k8stunnel.config" . | nindent 4 }}

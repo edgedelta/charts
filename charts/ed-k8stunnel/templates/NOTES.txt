@@ -1,0 +1,47 @@
+ed-k8stunnel is deploying.
+
+What happens next:
+
+  1. The agent mints a private CA for this cluster, registers with Edge Delta
+     and persists the tunnel credentials and keys into the state Secret
+     ({{ include "ed-k8stunnel.stateSecretName" . }}). The CA key never leaves
+     the cluster.
+  2. cloudflared starts once registration lands and brings the tunnel up
+     (outbound-only; the agent Service is internal to the cluster). Traffic
+     between Edge Delta and this agent is encrypted end to end with mutual
+     TLS; Cloudflare carries ciphertext only.
+  3. The cluster shows as connected in the Edge Delta connector page.
+
+kubectl commands from Edge Delta run in the kubectl-runner sidecar, which holds
+no credentials and sends API calls through the agent's mode-specific loopback listeners.
+{{- if .Values.networkPolicy.enabled }}
+
+Separate NetworkPolicies restrict cloudflared to Cloudflare edge, DNS and the
+agent mTLS entry point. The execution Pod can reach only DNS, tunnel health,
+and the configured Kubernetes API and platform destination ranges.
+Enforcement requires a NetworkPolicy-capable CNI; update the configured ranges
+when endpoint addresses change.
+{{- end }}
+
+Check on it:
+
+  kubectl --namespace {{ .Release.Namespace }} rollout status deployment/{{ include "ed-k8stunnel.fullname" . }}
+  kubectl --namespace {{ .Release.Namespace }} rollout status deployment/{{ include "ed-k8stunnel.tunnelName" . }}
+  kubectl --namespace {{ .Release.Namespace }} logs deployment/{{ include "ed-k8stunnel.fullname" . }} --container agent --follow
+
+If the rollout stalls, the agent logs say why: a rejected install token is a
+terminal error; network trouble retries forever with backoff.
+{{- if eq .Values.ceiling "operate" }}
+
+Operate ceiling: the agent forwards only scale, rollout restart, cordon/uncordon,
+taint (NoSchedule/PreferNoSchedule) and pod delete, body-checked. NoExecute taints
+and set image are refused. Known limitations: replicas is not capped; removing a
+node's last taint is refused (kubectl sends a null taint list).
+{{- if .Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1/ValidatingAdmissionPolicy" }}
+A ValidatingAdmissionPolicy bound to the agent's ServiceAccount is a backstop for
+workload and node writes in the API server; pod delete and /scale are not covered.
+{{- else }}
+This cluster has no ValidatingAdmissionPolicy v1 API (Kubernetes 1.30+), so the
+agent is the only enforcement point.
+{{- end }}
+{{- end }}

@@ -1,0 +1,394 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ed-k8stunnel Helm values",
+  "type": "object",
+  "properties": {
+    "installToken": {
+      "type": "object",
+      "properties": {
+        "existingSecret": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "edgedelta": {
+      "type": "object",
+      "properties": {
+        "installToken": {
+          "type": "string"
+        }
+      }
+    },
+    "platformUrl": {
+      "type": "string",
+      "pattern": "^https?://"
+    },
+    "ceiling": {
+      "type": "string",
+      "enum": [
+        "read",
+        "operate"
+      ]
+    },
+    "ports": {
+      "type": "object",
+      "properties": {
+        "health": {
+          "$ref": "#/definitions/port"
+        },
+        "metrics": {
+          "$ref": "#/definitions/port"
+        },
+        "tunnelMetrics": {
+          "$ref": "#/definitions/port"
+        },
+        "runner": {
+          "$ref": "#/definitions/port"
+        },
+        "shimRead": {
+          "$ref": "#/definitions/port"
+        },
+        "shimOperate": {
+          "$ref": "#/definitions/port"
+        },
+        "shim": {
+          "$ref": "#/definitions/port"
+        }
+      }
+    },
+    "config": {
+      "type": "object"
+    },
+    "stateSecret": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "type": "string"
+        },
+        "digest": {
+          "$ref": "#/definitions/digest"
+        },
+        "pullPolicy": {
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        }
+      }
+    },
+    "tunnel": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "object",
+          "properties": {
+            "repository": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tag": {
+              "type": "string"
+            },
+            "digest": {
+              "$ref": "#/definitions/digest"
+            }
+          }
+        },
+        "args": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "object"
+        },
+        "binaryPath": {
+          "type": "string",
+          "pattern": "^/"
+        }
+      }
+    },
+    "resources": {
+      "type": "object"
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kubectlPath": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "homeSizeLimit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resources": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "kubectlPath"
+      ]
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "service": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        },
+        "serviceMonitor": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "interval": {
+              "type": "string"
+            },
+            "labels": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "proxy": {
+      "type": "object",
+      "properties": {
+        "httpsProxy": {
+          "type": "string"
+        },
+        "noProxy": {
+          "type": "string"
+        }
+      }
+    },
+    "customCA": {
+      "type": "object",
+      "properties": {
+        "existingSecret": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "networkPolicy": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "egress": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cloudflareEdgeCIDRs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "dns": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "podLabels": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "minProperties": 1
+                }
+              },
+              "required": [
+                "namespace",
+                "podLabels"
+              ]
+            },
+            "apiServerCIDRs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "apiServerPorts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/port"
+              },
+              "minItems": 1
+            },
+            "platformPorts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/port"
+              },
+              "minItems": 1
+            },
+            "platformCIDRs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 3
+              }
+            }
+          },
+          "required": [
+            "cloudflareEdgeCIDRs",
+            "dns",
+            "apiServerPorts",
+            "platformPorts",
+            "apiServerCIDRs",
+            "platformCIDRs"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "replicaCount": {
+      "$comment": "v1 is single-replica: one tunnel, one agent, no leader election.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object"
+        }
+      }
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "readPodLogs": {
+          "type": "boolean"
+        },
+        "readConfigMaps": {
+          "type": "boolean"
+        },
+        "rules": {
+          "$comment": "Non-empty replaces the generated read ClusterRole rules verbatim.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "verbs"
+            ],
+            "properties": {
+              "apiGroups": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "resources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "resourceNames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "nonResourceURLs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "verbs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "imagePullSecrets": {
+      "type": "array"
+    },
+    "podAnnotations": {
+      "type": "object"
+    },
+    "podLabels": {
+      "type": "object"
+    },
+    "nodeSelector": {
+      "type": "object"
+    },
+    "tolerations": {
+      "type": "array"
+    },
+    "affinity": {
+      "type": "object"
+    },
+    "clusterDomain": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$",
+      "maxLength": 190
+    }
+  },
+  "definitions": {
+    "port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^$|^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

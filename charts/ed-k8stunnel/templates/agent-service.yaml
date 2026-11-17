@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ed-k8stunnel.agentServiceName" . }}
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "ed-k8stunnel.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: shim
+      port: {{ int .Values.ports.shim }}
+      targetPort: shim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ed-k8stunnel.tunnelName" . }}
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  publishNotReadyAddresses: true
+  selector:
+    {{- include "ed-k8stunnel.tunnelSelectorLabels" . | nindent 4 }}
+  ports:
+    - name: tunnel-metrics
+      port: {{ int .Values.ports.tunnelMetrics }}
+      targetPort: tunnel-metrics

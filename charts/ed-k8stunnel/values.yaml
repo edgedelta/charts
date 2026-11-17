@@ -1,0 +1,208 @@
+---
+# Edge Delta Kubernetes tunnel agent Helm values.
+#
+# `config` below IS the agent's config.yaml (see ed-k8stunnel.config in
+# templates/_helpers.tpl for what the chart adds on top). Everything else
+# is Kubernetes plumbing: separate transport and execution Deployments,
+# enumerated RBAC, and the state Secret the agent persists its registration
+# into.
+#
+# Comments starting with `# --` are rendered into the published README by
+# helm-docs; keep them one sentence per key.
+
+# Exactly one install token source must be set; the chart refuses to
+# render otherwise.
+installToken:
+  # -- Name of an existing Secret holding the Edge Delta connector install token (preferred: the token never touches Helm release storage).
+  existingSecret: ""
+  # -- Key inside that Secret.
+  secretKey: install-token
+
+edgedelta:
+  # -- Install token for `--set`; the chart templates its own Secret from it.
+  installToken: ""
+
+# -- Edge Delta platform the agent registers with.
+platformUrl: https://webhook.ai.edgedelta.com
+# -- Cluster DNS domain.
+clusterDomain: cluster.local
+
+# -- What the shim forwards: `read` (GET only) or `operate` (read plus the write allowlist, which also adds the matching write ClusterRole).
+ceiling: read
+
+# Listener ports. The agent config, container ports, probes, the cloudflared
+# metrics flag and the metrics Service all derive from these. runner,
+# shimRead and shimOperate are pod-internal loopback (127.0.0.1) ports that
+# only need to agree with each other; the chart derives both sides.
+ports:
+  # -- mTLS listener cloudflared forwards to.
+  shim: 8443
+  # -- Agent health endpoint.
+  health: 8081
+  # -- Agent Prometheus metrics.
+  metrics: 9090
+  # -- cloudflared metrics.
+  tunnelMetrics: 2000
+  # -- kubectl-runner sidecar (pod loopback).
+  runner: 8446
+  # -- Agent listener pinned to the read ceiling (pod loopback).
+  shimRead: 8444
+  # -- Agent listener at the chart ceiling (pod loopback).
+  shimOperate: 8445
+
+# -- The agent's config.yaml, verbatim (snake_case keys); chart-derived keys always win.
+config: {}
+
+stateSecret:
+  # -- Name of the chart-created state Secret; empty means `<fullname>-state`.
+  name: ""
+
+image:
+  # -- Agent image.
+  repository: gcr.io/edgedelta/k8stunnel
+  # -- Empty tag follows the chart appVersion (the matching release).
+  tag: ""
+  # -- Non-empty digest wins over tag.
+  digest: ""
+  # -- Image pull policy.
+  pullPolicy: IfNotPresent
+
+tunnel:
+  image:
+    # -- cloudflared image.
+    repository: docker.io/cloudflare/cloudflared
+    # -- cloudflared tag.
+    tag: "2026.10.7"
+    # -- Non-empty digest wins over tag.
+    digest: "sha256:4955524aeaa379e154023d5a027c250f7b35041a2e7e950cf13f144bc9b9c5ba"
+  # -- cloudflared binary inside its image.
+  binaryPath: /usr/local/bin/cloudflared
+  # -- cloudflared invocation, rendered through tpl so the metrics flag follows `ports.tunnelMetrics`.
+  args:
+    - tunnel
+    - --no-autoupdate
+    - --metrics
+    - "0.0.0.0:{{ .Values.ports.tunnelMetrics }}"
+    - run
+  # -- cloudflared container resources.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+
+# -- Agent container resources.
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+# kubectl-runner sidecar: where kubectl actually runs. The agent's mTLS
+# listener relays Edge Delta's kubectl calls to it over pod loopback. It
+# is a separate container so a kubectl flag that reads or writes files
+# (even one that slips past both allowlists) lands in an empty container
+# with no ServiceAccount token, no state Secret and no config; kubectl
+# reaches the kube API only through the agent's plain loopback listeners,
+# so the read mode can never write. Same image as the agent; ports live
+# under ports.runner / ports.shimRead / ports.shimOperate.
+runner:
+  # -- kubectl binary inside the agent image.
+  kubectlPath: /usr/local/bin/kubectl
+  # -- Size limit of the emptyDir HOME kubectl uses for its discovery cache.
+  homeSizeLimit: 64Mi
+  # -- kubectl-runner container resources.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+
+metrics:
+  service:
+    # -- Create a Service for the agent and cloudflared metrics ports.
+    enabled: false
+  serviceMonitor:
+    # -- Create a Prometheus Operator ServiceMonitor (also requires `metrics.service.enabled`).
+    enabled: false
+    # -- Scrape interval.
+    interval: 30s
+    # -- Extra ServiceMonitor labels.
+    labels: {}
+
+# Corporate egress: forwarded to the agent as HTTPS_PROXY/NO_PROXY for its
+# platform calls (the kube API stays in-cluster).
+proxy:
+  # -- HTTPS proxy for the agent's platform calls.
+  httpsProxy: ""
+  # -- NO_PROXY for the agent.
+  noProxy: ""
+
+# TLS-intercepting middleboxes: an existing Secret holding the extra CA
+# bundle, exposed to the agent via SSL_CERT_FILE.
+customCA:
+  # -- Existing Secret holding an extra CA bundle for TLS-intercepting proxies.
+  existingSecret: ""
+  # -- Key of the bundle inside that Secret.
+  key: ca.crt
+
+# Requires a NetworkPolicy-enforcing CNI. Supply endpoint CIDRs before installation.
+networkPolicy:
+  # -- Create NetworkPolicies restricting both pods' egress; requires a CNI that enforces them.
+  enabled: true
+  egress:
+    # -- Cloudflare edge ranges cloudflared may reach on 7844.
+    cloudflareEdgeCIDRs:
+      - 198.41.192.0/19
+      - 2606:4700:a0::/44
+    dns:
+      # -- Namespace of the cluster DNS pods.
+      namespace: kube-system
+      # -- Labels selecting the cluster DNS pods.
+      podLabels:
+        k8s-app: kube-dns
+    # -- Required: API server CIDRs, including the Service IP and backend addresses your CNI's DNAT needs.
+    apiServerCIDRs: []
+    # -- API server ports.
+    apiServerPorts: [443, 6443]
+    # -- Required: platform registration endpoint CIDRs, or the configured egress proxy.
+    platformCIDRs: []
+    # -- Platform or proxy ports.
+    platformPorts: [443]
+
+# -- Single replica by design (the schema caps it at 1): one tunnel, one agent, no leader election.
+replicaCount: 1
+
+serviceAccount:
+  # -- Create the agent ServiceAccount.
+  create: true
+  # -- ServiceAccount name; empty derives it from the release.
+  name: ""
+  # -- ServiceAccount annotations.
+  annotations: {}
+
+rbac:
+  # -- Create the ClusterRoles and bindings.
+  create: true
+  # -- Grant pod log reads; logs can expose credentials.
+  readPodLogs: false
+  # -- Grant ConfigMap reads; ConfigMaps can expose credentials.
+  readConfigMaps: false
+  # -- Non-empty replaces the generated read ClusterRole rules verbatim (readPodLogs and readConfigMaps are then ignored); standard PolicyRule entries.
+  rules: []
+
+# -- Image pull secrets for both Deployments.
+imagePullSecrets: []
+# -- Extra pod annotations.
+podAnnotations: {}
+# -- Extra pod labels.
+podLabels: {}
+# -- Node selector for both Deployments.
+nodeSelector: {}
+# -- Tolerations for both Deployments.
+tolerations: []
+# -- Affinity for both Deployments.
+affinity: {}

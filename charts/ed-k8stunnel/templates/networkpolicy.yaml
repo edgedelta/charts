@@ -1,0 +1,112 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- $eg := .Values.networkPolicy.egress }}
+{{- if not $eg.apiServerCIDRs }}
+{{- fail "set networkPolicy.egress.apiServerCIDRs to the Kubernetes API endpoint CIDRs before installation" }}
+{{- end }}
+{{- if not $eg.platformCIDRs }}
+{{- fail "set networkPolicy.egress.platformCIDRs to the platform or configured egress proxy CIDRs before installation" }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "ed-k8stunnel.tunnelName" . }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "ed-k8stunnel.tunnelSelectorLabels" . | nindent 6 }}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "ed-k8stunnel.selectorLabels" . | nindent 14 }}
+      ports:
+        - port: {{ int .Values.ports.tunnelMetrics }}
+          protocol: TCP
+  egress:
+    - to:
+        {{- range $eg.cloudflareEdgeCIDRs }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+      ports:
+        - port: 7844
+          protocol: TCP
+        - port: 7844
+          protocol: UDP
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "ed-k8stunnel.selectorLabels" . | nindent 14 }}
+      ports:
+        - port: {{ int .Values.ports.shim }}
+          protocol: TCP
+    {{- include "ed-k8stunnel.dnsEgress" . | nindent 4 }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "ed-k8stunnel.selectorLabels" . | nindent 6 }}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "ed-k8stunnel.tunnelSelectorLabels" . | nindent 14 }}
+      ports:
+        - port: {{ int .Values.ports.shim }}
+          protocol: TCP
+    {{- if .Values.metrics.service.enabled }}
+    - ports:
+        - port: {{ int .Values.ports.metrics }}
+          protocol: TCP
+    {{- end }}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "ed-k8stunnel.tunnelSelectorLabels" . | nindent 14 }}
+      ports:
+        - port: {{ int .Values.ports.tunnelMetrics }}
+          protocol: TCP
+    - to:
+        {{- range $eg.apiServerCIDRs }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+      ports:
+        {{- range $eg.apiServerPorts }}
+        - port: {{ int . }}
+          protocol: TCP
+        {{- end }}
+    - to:
+        {{- range $eg.platformCIDRs }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+      ports:
+        {{- range $eg.platformPorts }}
+        - port: {{ int . }}
+          protocol: TCP
+        {{- end }}
+    {{- include "ed-k8stunnel.dnsEgress" . | nindent 4 }}
+{{- end }}
+
+{{- define "ed-k8stunnel.dnsEgress" -}}
+- to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .Values.networkPolicy.egress.dns.namespace | quote }}
+      podSelector:
+        matchLabels:
+          {{- toYaml .Values.networkPolicy.egress.dns.podLabels | nindent 10 }}
+  ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+{{- end }}

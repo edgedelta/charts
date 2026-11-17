@@ -1,0 +1,39 @@
+{{- if and .Values.rbac.create (eq .Values.ceiling "operate") }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}-operate
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+# The operate allowlist lives in k8stunnel/shim/ceiling.go; these rules
+# must be kept in sync with it by hand. The shim refuses anything else first.
+rules:
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets, daemonsets]
+    verbs: [patch]
+  - apiGroups: [apps]
+    resources: [deployments/scale, statefulsets/scale, replicasets/scale]
+    verbs: [patch, update]
+  - apiGroups: [""]
+    resources: [nodes]
+    verbs: [patch]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}-operate
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "ed-k8stunnel.fullname" . }}-operate
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "ed-k8stunnel.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

@@ -1,0 +1,200 @@
+{{- include "ed-k8stunnel.installTokenGuard" . -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+spec:
+  # Recreate: the old agent must stop before the new one starts so two
+  # agents never fight over the same tunnel credentials.
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "ed-k8stunnel.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ed-k8stunnel.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ include "ed-k8stunnel.config" . | sha256sum }}
+        {{- if .Values.edgedelta.installToken }}
+        # A regenerated token arrives through helm upgrade; the pod must restart to register with it.
+        checksum/install-token: {{ .Values.edgedelta.installToken | sha256sum }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "ed-k8stunnel.serviceAccountName" . }}
+      # The SA token reaches the pod only through the projected volume
+      # below (1h expiry); nothing is auto-mounted.
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 65532
+      # Outlives the agent's 25s drain budget.
+      terminationGracePeriodSeconds: 70
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        # Native sidecar (initContainer + restartPolicy Always): the agent
+        # starts before the runner so the local shim is ready.
+        - name: agent
+          restartPolicy: Always
+          image: {{ include "ed-k8stunnel.image" (dict "repository" .Values.image.repository "tag" .Values.image.tag "digest" .Values.image.digest "defaultTag" .Chart.AppVersion) | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["--config", "/etc/edgedelta/config.yaml"]
+          env:
+            # Must match install_token_env in ed-k8stunnel.config.
+            - name: ED_INSTALL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ed-k8stunnel.installTokenSecretName" . }}
+                  key: {{ .Values.installToken.secretKey }}
+            {{- with .Values.proxy.httpsProxy }}
+            - name: HTTPS_PROXY
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.proxy.noProxy }}
+            - name: NO_PROXY
+              value: {{ . | quote }}
+            {{- end }}
+            {{- if .Values.customCA.existingSecret }}
+            - name: SSL_CERT_FILE
+              value: /etc/edgedelta-ca/{{ .Values.customCA.key }}
+            {{- end }}
+          ports:
+            - name: shim
+              containerPort: {{ int .Values.ports.shim }}
+            - name: health
+              containerPort: {{ int .Values.ports.health }}
+            - name: metrics
+              containerPort: {{ int .Values.ports.metrics }}
+          # 1-hour startup budget: cold-boot registration rides out
+          # platform outages in infinite jittered backoff;
+          # kubelet kills during that window would fake the CrashLoopBackOff
+          # signal the spec reserves for rejected credentials. Startup
+          # probes cost nothing once passed.
+          startupProbe:
+            httpGet:
+              path: /startupz
+              port: health
+            periodSeconds: 5
+            failureThreshold: 720
+          # Liveness is process health only — it must never depend on the
+          # tunnel or the platform, so an external outage cannot
+          # crash-loop customer pods.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /startupz
+              port: health
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: kube-api-access
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+            - name: config
+              mountPath: /etc/edgedelta
+              readOnly: true
+            {{- if .Values.customCA.existingSecret }}
+            - name: custom-ca
+              mountPath: /etc/edgedelta-ca
+              readOnly: true
+            {{- end }}
+      containers:
+        # kubectl runs here, not on Edge Delta pods and not in the agent:
+        # no ServiceAccount token, no state Secret, no config, only an
+        # empty writable HOME. kubectl reaches the kube API solely through
+        # the agent's plain loopback listeners, which apply the ceiling.
+        - name: kubectl-runner
+          image: {{ include "ed-k8stunnel.image" (dict "repository" .Values.image.repository "tag" .Values.image.tag "digest" .Values.image.digest "defaultTag" .Chart.AppVersion) | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/k8stunnel-runner"]
+          args:
+            - --listen={{ include "ed-k8stunnel.runnerAddr" . }}
+            - --kubectl={{ .Values.runner.kubectlPath }}
+            - --home=/home/runner
+            - --read_server=http://{{ include "ed-k8stunnel.shimReadAddr" . }}
+            - --operate_server=http://{{ include "ed-k8stunnel.shimOperateAddr" . }}
+          resources:
+            {{- toYaml .Values.runner.resources | nindent 12 }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: runner-home
+              mountPath: /home/runner
+      volumes:
+        # Hand-rolled kube-api-access: automount is off, so this projected
+        # trio (short-lived token, cluster CA, namespace) is the agent's
+        # entire kube identity.
+        - name: kube-api-access
+          projected:
+            defaultMode: 420
+            sources:
+              - serviceAccountToken:
+                  expirationSeconds: 3600
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+              - downwardAPI:
+                  items:
+                    - path: namespace
+                      fieldRef:
+                        fieldPath: metadata.namespace
+        - name: config
+          configMap:
+            name: {{ include "ed-k8stunnel.fullname" . }}-config
+        - name: runner-home
+          emptyDir:
+            sizeLimit: {{ .Values.runner.homeSizeLimit }}
+        {{- if .Values.customCA.existingSecret }}
+        - name: custom-ca
+          secret:
+            secretName: {{ .Values.customCA.existingSecret }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
