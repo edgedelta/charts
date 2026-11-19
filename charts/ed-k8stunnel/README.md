@@ -1,6 +1,6 @@
 # ed-k8stunnel
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.1](https://img.shields.io/badge/AppVersion-v0.1.1-informational?style=flat-square)
 
 Edge Delta's in-cluster Kubernetes tunnel agent: a kube-API shim behind an outbound-only Cloudflare Tunnel, capped at a read or operate (read plus a small write allowlist) ceiling. Outbound-only with mutual TLS end to end, no exec, no watch, and the RBAC reads no Secret but its own state.
 
@@ -37,7 +37,7 @@ Kubernetes: `>=1.29.0-0`
 | networkPolicy.egress.dns.podLabels | object | `{"k8s-app":"kube-dns"}` | Labels selecting the cluster DNS pods. |
 | networkPolicy.egress.platformCIDRs | list | `[]` | Required: platform registration endpoint CIDRs, or the configured egress proxy. |
 | networkPolicy.egress.platformPorts | list | `[443]` | Platform or proxy ports. |
-| networkPolicy.enabled | bool | `true` | Create NetworkPolicies restricting both pods' egress; requires a CNI that enforces them. |
+| networkPolicy.enabled | bool | `false` | Create NetworkPolicies restricting both pods' egress; requires a CNI that enforces them and the CIDRs below. |
 | nodeSelector | object | `{}` | Node selector for both Deployments. |
 | platformUrl | string | `"https://webhook.ai.edgedelta.com"` | Edge Delta platform the agent registers with. |
 | podAnnotations | object | `{}` | Extra pod annotations. |

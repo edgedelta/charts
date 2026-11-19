@@ -149,10 +149,11 @@ customCA:
   # -- Key of the bundle inside that Secret.
   key: ca.crt
 
-# Requires a NetworkPolicy-enforcing CNI. Supply endpoint CIDRs before installation.
+# Off by default: most clusters run no NetworkPolicy-enforcing CNI, and the API server and
+# platform CIDRs below cannot be derived by the chart.
 networkPolicy:
-  # -- Create NetworkPolicies restricting both pods' egress; requires a CNI that enforces them.
-  enabled: true
+  # -- Create NetworkPolicies restricting both pods' egress; requires a CNI that enforces them and the CIDRs below.
+  enabled: false
   egress:
     # -- Cloudflare edge ranges cloudflared may reach on 7844.
     cloudflareEdgeCIDRs:

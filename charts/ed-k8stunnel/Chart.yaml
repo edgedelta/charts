@@ -6,6 +6,6 @@ description: >-
   (read plus a small write allowlist) ceiling. Outbound-only with mutual TLS end
   to end, no exec, no watch, and the RBAC reads no Secret but its own state.
 type: application
-version: 0.1.0
-appVersion: "v0.1.0"
+version: 0.1.1
+appVersion: "v0.1.1"
 kubeVersion: '>=1.29.0-0'
