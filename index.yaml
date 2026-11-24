@@ -2,6 +2,20 @@ apiVersion: v1
 entries:
   ed-k8stunnel:
   - apiVersion: v2
+    appVersion: v0.1.2
+    created: "2026-11-24T11:25:20.43222611Z"
+    description: 'Edge Delta''s in-cluster Kubernetes tunnel agent: a kube-API shim
+      behind an outbound-only Cloudflare Tunnel, capped at a read or operate (read
+      plus a small write allowlist) ceiling. Outbound-only with mutual TLS end to
+      end, no exec, no watch, and the RBAC reads no Secret but its own state.'
+    digest: 2ebd10698f2c7137c0532a202c3c2af523b41d3d4c1d220c779adec44687c85a
+    kubeVersion: '>=1.29.0-0'
+    name: ed-k8stunnel
+    type: application
+    urls:
+    - https://github.com/edgedelta/charts/releases/download/ed-k8stunnel-0.1.2/ed-k8stunnel-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     appVersion: v0.1.1
     created: "2026-11-19T09:51:00.217726938Z"
     description: 'Edge Delta''s in-cluster Kubernetes tunnel agent: a kube-API shim
@@ -1722,4 +1736,4 @@ entries:
     urls:
     - https://github.com/edgedelta/charts/releases/download/edgedelta-gateway-1.35.0/edgedelta-gateway-1.35.0.tgz
     version: 1.35.0
-generated: "2026-11-19T09:51:00.218035816Z"
+generated: "2026-11-24T11:25:20.432629441Z"
