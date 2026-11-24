@@ -1,6 +1,6 @@
 # ed-k8stunnel
 
-![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.1](https://img.shields.io/badge/AppVersion-v0.1.1-informational?style=flat-square)
+![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.2](https://img.shields.io/badge/AppVersion-v0.1.2-informational?style=flat-square)
 
 Edge Delta's in-cluster Kubernetes tunnel agent: a kube-API shim behind an outbound-only Cloudflare Tunnel, capped at a read or operate (read plus a small write allowlist) ceiling. Outbound-only with mutual TLS end to end, no exec, no watch, and the RBAC reads no Secret but its own state.
 
@@ -51,10 +51,12 @@ Kubernetes: `>=1.29.0-0`
 | ports.tunnelMetrics | int | `2000` | cloudflared metrics. |
 | proxy.httpsProxy | string | `""` | HTTPS proxy for the agent's platform calls. |
 | proxy.noProxy | string | `""` | NO_PROXY for the agent. |
+| rbac.aggregateToView | bool | `true` | Aggregate operator ClusterRoles labelled aggregate-to-view into the read role, so operators that publish a view role (cert-manager, External Secrets, Flux, Prometheus Operator, anything under OLM) need no chart change; Kubernetes' own bootstrap roles are excluded, so the core group stays governed by the switches below. Labelled roles are taken as-is, so audit any cluster-local ones; the tunnel refuses `secrets` paths regardless of RBAC. |
 | rbac.create | bool | `true` | Create the ClusterRoles and bindings. |
-| rbac.readConfigMaps | bool | `false` | Grant ConfigMap reads; ConfigMaps can expose credentials. |
-| rbac.readPodLogs | bool | `false` | Grant pod log reads; logs can expose credentials. |
-| rbac.rules | list | `[]` | Non-empty replaces the generated read ClusterRole rules verbatim (readPodLogs and readConfigMaps are then ignored); standard PolicyRule entries. |
+| rbac.extraRules | list | `[]` | Appended to the chart's own read rules for cluster-specific CRDs (Strimzi, CloudNativePG, ...); standard PolicyRule entries, Secrets refused at render time. |
+| rbac.readConfigMaps | bool | `false` | Allow ConfigMap reads, in RBAC and in the agent's shim; ConfigMaps can expose credentials. |
+| rbac.readPodLogs | bool | `false` | Allow pod log reads, in RBAC and in the agent's shim; logs can expose credentials. |
+| rbac.rules | list | `[]` | Non-empty replaces the chart's own read rules verbatim (readPodLogs and readConfigMaps are then ignored); extraRules and aggregateToView still apply, so set aggregateToView=false for an exact grant. Rules reaching Secrets are refused at render time. |
 | replicaCount | int | `1` | Single replica by design (the schema caps it at 1): one tunnel, one agent, no leader election. |
 | resources | object | `{"limits":{"memory":"256Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}` | Agent container resources. |
 | runner.homeSizeLimit | string | `"64Mi"` | Size limit of the emptyDir HOME kubectl uses for its discovery cache. |

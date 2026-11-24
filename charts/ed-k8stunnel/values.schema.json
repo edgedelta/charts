@@ -304,6 +304,9 @@
         "create": {
           "type": "boolean"
         },
+        "aggregateToView": {
+          "type": "boolean"
+        },
         "readPodLogs": {
           "type": "boolean"
         },
@@ -314,44 +317,14 @@
           "$comment": "Non-empty replaces the generated read ClusterRole rules verbatim.",
           "type": "array",
           "items": {
-            "type": "object",
-            "required": [
-              "verbs"
-            ],
-            "properties": {
-              "apiGroups": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "resources": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "resourceNames": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "nonResourceURLs": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "verbs": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "additionalProperties": false
+            "$ref": "#/definitions/policyRule"
+          }
+        },
+        "extraRules": {
+          "$comment": "Appended to the generated read ClusterRole rules.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/policyRule"
           }
         }
       }
@@ -389,6 +362,46 @@
     "digest": {
       "type": "string",
       "pattern": "^$|^sha256:[a-f0-9]{64}$"
+    },
+    "policyRule": {
+      "type": "object",
+      "required": [
+        "verbs"
+      ],
+      "properties": {
+        "apiGroups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resourceNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nonResourceURLs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verbs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

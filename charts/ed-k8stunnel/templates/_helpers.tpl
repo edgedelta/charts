@@ -104,7 +104,7 @@ RBAC-pins).
 {{- define "ed-k8stunnel.config" -}}
 {{- $ops := dict "health_listen" (printf ":%d" (int .Values.ports.health)) "metrics_listen" (printf ":%d" (int .Values.ports.metrics)) -}}
 {{- $tunnel := dict "origin" (include "ed-k8stunnel.origin" .) "metrics_url" (printf "http://%s:%d" (include "ed-k8stunnel.tunnelName" .) (int .Values.ports.tunnelMetrics)) -}}
-{{- $shim := dict "listen" (printf "0.0.0.0:%d" (int .Values.ports.shim)) "ceiling" .Values.ceiling "read_listen" (include "ed-k8stunnel.shimReadAddr" .) "operate_listen" (include "ed-k8stunnel.shimOperateAddr" .) "runner_url" (printf "http://%s" (include "ed-k8stunnel.runnerAddr" .)) -}}
+{{- $shim := dict "listen" (printf "0.0.0.0:%d" (int .Values.ports.shim)) "ceiling" .Values.ceiling "read_listen" (include "ed-k8stunnel.shimReadAddr" .) "operate_listen" (include "ed-k8stunnel.shimOperateAddr" .) "runner_url" (printf "http://%s" (include "ed-k8stunnel.runnerAddr" .)) "read_configmaps" .Values.rbac.readConfigMaps "read_pod_logs" .Values.rbac.readPodLogs -}}
 {{- $derived := dict "platform_url" .Values.platformUrl "install_token_env" "ED_INSTALL_TOKEN" "shim" $shim "ops" $ops "tunnel" $tunnel "state_secret" (dict "name" (include "ed-k8stunnel.stateSecretName" .)) -}}
 {{- toYaml (mustMergeOverwrite (deepCopy (default (dict) .Values.config)) $derived) -}}
 {{- end -}}
@@ -125,3 +125,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "ed-k8stunnel.origin" -}}
 {{- printf "tcp://%s.%s.svc.%s:%d" (include "ed-k8stunnel.agentServiceName" .) .Release.Namespace .Values.clusterDomain (int .Values.ports.shim) -}}
 {{- end -}}
+
+{{/*
+Label the aggregated read ClusterRole selects; release-scoped so two installs never share rules.
+*/}}
+{{- define "ed-k8stunnel.aggregationLabel" -}}
+{{- printf "k8stunnel.edgedelta.com/aggregate-to-%s" (include "ed-k8stunnel.fullname" . | trunc 42 | trimSuffix "-") -}}
+{{- end }}

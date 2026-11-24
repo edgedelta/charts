@@ -188,12 +188,16 @@ serviceAccount:
 rbac:
   # -- Create the ClusterRoles and bindings.
   create: true
-  # -- Grant pod log reads; logs can expose credentials.
+  # -- Aggregate operator ClusterRoles labelled aggregate-to-view into the read role, so operators that publish a view role (cert-manager, External Secrets, Flux, Prometheus Operator, anything under OLM) need no chart change; Kubernetes' own bootstrap roles are excluded, so the core group stays governed by the switches below. Labelled roles are taken as-is, so audit any cluster-local ones; the tunnel refuses `secrets` paths regardless of RBAC.
+  aggregateToView: true
+  # -- Allow pod log reads, in RBAC and in the agent's shim; logs can expose credentials.
   readPodLogs: false
-  # -- Grant ConfigMap reads; ConfigMaps can expose credentials.
+  # -- Allow ConfigMap reads, in RBAC and in the agent's shim; ConfigMaps can expose credentials.
   readConfigMaps: false
-  # -- Non-empty replaces the generated read ClusterRole rules verbatim (readPodLogs and readConfigMaps are then ignored); standard PolicyRule entries.
+  # -- Non-empty replaces the chart's own read rules verbatim (readPodLogs and readConfigMaps are then ignored); extraRules and aggregateToView still apply, so set aggregateToView=false for an exact grant. Rules reaching Secrets are refused at render time.
   rules: []
+  # -- Appended to the chart's own read rules for cluster-specific CRDs (Strimzi, CloudNativePG, ...); standard PolicyRule entries, Secrets refused at render time.
+  extraRules: []
 
 # -- Image pull secrets for both Deployments.
 imagePullSecrets: []

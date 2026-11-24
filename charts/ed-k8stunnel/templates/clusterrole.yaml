@@ -1,14 +1,42 @@
 {{- if .Values.rbac.create }}
+{{- range concat .Values.rbac.rules .Values.rbac.extraRules }}
+  {{- $groups := .apiGroups | default list }}
+  {{- $resources := .resources | default list }}
+  {{- if and (or (has "" $groups) (has "*" $groups)) (or (has "secrets" $resources) (has "*" $resources)) }}
+    {{- fail "rbac.rules / rbac.extraRules must not reach Secrets: no rule may name secrets or wildcard resources in the core or all API groups" }}
+  {{- end }}
+{{- end }}
 ---
+# Aggregated so operators' aggregate-to-view roles are picked up without a chart change; Kubernetes'
+# bootstrap view role is excluded because it would add configmaps and pod logs behind the switches.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ include "ed-k8stunnel.fullname" . }}
   labels:
     {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        {{ include "ed-k8stunnel.aggregationLabel" . }}: "true"
+{{- if .Values.rbac.aggregateToView }}
+    - matchLabels:
+        rbac.authorization.k8s.io/aggregate-to-view: "true"
+      matchExpressions:
+        - { key: kubernetes.io/bootstrapping, operator: DoesNotExist }
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "ed-k8stunnel.fullname" . }}-base
+  labels:
+    {{- include "ed-k8stunnel.labels" . | nindent 4 }}
+    {{ include "ed-k8stunnel.aggregationLabel" . }}: "true"
 # Pod output redaction is best effort; command arguments, logs and arbitrary
 # strings can still contain credentials. ConfigMap and log grants are configured
-# separately in values.yaml and default off.
+# separately in values.yaml and default off. Secrets are never granted: there is no
+# deny in RBAC, so no wildcard touches the core group.
 rules:
 {{- if .Values.rbac.rules }}
   {{- toYaml .Values.rbac.rules | nindent 2 }}
@@ -88,5 +116,80 @@ rules:
     resources:
       - customresourcedefinitions
     verbs: [get, list]
+  - apiGroups: [coordination.k8s.io]
+    resources:
+      - leases
+    verbs: [get, list]
+  - apiGroups: [scheduling.k8s.io]
+    resources:
+      - priorityclasses
+    verbs: [get, list]
+  - apiGroups: [node.k8s.io]
+    resources:
+      - runtimeclasses
+    verbs: [get, list]
+  - apiGroups: [discovery.k8s.io]
+    resources:
+      - endpointslices
+    verbs: [get, list]
+  - apiGroups: [apiregistration.k8s.io]
+    resources:
+      - apiservices
+    verbs: [get, list]
+  - apiGroups: [admissionregistration.k8s.io]
+    resources:
+      - validatingwebhookconfigurations
+      - mutatingwebhookconfigurations
+      - validatingadmissionpolicies
+      - validatingadmissionpolicybindings
+    verbs: [get, list]
+  - apiGroups: [snapshot.storage.k8s.io]
+    resources:
+      - volumesnapshots
+      - volumesnapshotclasses
+    verbs: [get, list]
+  # Operators without an aggregate-to-view role. Their specs reference Secrets by name,
+  # but free-form fields (FlinkDeployment.flinkConfiguration, EC2NodeClass.userData,
+  # Argo Application helm values) can carry whatever a user put there. Anything else
+  # goes in rbac.extraRules.
+  - apiGroups: [karpenter.sh, karpenter.k8s.aws]
+    resources: ["*"]
+    verbs: [get, list]
+  - apiGroups: [flink.apache.org]
+    resources:
+      - flinkdeployments
+      - flinksessionjobs
+    verbs: [get, list]
+  - apiGroups: [argoproj.io]
+    resources:
+      - applications
+      - applicationsets
+      - appprojects
+      - rollouts
+      - analysisruns
+    verbs: [get, list]
+  - apiGroups: [keda.sh]
+    resources:
+      - scaledobjects
+      - scaledjobs
+    verbs: [get, list]
+  - apiGroups: [monitoring.coreos.com]
+    resources:
+      - prometheuses
+      - alertmanagers
+      - servicemonitors
+      - podmonitors
+      - prometheusrules
+    verbs: [get, list]
+  - apiGroups: [autoscaling.k8s.io]
+    resources:
+      - verticalpodautoscalers
+    verbs: [get, list]
+  - apiGroups: [gateway.networking.k8s.io]
+    resources: ["*"]
+    verbs: [get, list]
+{{- end }}
+{{- with .Values.rbac.extraRules }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
